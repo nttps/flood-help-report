@@ -344,6 +344,7 @@
 
         body {
             -webkit-print-color-adjust: exact; /* Ensure colors are printed */
+            margin: 0;
         }
         table {
             border: 1px solid black; /* Ensures the table is visible */
