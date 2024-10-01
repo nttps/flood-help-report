@@ -246,7 +246,7 @@
                                         <td class="border bg-white border-zinc-500 text-right">
                                             {{ sub.retreat.toLocaleString() }}
                                         </td>
-                                        <td class="border bg-white border-zinc-500 text-right" :class="{ 'bg-red-400': sub.outstanding > 0}">
+                                        <td class="border bg-white border-zinc-500 text-right" :class="{ 'bg-red-400': sub.outstanding > 0, 'bg-green-500': sub.outstanding == 0}">
                                             {{ sub.outstanding.toLocaleString() }}
                                         </td>
                                     </tr>
