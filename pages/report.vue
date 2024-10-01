@@ -317,7 +317,7 @@
     })
     
     const query = async () => {
-        const res = await $fetch(`/api/?startDate=${route.query.startDate}&endDate=${route.query.endDate}${route.query.pcode ? `&pcode=${route.query.pcode}`: ''}`)
+        const res = await $fetch(`/api/?startDate=${route.query?.startDate}&endDate=${route.query?.endDate}${route.query.pcode ? `&pcode=${route.query.pcode}`: ''}`)
         dataHead.value = res ?? []
         pending.value = true
     }
