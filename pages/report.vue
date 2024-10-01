@@ -356,7 +356,7 @@
         body {
             -webkit-print-color-adjust: exact; /* Ensure colors are printed */
             color-adjust: exact; /* บังคับให้พิมพ์สีในเบราว์เซอร์อื่น */
-            margin: 0;
+            margin: 0 !important;
         }
         table {
             border: 1px solid black; /* Ensures the table is visible */
