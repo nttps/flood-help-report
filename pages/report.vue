@@ -127,7 +127,7 @@
                             </td>
                         </tr>
                         <template v-for="(head, index) in dataHead" :key="head.p_no">
-                            <tr class="bg-zinc-400/70 font-bold border-t-2">
+                            <tr class="bg-zinc-400/70 font-bold">
                                 <td class="border border-t-0 border-zinc-500" colspan="2">
                                     <button @click="toggleSub(index)" class="flex items-center space-x-2">
                                         <UIcon :name="head.showSub ? 'i-mdi-chevron-down' : 'i-mdi-chevron-up'" />
