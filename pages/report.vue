@@ -17,7 +17,7 @@
             <div class="max-w-screen-2xl mx-auto mt-8">
                 <table class="w-full">
                     <thead class="text-center">
-                        <tr class="bg-zinc-500/70 font-bold">
+                        <tr class="bg-zinc-500/70 font-bold border-b-2 border-black">
                             <th class="border border-zinc-700">
 
                             </th>
