@@ -7,7 +7,7 @@
           <td class="border border-zinc-700">
             
           </td>
-          <td class="border border-zinc-70">
+          <td class="border border-zinc-700">
             จังหวัด
           </td>
           <td class="border border-b-0 border-zinc-700">
