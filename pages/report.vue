@@ -187,7 +187,7 @@
 
                             <template v-if="head.showSub">
                                 <template v-for="sub in head.sub" :key="sub.sub_id">
-                                    <tr class="bg-zinc-400/70 last-of-type:border-b-2 border-black">
+                                    <tr class="bg-zinc-400/70 last:border-b-2 border-black">
                                         <td class="border border-zinc-500">
 
                                         </td>
