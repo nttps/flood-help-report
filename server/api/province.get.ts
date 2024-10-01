@@ -13,11 +13,10 @@ const config = {
 
 export default defineEventHandler(async (event) => {
     try {
-     
         const sqlString = `select pcode, pname from a_province where is_active = 1`
         await sql.connect(config);
         const result = await sql.query(sqlString);
-        return result.recordset;
+        return result.recordset
     } catch (err) {
       console.error(err);
     }

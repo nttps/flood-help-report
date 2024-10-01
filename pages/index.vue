@@ -52,10 +52,7 @@
 
     })
 
-    const { data: provinces, status } = await useFetch('/api/province', {
-        cache: false
-    })
-
+    const { data: provinces, status } = await useFetch('/api/province')
 
     const router = useRouter()
 
