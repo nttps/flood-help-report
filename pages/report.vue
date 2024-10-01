@@ -341,6 +341,10 @@
         .date-title {
             @apply fixed right-4 top-4;
         }
+
+        body {
+            -webkit-print-color-adjust: exact; /* Ensure colors are printed */
+        }
         table {
             border: 1px solid black; /* Ensures the table is visible */
             page-break-inside: auto; /* Avoid page breaks inside rows */
