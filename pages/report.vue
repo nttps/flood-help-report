@@ -344,6 +344,7 @@
 
         body {
             -webkit-print-color-adjust: exact; /* Ensure colors are printed */
+            color-adjust: exact; /* บังคับให้พิมพ์สีในเบราว์เซอร์อื่น */
             margin: 0;
         }
         table {
@@ -357,9 +358,7 @@
             z-index: 1; /* Ensure header is above other content */
         }
         th, td {
-            border: 1px solid black;
             padding: 0;
-            word-wrap: break-word; /* ห่อข้อความที่ยาวเกินไป */
         }
 
         /* Landscape orientation */
