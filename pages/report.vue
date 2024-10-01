@@ -350,6 +350,9 @@
         table {
             border: 1px solid black; /* Ensures the table is visible */
             page-break-inside: auto; /* Avoid page breaks inside rows */
+
+            border-collapse: collapse; /* ใช้ขอบรวมกัน */
+            box-shadow: none; /* ลบเงาของตาราง */
         }
 
         th {
