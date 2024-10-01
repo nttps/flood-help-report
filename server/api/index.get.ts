@@ -6,13 +6,27 @@ const config = {
   database: 'DPM_HELP67',
   server: '122.154.29.20',
   options: {
-    encrypt: true, // ถ้าเชื่อมต่อแบบ SSL
+    encrypt: false, // ถ้าเชื่อมต่อแบบ SSL
     trustServerCertificate: true, // ถ้าไม่ใช้ SSL
   }
 };
 
-const getHeader = async (sql: typeof import('mssql')) => {
+const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: number) => {
   await sql.connect(config);
+
+  let where = '';
+  if(startDate) {
+    where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}' `
+  }
+
+  if(endDate) {
+    where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}' `
+  }
+
+  if(pcode) {
+    where += ` AND rq.p_no = '${pcode}' `
+  }
+
   const result = await sql.query(`
     WITH counts AS (
     SELECT 
@@ -40,6 +54,7 @@ const getHeader = async (sql: typeof import('mssql')) => {
     LEFT JOIN sf_commit_head ch ON ch.commit_id = cl.commit_id
     LEFT JOIN sf_help_request rq ON rq.req_id = cl.req_id
     WHERE ch.step_id = 'ปภ.' 
+    ${where}
     AND cl.is_active = 1
     GROUP BY rq.p_name, rq.p_no
     )
@@ -54,8 +69,19 @@ const getHeader = async (sql: typeof import('mssql')) => {
 }
 
 
-const getSub = async (sql: typeof import('mssql'), p_no: number) => {
+const getSub = async (sql: typeof import('mssql'), p_no: number, startDate: any, endDate: any) => {
   await sql.connect(config);
+
+  
+  let where = '';
+  if(startDate) {
+    where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}'`
+  }
+
+  if(endDate) {
+    where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}'`
+  }
+
   const result = await sql.query(`
     WITH sub_counts AS (
 
@@ -64,6 +90,7 @@ const getSub = async (sql: typeof import('mssql'), p_no: number) => {
       rq.p_name,
         ch.commit_no, -- จังหวัด
         ch.commit_date, -- จังหวัด
+        ch.commit_id,
         COUNT(ch.person_qty) AS person_qty, -- จำนวน ก.ช.ภ.จ
         COUNT(DISTINCT cl.commit_id) AS send,  -- ส่งปกครอง
         SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage, --ไม่ผ่าน Linkage
@@ -87,7 +114,8 @@ const getSub = async (sql: typeof import('mssql'), p_no: number) => {
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id
     LEFT JOIN sf_help_request rq ON rq.req_id = cl.req_id
     WHERE ch.step_id = 'ปภ.' AND cl.is_active = 1 AND rq.p_no = '${p_no}'
-    GROUP BY rq.p_no, rq.p_name,  ch.commit_date, ch.commit_no
+    ${where}
+    GROUP BY rq.p_no, rq.p_name,  ch.commit_date, ch.commit_no, ch.commit_id
     )
     SELECT *,
     0 AS retreat,
@@ -101,12 +129,14 @@ const getSub = async (sql: typeof import('mssql'), p_no: number) => {
 export default defineEventHandler(async (event) => {
   try {
    
+    const {startDate, endDate, pcode} = getQuery(event)
+
     const results = []
-    const resultHead = await getHeader(sql);
+    const resultHead = await getHeader(sql, startDate, endDate, pcode);
 
     // Loop ผ่านแต่ละ Head และเพิ่ม Sub เข้าไปในแต่ละ Head
     for (const head of resultHead) {
-      const sub = await getSub(sql, head.p_no); // รับข้อมูล Sub โดยใช้ head.p_no เป็นตัวกำหนด
+      const sub = await getSub(sql, head.p_no, startDate, endDate); // รับข้อมูล Sub โดยใช้ head.p_no เป็นตัวกำหนด
 
       // เพิ่ม sub เข้าไปใน object head โดยตรง
       head.sub = sub;
