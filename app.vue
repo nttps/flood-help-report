@@ -1,5 +1,6 @@
 <template>
-  <div class="py-8">
+ <div>
+  <div class="py-8" v-if="pending">
     <h3 class="text-center font-bold text-2xl">สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม.</h3>
     <div class="max-w-screen-2xl mx-auto mt-8">
       <table class="w-full">
@@ -234,6 +235,11 @@
     </div>
 
   </div>
+  <div v-else class="min-h-screen flex items-center justify-center">
+    <h3 class="text-center font-bold text-[50px]">กำลังประมวลผล...</h3>
+  </div>
+  <NuxtLoadingIndicator />
+ </div>
 </template>
 
 
@@ -241,6 +247,7 @@
 
   import { format } from 'date-fns'
   const dataHead = ref<any[]>([])
+  const pending = ref(false)
 
   onMounted(() => {
     query()
@@ -249,6 +256,7 @@
   const query = async () => {
     const res = await $fetch('/api')
     dataHead.value = res ?? []
+    pending.value = true
   }
 </script>
 
