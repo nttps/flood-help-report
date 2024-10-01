@@ -186,8 +186,8 @@
                             </tr>
 
                             <template v-if="head.showSub">
-                                <template v-for="sub in head.sub" :key="sub.sub_id">
-                                    <tr class="bg-zinc-400/70 last:border-b-2 border-black">
+                                <template v-for="(sub, subIndex) in head.sub" :key="sub.sub_id">
+                                    <tr class="bg-zinc-400/70" :class="{ 'border-b-2 border-black': subIndex == head.sub.length -1 }">
                                         <td class="border border-zinc-500">
 
                                         </td>
