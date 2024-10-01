@@ -326,6 +326,24 @@
         // เปลี่ยนสถานะการแสดงหรือซ่อนของ Sub
         dataHead.value[index].showSub = !dataHead.value[index].showSub;
     }
+    onMounted(() => {
+    // ตั้งค่าก่อนพิมพ์
+        window.onbeforeprint = function () {
+            document.body.style.transform = 'scale(0.9)'; // ลดขนาดเป็น 90%
+            document.body.style.transformOrigin = 'top left'; // ตั้งต้นการปรับขนาด
+        };
+
+        // คืนค่าหลังจากพิมพ์เสร็จ
+        window.onafterprint = function () {
+            document.body.style.transform = ''; // คืนค่าเป็นปกติ
+        };
+    });
+
+    onBeforeUnmount(() => {
+        // ล้างฟังก์ชันเมื่อ component ถูกถอดออก
+        window.onbeforeprint = null;
+        window.onafterprint = null;
+    });
 </script>
 
 <style>
