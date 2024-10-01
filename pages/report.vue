@@ -342,6 +342,17 @@
             @apply fixed right-4 top-4;
         }
 
+        tr {
+            page-break-inside: avoid; /* หลีกเลี่ยงการแบ่งแถวระหว่างหน้า */
+        }
+
+        thead {
+            display: table-header-group; /* ทำให้หัวตารางปรากฏในทุกหน้า */
+        }
+
+        tfoot {
+            display: table-footer-group; /* ทำให้ส่วนท้ายตารางปรากฏในทุกหน้า (ถ้ามี) */
+        }
         body {
             -webkit-print-color-adjust: exact; /* Ensure colors are printed */
             color-adjust: exact; /* บังคับให้พิมพ์สีในเบราว์เซอร์อื่น */
