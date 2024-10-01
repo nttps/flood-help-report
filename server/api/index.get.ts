@@ -19,7 +19,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
     where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}' `
   }
 
-  if(endDate) {
+  if(endDate ) {
     where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}' `
   }
 
@@ -53,16 +53,16 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
     FROM sf_commit_line cl
     LEFT JOIN sf_commit_head ch ON ch.commit_id = cl.commit_id
     LEFT JOIN sf_help_request rq ON rq.req_id = cl.req_id
-    WHERE ch.step_id = 'ปภ.' 
-    ${where}
-    AND cl.is_active = 1
-    GROUP BY rq.p_name, rq.p_no
+      WHERE ch.step_id = 'ปภ.' 
+      ${where}
+      AND cl.is_active = 1
+      GROUP BY rq.p_name, rq.p_no
     )
 
     SELECT *,
     0 AS retreat,
         count_back_to_province - outstanding AS send_from_province  -- จังหวัดส่งคืนผลตรวจสอบ (calculated as count_back_to_province - outstanding)
-    FROM counts;
+    FROM counts order by p_name;
     `); 
 
   return result.recordset;
