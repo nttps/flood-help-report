@@ -110,6 +110,7 @@ export default defineEventHandler(async (event) => {
 
       // เพิ่ม sub เข้าไปใน object head โดยตรง
       head.sub = sub;
+      head.showSub = true
 
       // เพิ่ม head (ที่มี sub) เข้าไปใน results
       results.push(head);
