@@ -1,15 +1,15 @@
 <template>
     <div>
-        <div class="py-8" v-if="pending">
+        <div class="py-8" v-if="pending"  ref="table">
             <div class="flex px-8 items-end">
-                <div class="ml-auto"></div>
+                <div class="ml-auto print:ml-0"></div>
                 <div>
-                    <h3 class="text-center font-bold text-2xl">สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567
+                    <h3 class="text-center font-bold text-2xl print:text-lg">สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567
                         ตามมติ
                         ครม.
                     </h3>
                 </div>
-                <div  class="ml-auto">
+                <div  class="ml-auto date-title">
                     <div class="font-bold">ข้อมูล ณ วันที่</div>
                     <div>{{ format(new Date(), 'dd MMM yyyy') }}</div>
                 </div>
@@ -31,13 +31,13 @@
                                 วันที่
                             </th>
                             <th class="border border-zinc-700">
-                                จำนวน ก.ช.ก.จ
+                                จำนวน <br />ก.ช.ก.จ
                             </th>
                             <th class="border border-zinc-700">
                                 ส่ง ปค.
                             </th>
                             <th class="border border-zinc-700">
-                                ไม่ผ่าน Linkage
+                                ไม่ผ่าน <br />Linkage
                             </th>
                             <th class="border border-zinc-700">
 
@@ -49,7 +49,7 @@
                                 วันที่โอนเงิน
                             </th>
                             <th class="border border-zinc-700">
-                                ครั้งที่
+                                ครั้ง <br />ที่
                             </th>
                             <th class="border border-zinc-700">
 
@@ -61,19 +61,19 @@
                                 โอนไม่สำเร็จ
                             </th>
                             <th class="border border-zinc-700">
-                                ส่งคืนจังหวัดจรวจสอบ
+                                ส่งคืนจังหวัด <br /> ตรวจสอบ
                             </th>
                             <th class="border border-zinc-700">
 
                             </th>
                             <th class="border border-zinc-700">
-                                จังหวัดส่งคืนผลตรวจสอบ
+                                จังหวัดส่งคืน <br /> ผลตรวจสอบ
                             </th>
                             <th class="border border-zinc-700">
                                 สละสิทธิ์
                             </th>
                             <th class="border border-zinc-700">
-                                ข้อมูลคงค้าง
+                                ข้อมูล <br /> คงค้าง
                             </th>
                         </tr>
                     </thead>
@@ -131,7 +131,7 @@
                                 <td class="border border-t-0 border-zinc-500" colspan="2">
                                     <button @click="toggleSub(index)" class="flex items-center space-x-2">
                                         <UIcon :name="head.showSub ? 'i-mdi-chevron-down' : 'i-mdi-chevron-up'" />
-                                        <span>{{ head.p_name }}</span>
+                                        <span class="text-sm">{{ head.p_name }}</span>
                                     </button>
 
                                 </td>
@@ -263,7 +263,8 @@
         </div>
         
         <NuxtLoadingIndicator />
-        <div class="text-center">
+        <div class="text-center print:hidden">
+            <!-- <UButton @click="downloadPDF" /> -->
             <UButton label="กลับ" to="/" />
         </div>
     </div>
@@ -274,12 +275,11 @@
     import {
         format
     } from 'date-fns'
+    import jsPDF from 'jspdf';
+    import html2canvas from 'html2canvas';
+
 
     const route = useRoute()
-
-
-
-
     interface Sub {
         sub_id: number;
         subField: string;
@@ -295,6 +295,22 @@
 
     const dataHead = ref < Head[] > ([])
     const pending = ref(false)
+    const table = ref()
+
+    const downloadPDF = () => {
+      html2canvas(table.value, { scale: 4 }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+     
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth * ratio, imgHeight * ratio);
+        pdf.save('table.pdf');
+      });
+    }
 
     onMounted(() => {
         query()
@@ -312,9 +328,39 @@
     }
 </script>
 
-<style scoped>
+<style>
+    table {
+        border-collapse: collapse;
+    }
     table tr td, table tr th {
         @apply p-2;
         font-size: 14px;
+    }
+    @media print {
+
+        .date-title {
+            @apply fixed right-4 top-4;
+        }
+        table {
+            border: 1px solid black; /* Ensures the table is visible */
+            page-break-inside: auto; /* Avoid page breaks inside rows */
+        }
+
+        th {
+            position: sticky;
+            top: 0; /* Stick header to the top */
+            z-index: 1; /* Ensure header is above other content */
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 0;
+            word-wrap: break-word; /* ห่อข้อความที่ยาวเกินไป */
+        }
+
+        /* Landscape orientation */
+        @page {
+            size: A4 portrait; /* Set to portrait */
+            margin: 1cm; /* Set margins for print */
+        }
     }
 </style>
