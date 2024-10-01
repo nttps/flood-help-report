@@ -72,7 +72,7 @@
                             <th class="border border-zinc-700">
                                 สละสิทธิ์
                             </th>
-                            <th class="border border-zinc-700">
+                            <th class="border border-zinc-700 bg-red-400">
                                 ข้อมูล <br /> คงค้าง
                             </th>
                         </tr>
