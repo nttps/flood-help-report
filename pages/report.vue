@@ -16,248 +16,249 @@
                 </div>
             </div>
            
-            <div class="max-w-screen-2xl mx-auto mt-8 px-4">
-                <div class="overflow-x-auto print:overflow-visible">
-                    <table class="w-full border border-black">
-                    <thead class="text-center">
-                        <tr class="bg-zinc-300/70 font-bold border-b-2 border-black">
-                            <th class="border border-zinc-700">
+            <div class="max-w-screen-2xl mx-auto mt-8 px-4 rounded-lg">
+                <div class="overflow-x-auto print:overflow-visible" >
+                    <table class="w-full border border-black" ref="mainTable">
+                        
+                        <thead class="text-center border border-black">
+                            <tr class="bg-zinc-300/70 font-bold border-b-2 border-black">
+                                <th class="border border-zinc-700">
 
-                            </th>
-                            <th class="border border-zinc-700">
-                                จังหวัด
-                            </th>
-                            <th class="border border-b-0 border-zinc-700">
-                                ครั้งที่
-                            </th>
-                            <th class="border border-zinc-700">
-                                วันที่
-                            </th>
-                            <th class="border border-zinc-700">
-                                จำนวน <br />ก.ช.ก.จ
-                            </th>
-                            <th class="border border-zinc-700">
-                                ส่ง ปค.
-                            </th>
-                            <th class="border border-zinc-700">
-                                ไม่ผ่าน <br />Linkage
-                            </th>
-                            <th class="border border-zinc-700">
+                                </th>
+                                <th class="border border-zinc-700">
+                                    จังหวัด
+                                </th>
+                                <th class="border border-b-0 border-zinc-700">
+                                    ครั้งที่
+                                </th>
+                                <th class="border border-zinc-700">
+                                    วันที่
+                                </th>
+                                <th class="border border-zinc-700">
+                                    จำนวน <br />ก.ช.ก.จ
+                                </th>
+                                <th class="border border-zinc-700">
+                                    ส่ง ปค.
+                                </th>
+                                <th class="border border-zinc-700">
+                                    ไม่ผ่าน <br />Linkage
+                                </th>
+                                <th class="border border-zinc-700">
 
-                            </th>
-                            <th class="border border-zinc-700">
-                                ส่งออมสิน
-                            </th>
-                            <th class="border border-zinc-700">
-                                วันที่โอนเงิน
-                            </th>
-                            <th class="border border-zinc-700">
-                                ครั้ง <br />ที่
-                            </th>
-                            <th class="border border-zinc-700">
+                                </th>
+                                <th class="border border-zinc-700">
+                                    ส่งออมสิน
+                                </th>
+                                <th class="border border-zinc-700">
+                                    วันที่โอนเงิน
+                                </th>
+                                <th class="border border-zinc-700">
+                                    ครั้ง <br />ที่
+                                </th>
+                                <th class="border border-zinc-700">
 
-                            </th>
-                            <th class="border border-zinc-700">
-                                โอนสำเร็จ
-                            </th>
-                            <th class="border border-zinc-700">
-                                โอนไม่สำเร็จ
-                            </th>
-                            <th class="border border-zinc-700">
-                                ส่งคืนจังหวัด <br /> ตรวจสอบ
-                            </th>
-                            <th class="border border-zinc-700">
+                                </th>
+                                <th class="border border-zinc-700">
+                                    โอนสำเร็จ
+                                </th>
+                                <th class="border border-zinc-700">
+                                    โอนไม่สำเร็จ
+                                </th>
+                                <th class="border border-zinc-700">
+                                    ส่งคืนจังหวัด <br /> ตรวจสอบ
+                                </th>
+                                <th class="border border-zinc-700">
 
-                            </th>
-                            <th class="border border-zinc-700">
-                                จังหวัดส่งคืน <br /> ผลตรวจสอบ
-                            </th>
-                            <th class="border border-zinc-700">
-                                สละสิทธิ์
-                            </th>
-                            <th class="border border-zinc-700 bg-red-400">
-                                ข้อมูล <br /> คงค้าง
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-zinc-200/70 font-semibold">
-                            <td class="border border-b-0 border-t-0 border-zinc-500">
-                                จังหวัด :
-                            </td>
-                            <td class="border border-b-0 border-t-0 border-zinc-500">
-
-                            </td>
-                            <td class="border border-b-0 border-zinc-500"></td>
-                            <td class="border border-b-0 border-zinc-500">
-
-                            </td>
-                            <td class="border border-b-0 border-zinc-500 text-right">
-                                Sum:
-                            </td>
-                            <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
-                                Count:
-                            </td>
-                            <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
-                                Sum:
-                            </td>
-                            <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
-                                Count:
-                            </td>
-                            <td class="border border-b-0 border-zinc-500 text-right">
-                                Sum:
-                            </td>
-                            <td class="border border-b-0 border-zinc-500 text-right" colspan="2">
-                                Count (Unique):
-                            </td>
-                            <td class="border border-b-0 border-zinc-500"></td>
-                            <td class="border border-b-0 border-zinc-500"></td>
-                            <td class="border border-b-0 border-zinc-500 text-right">
-                                Sum:
-                            </td>
-                            <td class="border border-b-0 border-zinc-500 text-right">
-                                Sum:
-                            </td>
-                            <td class="border border-b-0 border-zinc-500 p-2"></td>
-                            <td class="border border-b-0 border-zinc-500 text-right">
-                                Sum:
-                            </td>
-                            <td class="border border-b-0 border-zinc-500 text-right">
-                                Sum:
-                            </td>
-                            <td class="border border-b-0 border-zinc-500 text-right">
-                                Sum:
-                            </td>
-                        </tr>
-                        <template v-for="(head, index) in dataHead" :key="head.p_no">
-                            <tr class="bg-zinc-100 font-bold">
-                                <td class="border border-t-0 border-zinc-500" colspan="2">
-                                    <button @click="toggleSub(index)" class="flex items-center space-x-2">
-                                        <UIcon :name="head.showSub ? 'i-mdi-chevron-down' : 'i-mdi-chevron-up'" />
-                                        <span class="text-sm">{{ head.p_name }}</span>
-                                    </button>
+                                </th>
+                                <th class="border border-zinc-700">
+                                    จังหวัดส่งคืน <br /> ผลตรวจสอบ
+                                </th>
+                                <th class="border border-zinc-700">
+                                    สละสิทธิ์
+                                </th>
+                                <th class="border border-zinc-700 bg-red-400">
+                                    ข้อมูล <br /> คงค้าง
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-zinc-200/70 font-semibold">
+                                <td class="border border-b-0 border-t-0 border-zinc-500">
+                                    จังหวัด :
+                                </td>
+                                <td class="border border-b-0 border-t-0 border-zinc-500">
 
                                 </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
+                                <td class="border border-b-0 border-zinc-500"></td>
+                                <td class="border border-b-0 border-zinc-500">
 
                                 </td>
-                                <td class="border border-t-0 border-zinc-500"></td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.person_qty.toLocaleString() }}
+                                <td class="border border-b-0 border-zinc-500 text-right">
+                                    Sum:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.sub.length }}
+                                <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
+                                    Count:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.failed_linkage.toLocaleString() }}
+                                <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
+                                    Sum:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.sub.length }}
+                                <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
+                                    Count:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.send_bank.toLocaleString()}}
+                                <td class="border border-b-0 border-zinc-500 text-right">
+                                    Sum:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500"></td>
-
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.sub.length.toLocaleString() }}
+                                <td class="border border-b-0 border-zinc-500 text-right" colspan="2">
+                                    Count (Unique):
                                 </td>
-                                <td class="border border-t-0 border-zinc-500">
-
+                                <td class="border border-b-0 border-zinc-500"></td>
+                                <td class="border border-b-0 border-zinc-500"></td>
+                                <td class="border border-b-0 border-zinc-500 text-right">
+                                    Sum:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.successful_payments.toLocaleString() }}
+                                <td class="border border-b-0 border-zinc-500 text-right">
+                                    Sum:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.unsuccessful_payments.toLocaleString() }}
+                                <td class="border border-b-0 border-zinc-500 p-2"></td>
+                                <td class="border border-b-0 border-zinc-500 text-right">
+                                    Sum:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500 text-right" >
-                                    {{ head.count_back_to_province.toLocaleString() }}
+                                <td class="border border-b-0 border-zinc-500 text-right">
+                                    Sum:
                                 </td>
-                                <td class="border border-t-0 border-zinc-500">
-
-                                </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.send_from_province.toLocaleString() }}
-                                </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.retreat.toLocaleString() }}
-                                </td>
-                                <td class="border border-t-0 border-zinc-500 text-right">
-                                    {{ head.outstanding.toLocaleString() }}
+                                <td class="border border-b-0 border-zinc-500 text-right">
+                                    Sum:
                                 </td>
                             </tr>
+                            <template v-for="(head, index) in dataHead" :key="head.p_no">
+                                <tr class="bg-zinc-100 font-bold">
+                                    <td class="border border-t-0 border-zinc-500" colspan="2">
+                                        <button @click="toggleSub(index)" class="flex items-center space-x-2">
+                                            <UIcon :name="head.showSub ? 'i-mdi-chevron-down' : 'i-mdi-chevron-up'" />
+                                            <span class="text-sm">{{ head.p_name }}</span>
+                                        </button>
 
-                            <template v-if="head.showSub">
-                                <template v-for="(sub, subIndex) in head.sub" :key="sub.sub_id">
-                                    <tr class="bg-zinc-100/70" :class="{ 'border-b-2 border-black': subIndex == head.sub.length -1 }">
-                                        <td class="border border-zinc-500">
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
 
-                                        </td>
-                                        <td class="border border-zinc-500 font-bold">
-                                            {{ sub.p_name }}
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-center">
-                                            {{ sub.commit_no }}
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right">
-                                            {{ format(sub.commit_date, 'dd MMM yyyy') }}
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right">
-                                            {{ sub.person_qty.toLocaleString() }}
-                                        </td>
-                                        <td class="border bg-lime-300 border-zinc-500 ">
-                                            <UCheckbox class="justify-center" color="gray" disabled
-                                                v-bind:model-value="true" />
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right">
-                                            {{ sub.failed_linkage.toLocaleString() }}
-                                        </td>
-                                        <td class="border bg-lime-300 border-zinc-500">
-                                            <UCheckbox class="justify-center" color="gray" disabled
-                                                v-bind:model-value="true" />
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right">
-                                            {{ sub.send_bank.toLocaleString() }}
-                                        </td>
-                                        <td class="border bg-white border-zinc-500">
-                                            {{ sub.latest_payment_date ? format(sub.latest_payment_date, 'dd MMM yyyy') : '' }}
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right">
-                                            {{ sub.send.toLocaleString() }}
-                                        </td>
-                                        <td class="border bg-lime-300 border-zinc-500">
-                                            <UCheckbox class="justify-center" color="gray" disabled
-                                                v-bind:model-value="true" />
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right text-blue-500">
-                                            {{ sub.successful_payments.toLocaleString() }}
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right">
-                                            {{ sub.unsuccessful_payments.toLocaleString() }}
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600': sub.count_back_to_province > 0}">
-                                            {{ sub.count_back_to_province.toLocaleString() }}
-                                        </td>
-                                        <td class="border bg-sky-300 border-zinc-500 text-right">
-                                            <UCheckbox class="justify-center" color="gray" disabled
-                                                v-bind:model-value="true" />
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right " :class="{ 'text-red-600': sub.send_from_province > 0}">
-                                            {{ sub.send_from_province.toLocaleString() }}
-                                        </td>
-                                        <td class="border bg-white border-zinc-500 text-right">
-                                            {{ sub.retreat.toLocaleString() }}
-                                        </td>
-                                        <td class="border border-zinc-500 text-right" :class="{ 'bg-red-400': sub.outstanding > 0, 'bg-[#90db92]': sub.outstanding == 0}">
-                                            {{ sub.outstanding.toLocaleString() }}
-                                        </td>
-                                    </tr>
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500"></td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.person_qty.toLocaleString() }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.sub.length }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.failed_linkage.toLocaleString() }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.sub.length }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.send_bank.toLocaleString()}}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500"></td>
+
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.sub.length.toLocaleString() }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500">
+
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.successful_payments.toLocaleString() }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.unsuccessful_payments.toLocaleString() }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right" >
+                                        {{ head.count_back_to_province.toLocaleString() }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500">
+
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.send_from_province.toLocaleString() }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.retreat.toLocaleString() }}
+                                    </td>
+                                    <td class="border border-t-0 border-zinc-500 text-right">
+                                        {{ head.outstanding.toLocaleString() }}
+                                    </td>
+                                </tr>
+
+                                <template v-if="head.showSub">
+                                    <template v-for="(sub, subIndex) in head.sub" :key="sub.sub_id">
+                                        <tr class="bg-zinc-100/70" :class="{ 'border-b-2 border-black': subIndex == head.sub.length -1 }">
+                                            <td class="border border-zinc-500">
+
+                                            </td>
+                                            <td class="border border-zinc-500 font-bold">
+                                                {{ sub.p_name }}
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-center">
+                                                {{ sub.commit_no }}
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right">
+                                                {{ format(sub.commit_date, 'dd MMM yyyy') }}
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right">
+                                                {{ sub.person_qty.toLocaleString() }}
+                                            </td>
+                                            <td class="border bg-lime-300 border-zinc-500 ">
+                                                <UCheckbox class="justify-center" color="gray" disabled
+                                                    v-bind:model-value="true" />
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right">
+                                                {{ sub.failed_linkage.toLocaleString() }}
+                                            </td>
+                                            <td class="border bg-lime-300 border-zinc-500">
+                                                <UCheckbox class="justify-center" color="gray" disabled
+                                                    v-bind:model-value="true" />
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right">
+                                                {{ sub.send_bank.toLocaleString() }}
+                                            </td>
+                                            <td class="border bg-white border-zinc-500">
+                                                {{ sub.latest_payment_date ? format(sub.latest_payment_date, 'dd MMM yyyy') : '' }}
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right">
+                                                {{ sub.send.toLocaleString() }}
+                                            </td>
+                                            <td class="border bg-lime-300 border-zinc-500">
+                                                <UCheckbox class="justify-center" color="gray" disabled
+                                                    v-bind:model-value="true" />
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right text-blue-500">
+                                                {{ sub.successful_payments.toLocaleString() }}
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right">
+                                                {{ sub.unsuccessful_payments.toLocaleString() }}
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600': sub.count_back_to_province > 0}">
+                                                {{ sub.count_back_to_province.toLocaleString() }}
+                                            </td>
+                                            <td class="border bg-sky-300 border-zinc-500 text-right">
+                                                <UCheckbox class="justify-center" color="gray" disabled
+                                                    v-bind:model-value="true" />
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right " :class="{ 'text-red-600': sub.send_from_province > 0}">
+                                                {{ sub.send_from_province.toLocaleString() }}
+                                            </td>
+                                            <td class="border bg-white border-zinc-500 text-right">
+                                                {{ sub.retreat.toLocaleString() }}
+                                            </td>
+                                            <td class="border border-zinc-500 text-right" :class="{ 'bg-red-400': sub.outstanding > 0, 'bg-[#90db92]': sub.outstanding == 0}">
+                                                {{ sub.outstanding.toLocaleString() }}
+                                            </td>
+                                        </tr>
+                                    </template>
                                 </template>
                             </template>
-                        </template>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
                 </div>
                
             </div>
@@ -282,7 +283,8 @@
     } from 'date-fns'
     import jsPDF from 'jspdf';
     import html2canvas from 'html2canvas';
-
+    import "@fontsource/sarabun"; // Import the Google Font
+    import {pdfFonts} from '~/assets/fonts/vfs_fonts.js'
 
     const route = useRoute()
     interface Sub {
@@ -301,24 +303,92 @@
     const dataHead = ref < Head[] > ([])
     const pending = ref(false)
     const table = ref()
+    const isMobile = ref(false)
+    const mainTable = ref()
+
+    const checkMobile = () => {
+      isMobile.value = window.innerWidth <= 768; // กำหนดค่าตามขนาดหน้าจอที่คุณต้องการ
+    }
+
 
     const downloadPDF = () => {
-        //window.print()
-      html2canvas(table.value, { scale: 4 }).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
-     
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth * ratio, imgHeight * ratio);
-        pdf.save('table.pdf');
-      });
+
+        const title = "สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม."; // Define your title
+        const timestamp = format(new Date(), 'dd MMM yyyy') ; // Get the current timestamp
+
+        if(isMobile.value) {
+            html2canvas(mainTable.value).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+
+                // Define margins
+                const marginTop = 15;    // Top margin
+                const marginBottom = 15; // Bottom margin
+                const marginLeft = 10;   // Left margin
+                const marginRight = 10;  // Right margin
+                const titleFontSize = 16; // Font size for title
+                const timestampFontSize = 10; // Font size for timestamp
+
+                // Calculate page dimensions
+                const pageWidth = pdf.internal.pageSize.getWidth() - marginLeft - marginRight;
+                const pageHeight = pdf.internal.pageSize.getHeight() - marginTop - marginBottom;
+
+                // Calculate image dimensions
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+
+                // Positioning for image
+                const x = marginLeft; // Left margin
+                const y = marginTop + 20; // Top margin plus space for title
+
+                // Set the font to Sarabun
+                pdf.addFileToVFS("Sarabun-Regular.ttf", pdfFonts['THSarabunNew Bold.ttf']);
+                pdf.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
+                pdf.setFont("Sarabun");
+
+
+                 // Calculate the title's position to center it
+                const titleWidth = pdf.getStringUnitWidth(title) * titleFontSize / pdf.internal.scaleFactor; 
+                const titleX = (pdf.internal.pageSize.getWidth() - titleWidth) / 2; // Center title horizontally
+               
+
+                // Add title
+                pdf.setFontSize(titleFontSize); // Set font size for title
+                pdf.text(title, titleX, marginTop + 10); // Position title
+                // Add timestamp
+                pdf.setFontSize(timestampFontSize); // Set font size for timestamp
+                  // Calculate the timestamp's position to align it to the right
+                const timestampWidth = pdf.getStringUnitWidth(`ข้อมูล ณ วันที่: ${timestamp}`) * timestampFontSize / pdf.internal.scaleFactor;
+                const timestampX = pageWidth - timestampWidth - marginLeft; // Right-align timestamp
+                pdf.text(`ข้อมูล ณ วันที่: ${timestamp}`, timestampX, marginTop); // Position timestamp
+
+                // Add image
+                pdf.addImage(imgData, 'PNG', x, y - 5, imgWidth * ratio, imgHeight * ratio);
+                pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
+            });
+               
+        }else{
+            html2canvas(table.value, { scale: 4 }).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth * ratio, imgHeight * ratio);
+                pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
+            });
+        }
+
+       
     }
 
     onMounted(() => {
+        checkMobile()
+        window.addEventListener('resize', checkMobile);
         query()
     })
     
@@ -349,7 +419,12 @@
         // ล้างฟังก์ชันเมื่อ component ถูกถอดออก
         window.onbeforeprint = null;
         window.onafterprint = null;
+       
     });
+
+    onUnmounted(() => {
+        window.addEventListener('resize', checkMobile);
+    })
 </script>
 
 <style>
