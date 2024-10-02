@@ -130,7 +130,7 @@
                                     Sum:
                                 </td>
                             </tr>
-                            <template v-for="(head, index) in dataHead" :key="head.p_no">
+                            <template v-for="(head, index) in dataHead" :key="head.p_no" >
                                 <tr class="bg-zinc-100 font-bold">
                                     <td class="border border-t-0 border-zinc-500" colspan="2">
                                         <button @click="toggleSub(index)" class="flex items-center space-x-2">
@@ -257,6 +257,11 @@
                                     </template>
                                 </template>
                             </template>
+                            <tr v-if="dataHead.length == 0">
+                                <td colspan="19" class="border border-zinc-500">
+                                    ไม่พบข้อมูล
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
