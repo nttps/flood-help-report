@@ -360,7 +360,7 @@
                 pdf.setFontSize(timestampFontSize); // Set font size for timestamp
                   // Calculate the timestamp's position to align it to the right
                 const timestampWidth = pdf.getStringUnitWidth(`ข้อมูล ณ วันที่: ${timestamp}`) * timestampFontSize / pdf.internal.scaleFactor;
-                const timestampX = pageWidth - timestampWidth - marginLeft; // Right-align timestamp
+                const timestampX = pageWidth - timestampWidth - marginLeft + 20; // Right-align timestamp
                 pdf.text(`ข้อมูล ณ วันที่: ${timestamp}`, timestampX, marginTop); // Position timestamp
 
                 // Add image
