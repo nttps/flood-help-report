@@ -6,7 +6,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-center justify-center gap-4">
                     <UFormGroup label="ตั้งแต่วันที่" size="xl" name="startDate">
                         <UPopover :popper="{ placement: 'bottom-start' }">
-                            <UButton icon="i-heroicons-calendar-days-20-solid" :label="format(form.startDate, 'd MMM yyy', { locale: th})" size="xl" />
+                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="format(form.startDate, 'd MMM yyy', { locale: th})" size="xl" />
                             <template #panel="{ close }">
                                 <DatePicker v-model="form.startDate" is-required @close="close" />
                             </template>
@@ -14,7 +14,7 @@
                     </UFormGroup>
                     <UFormGroup label="ถึงวันที่" name="endDate" size="xl">
                         <UPopover :popper="{ placement: 'bottom-start' }">
-                            <UButton icon="i-heroicons-calendar-days-20-solid" :label="format(form.endDate, 'd MMM yyy', { locale: th})" size="xl" />
+                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="format(form.endDate, 'd MMM yyy', { locale: th})" size="xl" />
                             <template #panel="{ close }">
                                 <DatePicker v-model="form.endDate" is-required @close="close" />
                             </template>
