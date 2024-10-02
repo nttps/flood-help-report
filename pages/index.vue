@@ -3,7 +3,7 @@
         <UContainer class="bg-zinc-200 p-10 rounded-lg border-2 border-black">
             <h1 class="text-lg lg:text-2xl font-bold mb-4 text-center">ค้นหา จำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม.</h1>
             <UForm :state="form" :schema="schema" @submit.prevent="submit">
-                <div class="grid grid-cols-2 lg:grid-cols-4 items-center justify-center gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-center justify-center gap-4">
                     <UFormGroup label="ตั้งแต่วันที่" size="xl" name="startDate">
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton icon="i-heroicons-calendar-days-20-solid" :label="format(form.startDate, 'd MMM yyy', { locale: th})" size="xl" />
