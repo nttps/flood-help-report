@@ -43,7 +43,7 @@
     const form = reactive({
         startDate: new Date(2024, 8, 26),
         endDate: new Date(),
-        pcode: null
+        pcode: 'all'
     })
 
     const schema = z.object({

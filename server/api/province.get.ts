@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
         const result = await sql.query(sqlString);
 
 
-        const modifiedResult = [{ pcode: null, pname: 'เลือกทั้งหมด' }, ...result.recordset];
+        const modifiedResult = [{ pcode: 'all', pname: 'เลือกทั้งหมด' }, ...result.recordset];
         return modifiedResult;
     } catch (err) {
       console.error(err);

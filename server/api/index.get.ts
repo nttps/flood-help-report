@@ -11,7 +11,7 @@ const config = {
   }
 };
 
-const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: number) => {
+const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any) => {
   await sql.connect(config);
 
   let where = '';
@@ -23,7 +23,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
     where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}' `
   }
 
-  if(pcode) {
+  if(pcode != 'all') {
     where += ` AND rq.p_no = '${pcode}' `
   }
 
