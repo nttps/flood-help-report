@@ -1,23 +1,26 @@
 <template>
     <div>
+
         <div class="py-8" v-if="pending"  ref="table">
-            <div class="flex px-8 items-end">
-                <div class="ml-auto print:ml-0"></div>
-                <div>
-                    <h3 class="text-center font-bold text-2xl print:text-lg">สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567
+            <div class="mt-8 lg:mt-0 print:block lg:flex justify-between px-8 items-center">
+                <div class="ml-auto print:ml-0 print:hidden"></div>
+                <div >
+                    <h3 class="text-center font-bold text-lg lg:text-2xl print:text-lg">สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567
                         ตามมติ
                         ครม.
                     </h3>
                 </div>
-                <div  class="ml-auto date-title">
+                <div  class="print:text-right absolute right-4 top-4 print:fixed print:ml-0 print:right-0 lg:top-0 lg:right-0 lg:relative lg:block lg:ml-auto date-title text-xs lg:text-base">
                     <div class="font-bold">ข้อมูล ณ วันที่</div>
                     <div>{{ format(new Date(), 'dd MMM yyyy') }}</div>
                 </div>
             </div>
-            <div class="max-w-screen-2xl mx-auto mt-8">
-                <table class="w-full border border-black">
+           
+            <div class="max-w-screen-2xl mx-auto mt-8 px-4">
+                <div class="overflow-x-auto print:overflow-visible">
+                    <table class="w-full border border-black">
                     <thead class="text-center">
-                        <tr class="bg-zinc-500/70 font-bold border-b-2 border-black">
+                        <tr class="bg-zinc-300/70 font-bold border-b-2 border-black">
                             <th class="border border-zinc-700">
 
                             </th>
@@ -78,7 +81,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-zinc-400/70 font-semibold">
+                        <tr class="bg-zinc-200/70 font-semibold">
                             <td class="border border-b-0 border-t-0 border-zinc-500">
                                 จังหวัด :
                             </td>
@@ -127,7 +130,7 @@
                             </td>
                         </tr>
                         <template v-for="(head, index) in dataHead" :key="head.p_no">
-                            <tr class="bg-zinc-400/70 font-bold">
+                            <tr class="bg-zinc-100 font-bold">
                                 <td class="border border-t-0 border-zinc-500" colspan="2">
                                     <button @click="toggleSub(index)" class="flex items-center space-x-2">
                                         <UIcon :name="head.showSub ? 'i-mdi-chevron-down' : 'i-mdi-chevron-up'" />
@@ -187,7 +190,7 @@
 
                             <template v-if="head.showSub">
                                 <template v-for="(sub, subIndex) in head.sub" :key="sub.sub_id">
-                                    <tr class="bg-zinc-400/70" :class="{ 'border-b-2 border-black': subIndex == head.sub.length -1 }">
+                                    <tr class="bg-zinc-100/70" :class="{ 'border-b-2 border-black': subIndex == head.sub.length -1 }">
                                         <td class="border border-zinc-500">
 
                                         </td>
@@ -203,14 +206,14 @@
                                         <td class="border bg-white border-zinc-500 text-right">
                                             {{ sub.person_qty.toLocaleString() }}
                                         </td>
-                                        <td class="border bg-lime-200 border-zinc-500 ">
+                                        <td class="border bg-lime-300 border-zinc-500 ">
                                             <UCheckbox class="justify-center" color="gray" disabled
                                                 v-bind:model-value="true" />
                                         </td>
                                         <td class="border bg-white border-zinc-500 text-right">
                                             {{ sub.failed_linkage.toLocaleString() }}
                                         </td>
-                                        <td class="border bg-lime-200 border-zinc-500">
+                                        <td class="border bg-lime-300 border-zinc-500">
                                             <UCheckbox class="justify-center" color="gray" disabled
                                                 v-bind:model-value="true" />
                                         </td>
@@ -223,7 +226,7 @@
                                         <td class="border bg-white border-zinc-500 text-right">
                                             {{ sub.send.toLocaleString() }}
                                         </td>
-                                        <td class="border bg-lime-200 border-zinc-500">
+                                        <td class="border bg-lime-300 border-zinc-500">
                                             <UCheckbox class="justify-center" color="gray" disabled
                                                 v-bind:model-value="true" />
                                         </td>
@@ -255,6 +258,8 @@
                         </template>
                     </tbody>
                 </table>
+                </div>
+               
             </div>
 
         </div>
@@ -264,7 +269,7 @@
         
         <NuxtLoadingIndicator />
         <div class="text-center print:hidden">
-            <!-- <UButton @click="downloadPDF" /> -->
+            <UButton @click="downloadPDF" label="ปริ้น" class="mr-4" />
             <UButton label="กลับ" to="/" />
         </div>
     </div>
@@ -298,6 +303,7 @@
     const table = ref()
 
     const downloadPDF = () => {
+        //window.print()
       html2canvas(table.value, { scale: 4 }).then((canvas) => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
@@ -329,7 +335,7 @@
     onMounted(() => {
     // ตั้งค่าก่อนพิมพ์
         window.onbeforeprint = function () {
-            document.body.style.transform = 'scale(0.9)'; // ลดขนาดเป็น 90%
+            document.body.style.transform = 'scale(0.75)'; // ลดขนาดเป็น 90%
             document.body.style.transformOrigin = 'top left'; // ตั้งต้นการปรับขนาด
         };
 
@@ -347,14 +353,34 @@
 </script>
 
 <style>
+
+    .timestamp {
+        display: none; /* ซ่อนไว้เมื่อแสดงผลบนหน้าจอ */
+    }
+
+
     table {
         border-collapse: collapse;
     }
     table tr td, table tr th {
-        @apply p-2;
+        @apply p-2 whitespace-nowrap;
         font-size: 14px;
     }
+
+    
     @media print {
+
+        .timestamp {
+            display: block;
+            position: fixed; /* ใช้ fixed เพื่อให้ยึดตำแหน่งบนหน้ากระดาษ */
+            top: 0;
+            right: 0; /* กำหนดให้ชิดขวาสุด */
+            margin-right: 0.5cm; /* เพิ่มระยะห่างเล็กน้อยจากขอบ */
+            font-size: 12px;
+            padding: 10px;
+            background-color: #fff; /* ใส่พื้นหลังสีขาวเพื่อให้ timestamp ชัดเจน */
+            z-index: 1000;
+        }
 
         .date-title {
             @apply fixed right-4 top-4;
@@ -373,13 +399,12 @@
         }
         body {
             -webkit-print-color-adjust: exact; /* Ensure colors are printed */
-            color-adjust: exact; /* บังคับให้พิมพ์สีในเบราว์เซอร์อื่น */
             margin: 0 !important;
         }
         table {
             border: 1px solid black; /* Ensures the table is visible */
             page-break-inside: auto; /* Avoid page breaks inside rows */
-
+            table-layout: auto; /* บังคับให้เซลล์มีขนาดเท่ากัน */
             border-collapse: collapse; /* ใช้ขอบรวมกัน */
             box-shadow: none; /* ลบเงาของตาราง */
         }
@@ -395,7 +420,7 @@
 
         /* Landscape orientation */
         @page {
-            size: A4 portrait; /* Set to portrait */
+            size: A4 ; /* Set to portrait */
             margin: 1cm; /* Set margins for print */
         }
     }

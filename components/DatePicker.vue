@@ -33,7 +33,7 @@ const attrs = {
 </script>
 
 <template>
-  <VCalendarDatePicker v-model="date" :min-date="new Date(2024, 4, 20)" v-bind="{ ...attrs, ...$attrs }" @dayclick="
+  <VCalendarDatePicker v-model="date" :min-date="new Date(2024, 4, 20)" :max-date="new Date()" v-bind="{ ...attrs, ...$attrs }" @dayclick="
             (_, event) => {
                 event.target.blur();
             }

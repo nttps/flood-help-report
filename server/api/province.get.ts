@@ -16,7 +16,10 @@ export default defineEventHandler(async (event) => {
         const sqlString = `select pcode, pname from a_province where is_active = 1`
         await sql.connect(config);
         const result = await sql.query(sqlString);
-        return result.recordset
+
+
+        const modifiedResult = [{ pcode: null, pname: 'เลือกทั้งหมด' }, ...result.recordset];
+        return modifiedResult;
     } catch (err) {
       console.error(err);
     }

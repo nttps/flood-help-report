@@ -1,9 +1,9 @@
 <template>
-    <div class="flex items-center justify-center min-h-screen">
+    <div class="flex items-center justify-center min-h-screen px-4">
         <UContainer class="bg-zinc-200 p-10 rounded-lg border-2 border-black">
-            <h1 class="text-2xl font-bold mb-4">ค้นหา จำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม.</h1>
+            <h1 class="text-lg lg:text-2xl font-bold mb-4 text-center">ค้นหา จำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม.</h1>
             <UForm :state="form" :schema="schema" @submit.prevent="submit">
-                <div class="grid grid-cols-4 items-center justify-center">
+                <div class="grid grid-cols-2 lg:grid-cols-4 items-center justify-center gap-4">
                     <UFormGroup label="ตั้งแต่วันที่" size="xl" name="startDate">
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton icon="i-heroicons-calendar-days-20-solid" :label="format(form.startDate, 'd MMM yyy', { locale: th})" size="xl" />
@@ -41,9 +41,9 @@
 
 
     const form = reactive({
-        startDate: new Date(2024, 4, 20),
+        startDate: new Date(2024, 8, 26),
         endDate: new Date(),
-        pcode: undefined
+        pcode: null
     })
 
     const schema = z.object({
@@ -67,8 +67,7 @@
 </script>
 
 <style>
-    *{
-        font-size: 16px;
-    }
+* {
     
+}
 </style>

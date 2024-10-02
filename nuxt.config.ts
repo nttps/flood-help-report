@@ -10,4 +10,10 @@ export default defineNuxtConfig({
       }
     }
   },
+  colorMode: {
+    classSuffix: "",
+    preference: "light", // default theme
+    fallback: "light", // fallback theme
+    storageKey: "ddpm-color-mode",
+  },
 })

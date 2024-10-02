@@ -4,13 +4,8 @@
   </div>
 </template>
 
-<script setup>
-
+<script setup>'date-fns'
 </script>
 
 <style>
-    html {
-      font-family: 'Sarabun', sans-serif;
-      
-    }
 </style>
