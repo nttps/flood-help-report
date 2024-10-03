@@ -22,45 +22,47 @@
             </div>
         </header>
 
-        <main class="px-8 mt-2">
+        <main class="px-8 mt-2" >
             <section class="bg-primary rounded-2xl p-3">
                <div class="flex gap-2">
                     <div class="bg-secondary py-4 rounded-xl w-3/5 flex flex-col justify-center items-center">
                         <div class="font-semibold text-2xl mb-2">จำนวนคำร้องที่ขอรับการช่วยเหลือ</div>
-                        <div class="text-white text-lg">1 ตุลาคม 2567 (ในแต่ละจังหวัด)</div>
-                        <div class="text-white text-lg">คำร้องทั้งหมด <span class="text-4xl">40,578</span> คำร้อง  </div>
+                        <div class="text-white text-lg">{{ format(new Date(), 'dd MMMM yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }} (ในแต่ละจังหวัด)</div>
+                        <div class="text-white text-lg">คำร้องทั้งหมด <span class="text-4xl">{{ report.countRequest.toLocaleString() }}</span> คำร้อง  </div>
                     </div>
                     <div class="bg-secondary rounded-xl w-2/5 flex flex-col justify-center items-center">
-                        <div class="text-2xl font-semibold mb-2">เชียงราย</div>
-                        <div class="text-2xl">26,734</div>
+                        <div class="text-2xl font-semibold mb-2">{{ report.topRequest.p_name }}</div>
+                        <div class="text-2xl">{{ report.topRequest?.top_count?.toLocaleString() }}</div>
                     </div>
                </div>
                <div class="flex text-primary my-5 items-center">
                     <div class="w-1/3 text-center">
                         <div>ครัวเรือนที่ได้รับเงินแล้ว</div>
-                        <div><span class="text-3xl">5,733</span> ครัวเรือน</div>
+                        <div><span class="text-3xl">{{ report.allTransfer?.toLocaleString() }}</span> ครัวเรือน</div>
                     </div>
                     <div class="w-1/3 text-center">
                         <div>จำนวนเงินที่โอนแล้ว</div>
-                        <div><span class="text-3xl">5,733</span> บาท</div>
+                        <div><span class="text-3xl">{{ report.allMoneyTransfer?.toLocaleString() }}</span> บาท</div>
                     </div>
                     <div class="w-1/3 text-center">
                         <div>จังหวัดที่ได้รับเงินแล้ว</div>
                         <div>/ จังหวัดที่กรอกคำร้อง</div>
-                        <div class="text-3xl">2/57</div>
+                        <div class="text-3xl">{{report.provinceRetrieveMoney?.toLocaleString() }}/{{ report.provinceRequest?.toLocaleString() }}</div>
 
                     </div>
                </div>
                <div class="grid grid-cols-5 gap-2">
-                    <div class="bg-[#FFE196] rounded-xl p-4 text-center text-lg" v-for="d in 5" :key="d">
-                        <div>เชียงใหม่</div>
-                        <div>6,516</div>
+                    <div class="bg-[#FFE196] rounded-xl p-4 text-center text-lg" v-for="d in report.allRequest.slice(0, 5)" :key="d">
+                        <div>{{d.p_name}}</div>
+                        <div>{{d.top_count.toLocaleString()}}</div>
                     </div>
                </div>
             </section>
             <section class="rounded-2xl bg-white/10 backdrop-blur-3xl px-8 py-4">
-                <div class="grid grid-cols-5 gap-5" v-for="a in 5" :key="a">
-                    <div class="mb-5 text-white" v-for="a in 5" :key="a">ลำพูน (460)</div>
+                <div class="grid grid-cols-5 gap-2 items-center">
+                    <div class="mb-5 text-white" v-for="a in report.allRequest.slice(5)" :key="a">
+                        {{ `${a.p_name} (${a.top_count.toLocaleString()})` }}
+                    </div>
                </div>
             </section>
         </main>
@@ -100,7 +102,31 @@
 </template>
 
 <script setup>
+import { format } from 'date-fns';
+import { th } from 'date-fns/locale';
 
+    onMounted(() => {
+        query()
+    })
+
+
+    const show = ref(false)
+
+    const report = ref({
+        allRequest: [],
+        allTransfer: 0,
+        countRequest: 0,
+        topRequest: {}
+
+    })
+
+    const query = async () => {
+        const result = await $fetch(`/api/onepage`)
+
+        report.value = result
+
+        show.value = true
+    }
 </script>
 
 <style lang="scss" scoped>
