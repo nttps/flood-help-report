@@ -67,8 +67,14 @@
             </section>
         </main>
         <!-- Show loading spinner while data is loading -->
-        <div v-else class="flex justify-center items-center h-screen">
-            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid border-transparent"></div>
+        <div class="flex justify-center items-center h-screen bg-white/10 backdrop-blur-3xl" v-else>
+            <div class="relative inline-flex flex-col items-center">
+                <!-- Spinner -->
+                <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-[#051445] border-solid border-transparent"></div>
+
+                <!-- Loading Text -->
+                <span class="text-primary font-semibold text-lg">กำลังประมวลผล...</span>
+            </div>
         </div>
         <footer>
             <div class="flex bg-primary px-10 py-4 space-x-8 justify-between items-center text-white rounded-t-3xl">
