@@ -31,6 +31,7 @@
                         <div class="text-white text-lg">คำร้องทั้งหมด <span class="text-4xl">{{ report.countRequest.toLocaleString() }}</span> คำร้อง  </div>
                     </div>
                     <div class="bg-secondary rounded-xl w-2/5 flex flex-col justify-center items-center">
+                        <div class="font-semibold text-2xl mb-2">จำนวนคำร้องสูงสุด</div>
                         <div class="text-2xl font-semibold mb-2">{{ report.topRequest.p_name }}</div>
                         <div class="text-2xl">{{ report.topRequest?.top_count?.toLocaleString() }}</div>
                     </div>
