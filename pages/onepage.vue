@@ -111,7 +111,7 @@
 
 
     const { data: report, status } = await useFetch('/api/onepage', {
-        cacheKey: 'onepage',
+        cacheKey: 'ddpm-onepage',
         cacheTime: 1000 * 60 * 5,
     })
     const pending = computed(() => status.value === 'success')
