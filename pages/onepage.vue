@@ -12,7 +12,7 @@
                     <div class="text-lg font-[300] text-right">
                         <div class="mb-1">ตามมติคณะรัฐมนตรี 17 กันยายน 2567</div>
                         <div class="rounded-full bg-[#FFB800] inline-flex items-center py-1 px-4">
-                            <div>ณ วันที {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}</div>
+                            <div class="mr-2">ณ วันที {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}</div>
                             <UIcon name="disaster-clock" class="text-primary mr-2" />
                             <div>
                                 09:00 น.
