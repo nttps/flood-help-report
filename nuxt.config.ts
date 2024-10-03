@@ -6,10 +6,28 @@ export default defineNuxtConfig({
   fonts: {
     google: {
       families: {
-        Sarabun: [300, 400, 600, 700]
+        Sarabun: [300, 400, 600, 700],
+        Kanit: [300, 400, 600, 700]
       }
     }
   },
+  icon: {
+    customCollections: [
+        {
+            prefix: "disaster",
+            dir: "./assets/icons",
+        },
+    ],
+},
+vite: {
+  css: {
+      preprocessorOptions: {
+          scss: {
+              silenceDeprecations: ["legacy-js-api"],
+          },
+      },
+  },
+},
   colorMode: {
     classSuffix: "",
     preference: "light", // default theme
