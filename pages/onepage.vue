@@ -9,11 +9,11 @@
                 <h3 class="text-center mb-6">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567</h3>
                 <div class="flex justify-between">
                     <div>ในระดับจังหวัด</div>
-                    <div class="text-lg font-[300] text-right">
+                    <div class="text-lg text-[#051445] font-[300] text-right">
                         <div class="mb-1">ตามมติคณะรัฐมนตรี 17 กันยายน 2567</div>
                         <div class="rounded-full bg-[#FFB800] inline-flex items-center py-1 px-4">
                             <div class="mr-2">ณ วันที {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}</div>
-                            <UIcon name="disaster-clock" class="text-primary mr-2" />
+                            <UIcon name="disaster-clock" class="mr-2" />
                             <div>
                                 09:00 น.
                             </div>
