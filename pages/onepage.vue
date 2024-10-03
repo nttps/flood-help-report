@@ -22,7 +22,7 @@
             </div>
         </header>
 
-        <main class="px-8 mt-2" >
+        <main class="px-8 mt-2" v-if="pending">
             <section class="bg-primary rounded-2xl p-3">
                <div class="flex gap-2">
                     <div class="bg-secondary py-4 rounded-xl w-3/5 flex flex-col justify-center items-center">
@@ -66,6 +66,10 @@
                </div>
             </section>
         </main>
+        <!-- Show loading spinner while data is loading -->
+        <div v-else class="flex justify-center items-center h-screen">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid border-transparent"></div>
+        </div>
         <footer>
             <div class="flex bg-primary px-10 py-4 space-x-8 justify-between items-center text-white rounded-t-3xl">
                 <div class="text-lg pt-4 pb-2">
@@ -102,31 +106,16 @@
 </template>
 
 <script setup>
-import { format } from 'date-fns';
-import { th } from 'date-fns/locale';
+    import { format } from 'date-fns';
+    import { th } from 'date-fns/locale';
 
-    onMounted(() => {
-        query()
+
+    const { data: report, status } = await useFetch('/api/onepage', {
+        cacheKey: 'onepage',
+        cacheTime: 1000 * 60 * 5,
     })
+    const pending = computed(() => status.value === 'success')
 
-
-    const show = ref(false)
-
-    const report = ref({
-        allRequest: [],
-        allTransfer: 0,
-        countRequest: 0,
-        topRequest: {}
-
-    })
-
-    const query = async () => {
-        const result = await $fetch(`/api/onepage`)
-
-        report.value = result
-
-        show.value = true
-    }
 </script>
 
 <style lang="scss" scoped>
