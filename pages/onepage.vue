@@ -71,12 +71,12 @@
         <footer>
             <div class="flex bg-primary px-10 py-4 space-x-8 justify-between items-center text-white rounded-t-3xl">
                 <div class="text-lg pt-4 pb-2">
-                    <div class="mb-2">ศูนย์เทคโนโลยีสารสนเทศและการสื่อสาร กรมป้องกันและบรรเทาสาธาธารณภัย</div>
-                    <div class="mb-4">ตรวจสอบสถานะคำร้องตนเองได้ที่ : <span class="font-semibold"><a target="_blank" href="https://flood67.disoster.go.th">https://flood67.disoster.go.th</a></span></div>
+                    <div class="mb-2">ศูนย์เทคโนโลยีสารสนเทศและการสื่อสาร กรมป้องกันและบรรเทาสาธารณภัย</div>
+                    <div class="mb-4">ตรวจสอบสถานะคำร้องตนเองได้ที่ : <span class="font-semibold"><a target="_blank" href="https://flood67.disaster.go.th">https://flood67.disaster.go.th</a></span></div>
                     <div class="flex justify-between items-center">
                         <a href="https://www.facebook.com/DDPMNews" target="_blank" class="flex items-center">
                             <UIcon name="disaster-facebook" size="40" />
-                            <div class="ml-2">: กรมป้องกันและบรรเทาสาธาธารณภัย DDPM </div>
+                            <div class="ml-2">: กรมป้องกันและบรรเทาสาธารณภัย DDPM </div>
                         </a>
                         <a href="https://line.me/R/ti/p/@1784DDPM" target="_blank" class="flex items-center">
                             <UIcon name="disaster-line" size="40" />
