@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="fixed right-[300px] top-1/2 -translate-y-1/2">
-            <div class="rounded-full w-20 p-2 bg-primary text-center">
+        <div class="fixed right-8 bottom-8 lg:right-[300px] lg:top-1/2 lg:-translate-y-1/2 z-[9999]">
+            <div class="rounded-full w-20 p-2 bg-secondary lg:bg-primary text-center">
                 <button @click="downloadPDF" class="text-white">
                     ปริ้น
                 </button>
@@ -20,7 +20,6 @@
                             ณ วันที่ {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}
                         </div>
                     </div>
-                   
                 </div>
             </header>
 
@@ -55,7 +54,7 @@
                 </div>
                 <div class="lg:grid flex flex-wrap lg:grid-cols-5 lg:gap-2 justify-center ">
                         <div class="w-1/3 p-1 lg:p-0 lg:w-auto" v-for="d in report.allRequest.slice(1, 6)" :key="d">
-                            <div class="bg-[#FFE196] rounded-xl lg:p-4 text-center text-lg " >
+                            <div class="bg-[#FFE196] rounded-xl py-2 lg:p-4 text-center text-lg " >
                                 <div>{{d.p_name}}</div>
                                 <div>{{d.top_count.toLocaleString()}}</div>
                             </div>
@@ -64,7 +63,7 @@
                 </section>
                 <section class="rounded-2xl bg-white/10 backdrop-blur-3xl px-2 lg:px-8 py-4">
                     <div class="grid grid-cols-3 lg:grid-cols-5 lg:gap-2 lg:items-center">
-                        <div class="mb-5 text-white break-words" v-for="a in report.allRequest.slice(6)" :key="a">
+                        <div class="mb-5 text-white break-words lg:py-0" v-for="a in report.allRequest.slice(6)" :key="a">
                             {{ `${a.p_name} (${a.top_count.toLocaleString()})` }}
                         </div>
                 </div>
@@ -108,7 +107,7 @@
    </div>
 </template>
 
-<script setup>
+<script setup scoped>
     import { format } from 'date-fns';
     import { th } from 'date-fns/locale';
     import html2canvas from 'html2canvas';
@@ -122,6 +121,9 @@
 
     const htmlContent = ref(null)
     const downloadPDF = () => {
+
+        htmlContent.value.classList.add('desktop-view');
+
         // ใช้ dom-to-image เพื่อสร้างภาพจาก htmlContent
         html2canvas(htmlContent.value, {
             useCORS: true,  // เปิดใช้ CORS สำหรับฟอนต์จากภายนอก
@@ -137,8 +139,14 @@
             const imgHeight = canvas.height;
             const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
 
-            pdf.addImage(imgData, 'PNG', 0, 5, imgWidth * ratio, imgHeight * ratio);
+            const x = (pageWidth - (imgWidth * ratio)) / 2; // จัดกลางแนวนอน
+            const y = (pageHeight - (imgHeight * ratio)) / 2; // ห่างจากขอบบน
+
+            pdf.addImage(imgData, 'PNG', x, y, imgWidth * ratio, imgHeight * ratio);
+
             pdf.save('จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567.pdf');
+
+            htmlContent.value.classList.remove('desktop-view');
         });
     }
 
@@ -152,7 +160,7 @@
         @apply text-[#FFB800];
     }
     .bg-primary {
-        @apply bg-[#051445];
+        @apply bg-[#051445] ;
     }
 
     .bg-secondary {
@@ -161,5 +169,10 @@
 
     img {
         @apply inline-block;
+    }
+
+    .desktop-view {
+        width: 980px !important; /* ปรับให้เหมาะสมกับหน้าจอ PC */
+        margin: 0 auto; /* จัดกลางในแนวนอน */
     }
 </style>
