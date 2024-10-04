@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="fixed right-8 bottom-8 lg:right-[300px] lg:top-1/2 lg:-translate-y-1/2 z-[9999]">
-            <button @click="downloadPDF" class="rounded-full w-20 p-2 bg-secondary lg:!bg-[#051445] text-center text-white">
+            <button @click="downloadPDF" class="rounded-full w-20 p-2 bg-secondary text-[#051445] lg:!bg-[#051445] text-center lg:text-white">
                 ปริ้น
             </button>
         </div>
