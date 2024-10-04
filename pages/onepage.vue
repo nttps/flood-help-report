@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="fixed right-8 bottom-8 lg:right-[300px] lg:top-1/2 lg:-translate-y-1/2 z-[9999]">
+        <div class="fixed right-8 bottom-8 lg:right-[300px] lg:top-1/2 z-[9999]">
             <button @click="downloadPDF" class="rounded-full w-20 p-2 bg-secondary text-[#051445] lg:!bg-[#051445] text-center lg:text-white">
                 ปริ้น
             </button>
@@ -109,6 +109,7 @@
     import { th } from 'date-fns/locale';
     import html2canvas from 'html2canvas';
     import { jsPDF } from 'jspdf';
+    import {pdfFonts} from '~/assets/fonts/vfs_fonts.js'
 
     const { data: report, status } = await useFetch('/api/onepage', {
         cacheKey: 'ddpm-onepage',
@@ -120,27 +121,52 @@
     const downloadPDF = () => {
 
         htmlContent.value.classList.add('desktop-view');
+        const isMobile = window.innerWidth < 1024;
 
         // ใช้ dom-to-image เพื่อสร้างภาพจาก htmlContent
         html2canvas(htmlContent.value, {
             useCORS: true,  // เปิดใช้ CORS สำหรับฟอนต์จากภายนอก
-            scale: 2,       // เพิ่มความละเอียดของการเรนเดอร์
+            scale:  2,        // เพิ่มความละเอียดของการเรนเดอร์
             logging: true   // เปิดการบันทึกการทำงานของ html2canvas
         }).then((canvas) => {
 
             const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const imgWidth = canvas.width;
-            const imgHeight = canvas.height;
-            const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+            const pdf = new jsPDF('p', 'mm', 'a4')
+
+            const pageWidth = pdf.internal.pageSize.getWidth() ; // ปรับขนาดของ pageWidth
+            const pageHeight = pdf.internal.pageSize.getHeight() ; // ปรับขนาดของ pageHeight
+            const imgWidth = canvas.width; // ปรับขนาด width ของ canvas
+            const imgHeight = canvas.height; // ปรับขนาด height ของ canvas
+
+             // คำนวณสัดส่วนที่เหมาะสม
+            let ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+
+            // ปรับสัดส่วนให้เหมาะสมกับจอมือถือ
+            if (isMobile) {
+                ratio = Math.min((pageWidth / imgWidth) * 0.9, (pageHeight / imgHeight) * 0.9); // ลดขนาดเพื่อให้ขอบไม่ชิดเกินไป
+            }
 
             const x = (pageWidth - (imgWidth * ratio)) / 2; // จัดกลางแนวนอน
-            const y = (pageHeight - (imgHeight * ratio)) / 2; // ห่างจากขอบบน
+            const y = (pageHeight - (imgHeight * ratio)) / 2; // จัดกลางแนวตั้ง
 
             pdf.addImage(imgData, 'PNG', x, y, imgWidth * ratio, imgHeight * ratio);
 
+            // Set the font to Sarabun
+            pdf.addFileToVFS("Sarabun-Regular.ttf", pdfFonts['THSarabunNew Bold.ttf']);
+            pdf.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
+            pdf.setFont("Sarabun");
+
+            const timestampFontSize = 10; // Font size for timestamp
+            pdf.setFontSize(timestampFontSize); // Set font size for timestamp
+
+            const timestamp = format(new Date(), 'dd MMMM yyyy HH:mm:ss', { locale: th }); // Get the current timestamp
+            const timestampWidth = pdf.getStringUnitWidth(`วันที่: ${timestamp}`) * timestampFontSize / pdf.internal.scaleFactor;
+
+            // ปรับให้ตำแหน่ง y สูงกว่าขอบบน เพื่อไม่ให้ทับกับเนื้อหา
+            const timestampY = 10; // ห่างจากขอบบน 10 mm
+            const timestampX = pageWidth - timestampWidth - 10; // Right-align timestamp with some padding
+
+            pdf.text(`วันที่: ${timestamp}`, timestampX, timestampY); // Position timestamp
             pdf.save('จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567.pdf');
 
             htmlContent.value.classList.remove('desktop-view');
@@ -149,7 +175,7 @@
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     body{
         line-height: 1;
     }
