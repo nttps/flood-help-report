@@ -18,17 +18,17 @@ export default defineEventHandler(async (event) => {
   await sql.connect(config);
 
 
-  const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request WHERE created_date <= CAST(CONVERT(varchar, GETDATE(), 23) + ' 09:00:00' AS DATETIME);`
+  const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request;`
   const countRequest = await sql.query(queryCountRequestString);
 
 
-  const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request WHERE created_date <= CAST(CONVERT(varchar, GETDATE(), 23) + ' 09:00:00' AS DATETIME) GROUP BY p_name ORDER BY top_count DESC;`
+  const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request GROUP BY p_name ORDER BY top_count DESC;`
   const topRequest = await sql.query(queryTopRequestString);
 
-  const queryAllRequestString = `SELECT COUNT(*) AS top_count , p_name from sf_help_request WHERE created_date <= CAST(CONVERT(varchar, GETDATE(), 23) + ' 09:00:00' AS DATETIME) GROUP BY p_name ORDER BY top_count DESC;`
+  const queryAllRequestString = `SELECT COUNT(*) AS top_count , p_name from sf_help_request GROUP BY p_name ORDER BY top_count DESC;`
   const allRequest = await sql.query(queryAllRequestString);
 
-  const queryAllTransferString = `SELECT COUNT(*) AS total from sf_help_request WHERE current_status ='โอนเงินแล้ว' and created_date <= CAST(CONVERT(varchar, GETDATE(), 23) + ' 09:00:00' AS DATETIME);`
+  const queryAllTransferString = `SELECT COUNT(*) AS total from sf_help_request WHERE current_status ='โอนเงินแล้ว';`
   const allTransfer = await sql.query(queryAllTransferString);
 
   const queryProvinceRetrieveMoneyString = `SELECT COUNT(*) AS total
@@ -36,7 +36,6 @@ export default defineEventHandler(async (event) => {
         SELECT COUNT(p_no) AS total
         FROM sf_help_request
         WHERE current_status = 'โอนเงินแล้ว' 
-        and created_date <= CAST(CONVERT(varchar, GETDATE(), 23) + ' 09:00:00' AS DATETIME)
         GROUP BY p_no
     ) AS grouped_result`
 
@@ -46,7 +45,6 @@ export default defineEventHandler(async (event) => {
     FROM (
         SELECT COUNT(p_no) AS total
         FROM sf_help_request
-        WHERE created_date <= CAST(CONVERT(varchar, GETDATE(), 23) + ' 09:00:00' AS DATETIME)
         GROUP BY p_no
     ) AS grouped_result`
 
@@ -54,8 +52,7 @@ export default defineEventHandler(async (event) => {
 
   const queryallMoneyTransfer = ` SELECT SUM(help_amt) AS total
         FROM vw_sf_help_request
-        WHERE current_status = 'โอนเงินแล้ว' 
-        and created_date <= CAST(CONVERT(varchar, GETDATE(), 23) + ' 09:00:00' AS DATETIME)`
+        WHERE current_status = 'โอนเงินแล้ว'`
 
   const allMoneyTransfer = await sql.query(queryallMoneyTransfer);
 
