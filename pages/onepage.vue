@@ -143,7 +143,7 @@
 
             // ปรับสัดส่วนให้เหมาะสมกับจอมือถือ
             if (isMobile) {
-                ratio = Math.min((pageWidth / imgWidth) * 0.9, (pageHeight / imgHeight) * 0.9); // ลดขนาดเพื่อให้ขอบไม่ชิดเกินไป
+                ratio = Math.min((pageWidth / imgWidth), (pageHeight / imgHeight) * 0.9); // ลดขนาดเพื่อให้ขอบไม่ชิดเกินไป
             }
 
             const x = (pageWidth - (imgWidth * ratio)) / 2; // จัดกลางแนวนอน
