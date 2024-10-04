@@ -74,7 +74,7 @@
                 <div class="flex flex-wrap lg:flex-nowrap bg-primary px-5 lg:px-10 py-4 lg:space-x-8 justify-between items-center text-white rounded-t-3xl">
                     <div class="text-lg pt-4 pb-2">
                         <div class="mb-2 text-center lg:text-left">ศูนย์เทคโนโลยีสารสนเทศและการสื่อสาร กรมป้องกันและบรรเทาสาธารณภัย</div>
-                        <div class="mb-4 text-center lg:text-left">ตรวจสอบสถานะคำร้องตนเองได้ที่ : <span class="font-semibold"><a target="_blank" href="https://flood67.disaster.go.th">https://flood67.disaster.go.th</a></span></div>
+                        <div class="mb-4 text-center lg:text-left">ตรวจสอบสถานะคำร้องตนเองได้ที่ : <span class="font-semibold"><a target="_blank" href="https://flood67.disaster.go.th/HELP/CheckStatusHelpRequest/Desktop">https://flood67.disaster.go.th</a></span></div>
                         <div class="flex flex-wrap justify-between items-center">
                             <a href="https://www.facebook.com/DDPMNews" target="_blank" class="flex items-center  mb-2">
                                 <UIcon name="disaster-facebook" size="40" />
