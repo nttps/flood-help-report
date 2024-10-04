@@ -1,11 +1,9 @@
 <template>
     <div>
         <div class="fixed right-8 bottom-8 lg:right-[300px] lg:top-1/2 lg:-translate-y-1/2 z-[9999]">
-            <div class="rounded-full w-20 p-2 bg-secondary lg:bg-primary text-center">
-                <button @click="downloadPDF" class="text-white">
-                    ปริ้น
-                </button>
-            </div>
+            <button @click="downloadPDF" class="rounded-full w-20 p-2 bg-secondary lg:bg-[#051445] text-center text-white">
+                ปริ้น
+            </button>
         </div>
         <div class="font-kanit lg:w-[980px] mx-auto bg-[#F1F1F1] relative bg-[url('~/assets/images/bg-bottom.jpg')] bg-bottom bg-no-repeat bg-cover" ref="htmlContent" >
             <!-- <img src="~/assets/images/bg-bottom.jpg" class="absolute bottom-0 w-full left-0 right-0" alt=""> -->
@@ -106,7 +104,7 @@
    </div>
 </template>
 
-<script setup scoped>
+<script setup >
     import { format } from 'date-fns';
     import { th } from 'date-fns/locale';
     import html2canvas from 'html2canvas';
@@ -151,7 +149,7 @@
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     body{
         line-height: 1;
     }
