@@ -22,20 +22,19 @@
                     </div>
                 </div>
             </header>
-
             <main class="px-4 lg:px-8 mt-2" v-if="pending">
                 <section class="bg-primary rounded-2xl p-3">
                 <div class="flex flex-wrap lg:flex-nowrap gap-4 lg:gap-2">
-                        <div class="bg-secondary py-8 rounded-xl w-full lg:w-3/5 text-center">
-                            <div class="font-semibold text-2xl mb-2">จำนวนคำร้องที่ขอรับการช่วยเหลือ</div>
-                            <div class="text-lg">{{ format(new Date(), 'dd MMMM yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }} (ในแต่ละจังหวัด)</div>
-                            <div class="text-lg">คำร้องทั้งหมด <span class="text-4xl">{{ report.countRequest.toLocaleString() }}</span> คำร้อง  </div>
-                        </div>
-                        <div class="bg-secondary py-8 rounded-xl w-full lg:w-2/5 text-center">
-                            <div class="font-semibold text-2xl mb-2">จำนวนคำร้องสูงสุด</div>
-                            <div class="text-2xl font-semibold mb-2">{{ report.topRequest.p_name }}</div>
-                            <div class="text-2xl">{{ report.topRequest?.top_count?.toLocaleString() }}</div>
-                        </div>
+                    <div class="bg-secondary py-8 rounded-xl w-full lg:w-3/5 text-center">
+                        <div class="font-semibold text-2xl mb-2">จำนวนคำร้องที่ขอรับการช่วยเหลือ</div>
+                        <div class="text-lg">{{ format(new Date(), 'dd MMMM yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }} (ในแต่ละจังหวัด)</div>
+                        <div class="text-lg">คำร้องทั้งหมด <span class="text-4xl">{{ report.countRequest.toLocaleString() }}</span> คำร้อง  </div>
+                    </div>
+                    <div class="bg-secondary py-8 rounded-xl w-full lg:w-2/5 text-center">
+                        <div class="font-semibold text-2xl mb-2">จำนวนคำร้องสูงสุด</div>
+                        <div class="text-2xl font-semibold mb-2">{{ report.topRequest.p_name }}</div>
+                        <div class="text-2xl">{{ report.topRequest?.top_count?.toLocaleString() }}</div>
+                    </div>
                 </div>
                 <div class="flex flex-wrap lg:flex-nowrap text-primary mt-5 items-center">
                         <div class="w-full mb-4 lg:w-1/3 text-center">
