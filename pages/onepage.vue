@@ -7,18 +7,17 @@
                 </button>
             </div>
         </div>
-        <div class="font-kanit lg:w-[980px] mx-auto bg-[#F1F1F1] relative bg-[url('~/assets/images/bg-bottom.jpg')] bg-bottom bg-no-repeat bg-cover" ref="htmlContent">
+        <div class="font-kanit lg:w-[980px] mx-auto bg-[#F1F1F1] relative bg-[url('~/assets/images/bg-bottom.jpg')] bg-bottom bg-no-repeat bg-cover"  ref="htmlContent">
             <!-- <img src="~/assets/images/bg-bottom.jpg" class="absolute bottom-0 w-full left-0 right-0" alt=""> -->
             <header class="flex bg-primary px-5 lg:px-10 py-2 space-x-4 items-center text-white rounded-b-3xl">
                 <div class="min-w-max lg:w-1/6">
                     <img src="~/assets/images/logo.png" class="h-[100px] lg:h-[120px] min-w-max" alt="">
                 </div>
-                <div class="text-lg lg:text-2xl lg:pt-6 lg:w-5/6">
-                    <h3 class="lg:mb-3 text-center">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 <br class="hidden lg:block" /> ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567</h3>
-
+                <div class="lg:pt-6 lg:w-5/6">
+                    <h3 class="lg:mb-3 text-center text-lg lg:text-2xl ">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 <br class="hidden lg:block" /> ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567</h3>
                     <div class="text-right">
-                        <div class="rounded-full bg-[#FFB800] text-center my-2 lg:my-4 px-4 text-[#051445] text-base lg:text-lg leading-8 inline-block ml-auto">
-                            ณ วันที {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}
+                        <div class="rounded-full bg-[#FFB800] text-[#051445] my-2 lg:my-4 py-2 px-4 ml-auto inline-flex justify-center h-full">
+                            ณ วันที่ {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}
                         </div>
                     </div>
                    
@@ -126,7 +125,6 @@
         html2canvas(htmlContent.value, {
             useCORS: true,  // เปิดใช้ CORS สำหรับฟอนต์จากภายนอก
             scale: 2,       // เพิ่มความละเอียดของการเรนเดอร์
-            logging: true   // เปิดการบันทึกการทำงานของ html2canvas
         }).then((canvas) => {
 
             const imgData = canvas.toDataURL('image/png');
@@ -138,9 +136,10 @@
             const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
 
             pdf.addImage(imgData, 'PNG', 0, 5, imgWidth * ratio, imgHeight * ratio);
-            pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
+            pdf.save('จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567.pdf');
         });
     }
+
 </script>
 
 <style lang="scss" scoped>
