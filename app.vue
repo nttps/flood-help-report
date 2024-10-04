@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup>'date-fns'
+<script setup>
 </script>
 
 <style>

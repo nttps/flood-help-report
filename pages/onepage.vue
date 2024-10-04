@@ -7,7 +7,7 @@
                 </button>
             </div>
         </div>
-        <div class="font-kanit lg:w-[980px] mx-auto bg-[#F1F1F1] relative bg-[url('~/assets/images/bg-bottom.jpg')] bg-bottom bg-no-repeat bg-cover"  ref="htmlContent">
+        <div class="font-kanit lg:w-[980px] mx-auto bg-[#F1F1F1] relative bg-[url('~/assets/images/bg-bottom.jpg')] bg-bottom bg-no-repeat bg-cover" ref="htmlContent" >
             <!-- <img src="~/assets/images/bg-bottom.jpg" class="absolute bottom-0 w-full left-0 right-0" alt=""> -->
             <header class="flex bg-primary px-5 lg:px-10 py-2 space-x-4 items-center text-white rounded-b-3xl">
                 <div class="min-w-max lg:w-1/6">
@@ -16,7 +16,7 @@
                 <div class="lg:pt-6 lg:w-5/6">
                     <h3 class="lg:mb-3 text-center text-lg lg:text-2xl ">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 <br class="hidden lg:block" /> ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567</h3>
                     <div class="text-right">
-                        <div class="rounded-full bg-[#FFB800] text-[#051445] my-2 lg:my-4 py-2 px-4 ml-auto inline-flex justify-center h-full">
+                        <div class="rounded-full bg-[#FFB800] text-[#051445] py-2 px-4 ml-auto inline-flex items-center justify-center" >
                             ณ วันที่ {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}
                         </div>
                     </div>
@@ -112,7 +112,7 @@
     import { format } from 'date-fns';
     import { th } from 'date-fns/locale';
     import html2canvas from 'html2canvas';
-    import jsPDF from 'jspdf';
+    import jsPDF from 'jsPDF';
 
     const { data: report, status } = await useFetch('/api/onepage', {
         cacheKey: 'ddpm-onepage',
@@ -122,9 +122,11 @@
 
     const htmlContent = ref(null)
     const downloadPDF = () => {
+        // ใช้ dom-to-image เพื่อสร้างภาพจาก htmlContent
         html2canvas(htmlContent.value, {
             useCORS: true,  // เปิดใช้ CORS สำหรับฟอนต์จากภายนอก
             scale: 2,       // เพิ่มความละเอียดของการเรนเดอร์
+            logging: true   // เปิดการบันทึกการทำงานของ html2canvas
         }).then((canvas) => {
 
             const imgData = canvas.toDataURL('image/png');
@@ -142,7 +144,10 @@
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+    body{
+        line-height: 1;
+    }
     .text-primary {
         @apply text-[#FFB800];
     }
@@ -154,7 +159,7 @@
         @apply bg-[#FFB800];
     }
 
-    body {
-        line-height: 1.5;
+    img {
+        @apply inline-block;
     }
 </style>
