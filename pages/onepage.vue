@@ -110,7 +110,7 @@
     import { format } from 'date-fns';
     import { th } from 'date-fns/locale';
     import html2canvas from 'html2canvas';
-    import { jsPDF } from 'jsPDF';
+    import { jsPDF } from 'jspdf';
 
     const { data: report, status } = await useFetch('/api/onepage', {
         cacheKey: 'ddpm-onepage',
