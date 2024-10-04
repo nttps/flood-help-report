@@ -156,7 +156,7 @@
             pdf.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
             pdf.setFont("Sarabun");
 
-            const timestampFontSize = 10; // Font size for timestamp
+            const timestampFontSize = 12; // Font size for timestamp
             pdf.setFontSize(timestampFontSize); // Set font size for timestamp
 
             const timestamp = format(new Date(), 'dd MMMM yyyy HH:mm:ss', { locale: th }); // Get the current timestamp
