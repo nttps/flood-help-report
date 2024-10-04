@@ -159,7 +159,7 @@
             const timestampFontSize = 12; // Font size for timestamp
             pdf.setFontSize(timestampFontSize); // Set font size for timestamp
 
-            const timestamp = format(new Date(), 'dd/mm/yyyy HH:mm:ss', { locale: th }); // Get the current timestamp
+            const timestamp = format(new Date(), 'dd/MM/yyyy HH:mm:ss', { locale: th }); // Get the current timestamp
             const timestampWidth = pdf.getStringUnitWidth(`${timestamp}`) * timestampFontSize / pdf.internal.scaleFactor;
 
             // ปรับให้ตำแหน่ง y สูงกว่าขอบบน เพื่อไม่ให้ทับกับเนื้อหา
