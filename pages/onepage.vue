@@ -159,14 +159,14 @@
             const timestampFontSize = 12; // Font size for timestamp
             pdf.setFontSize(timestampFontSize); // Set font size for timestamp
 
-            const timestamp = format(new Date(), 'dd MMMM yyyy HH:mm:ss', { locale: th }); // Get the current timestamp
-            const timestampWidth = pdf.getStringUnitWidth(`วันที่: ${timestamp}`) * timestampFontSize / pdf.internal.scaleFactor;
+            const timestamp = format(new Date(), 'dd/mm/yyyy HH:mm:ss', { locale: th }); // Get the current timestamp
+            const timestampWidth = pdf.getStringUnitWidth(`${timestamp}`) * timestampFontSize / pdf.internal.scaleFactor;
 
             // ปรับให้ตำแหน่ง y สูงกว่าขอบบน เพื่อไม่ให้ทับกับเนื้อหา
             const timestampY = 10; // ห่างจากขอบบน 10 mm
             const timestampX = pageWidth - timestampWidth - 10; // Right-align timestamp with some padding
 
-            pdf.text(`วันที่: ${timestamp}`, timestampX, timestampY); // Position timestamp
+            pdf.text(`${timestamp}`, timestampX, timestampY); // Position timestamp
             pdf.save('จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567.pdf');
 
             htmlContent.value.classList.remove('desktop-view');
