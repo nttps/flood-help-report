@@ -132,20 +132,20 @@
                                         {{ head.failed_linkage.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ (head.person_qty- head.failed_linkage).toLocaleString() }}
+                                        {{ (head.person_qty - head.failed_linkage).toLocaleString() }}  
                                     </td>
                                     <td class="border border-t-0 border-zinc-500"></td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.count_payment_date.toLocaleString() }}
+                                        {{ head.count_payment_date.toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.successful_payments.toLocaleString() }}
+                                        {{ head.successful_payments.toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.unsuccessful_payments.toLocaleString() }}
+                                        {{ ((head.person_qty - head.failed_linkage) - head.successful_payments).toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right" >
-                                        {{ head.count_back_to_province.toLocaleString() }}
+                                        {{ (head.failed_linkage + (head.person_qty - head.failed_linkage - head.successful_payments)).toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
                                         {{ head.send_from_province.toLocaleString() }}
@@ -192,11 +192,11 @@
                                                 {{ sub.successful_payments.toLocaleString() }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{ sub.unsuccessful_payments.toLocaleString() }}
+                                                {{ ((sub.person_qty - sub.failed_linkage) - sub.successful_payments).toLocaleString() }}
                                             </td>
-                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600': sub.count_back_to_province > 0}">
+                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600':  (sub.failed_linkage + (sub.person_qty - sub.failed_linkage - sub.successful_payments)) > 0}">
                      
-                                                {{ sub.outstanding == 0 ? 0 : sub.count_back_to_province.toLocaleString()}}
+                                                {{ (sub.failed_linkage + (sub.person_qty - sub.failed_linkage - sub.successful_payments)).toLocaleString() }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right " :class="{ 'text-red-600': sub.send_from_province > 0}">
                                                 {{ sub.outstanding == 0 ? sub.send_from_province.toLocaleString() : 0 }}
