@@ -60,7 +60,7 @@
                         <div class="w-1/3 p-1 lg:p-0 lg:w-auto" v-for="d in report.allRequest.slice(3, 7)" :key="d">
                             <div class="bg-white rounded-xl py-2 lg:p-4 text-center text-lg" >
                                 <div class="mb-4 text-xl">{{d.p_name}}</div>
-                                <div>{{d.top_count.toLocaleString()}} <span class="font-bold">({{d.total.toLocaleString()}})</span></div>
+                                <div>{{d.top_count.toLocaleString()}} <span class="font-bold">({{d.total.toLocaleString()}} )</span></div>
                             </div>
                         </div>
                 </div>
