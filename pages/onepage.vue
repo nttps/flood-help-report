@@ -23,19 +23,19 @@
             <main class="px-4 lg:px-8 mt-2" v-if="pending">
                 <section class="bg-primary rounded-2xl p-3">
                 <div class="flex flex-wrap lg:flex-nowrap gap-4 lg:gap-2">
-                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-2/5 text-center font-extrabold">
+                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-2/5 text-center">
                         <div class="text-2xl mb-2">ผู้ยื่นคำร้องทั้งหมด <br /> (รวมทุกจังหวัด)</div>
-                        <div class="text-4xl">{{ report.countRequest.toLocaleString() }}  </div>
+                        <div class="text-4xl font-bold">{{ report.countRequest.toLocaleString() }}  </div>
                         <div class="text-2xl mt-3">ครัวเรือน</div>
                     </div>
-                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-2/5 text-center font-extrabold">
+                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-2/5 text-center ">
                         <div class="text-2xl mb-2">โอนช่วยเหลือผ่าน <br /> บัญชี Promt pay สำเร็จ</div>
-                        <div class="text-4xl">{{ report.allTransfer?.toLocaleString() }}  </div>
+                        <div class="text-4xl font-bold">{{ report.allTransfer?.toLocaleString() }}  </div>
                         <div class="text-2xl mt-3">ครัวเรือน</div>
                     </div>
-                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-3/5 text-center font-extrabold">
+                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-3/5 text-center">
                         <div class="text-2xl mb-2">จำนวนเงินช่วยเหลือ <br />โอนผ่านบัญชี Promt pay สำเร็จ</div>
-                        <div class="text-4xl">{{ report.allMoneyTransfer?.toLocaleString() }}  </div>
+                        <div class="text-4xl font-bold">{{ report.allMoneyTransfer?.toLocaleString() }}  </div>
                         <div class="text-2xl mt-3">บาท</div>
                     </div>
                 </div>
