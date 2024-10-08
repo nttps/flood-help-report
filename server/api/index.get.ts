@@ -39,7 +39,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
       SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
       SUM(CASE WHEN cl.payment_status = 'ปฏิเสธ' THEN 1 ELSE 0 END) AS unsuccessful_payments,  -- โอนไม่สำเร็จ
-      COUNT(DISTINCT CASE WHEN cl.payment_date IS NOT NULL THEN CONCAT(cl.payment_date, cl.commit_id) END) AS count_payment_date,
+      COUNT(DISTINCT CASE WHEN ch.export_bank_trn_date IS NOT NULL THEN CONCAT(ch.export_bank_trn_date, cl.commit_id) END) AS count_payment_date,
       SUM(CASE WHEN cl.payment_status != 'สำเร็จ' THEN 1 ELSE 0 END) AS count_back_to_province,  -- นับจำนวนจังหวัดที่ยังรอดำเนินการ
       isnull((SELECT count(*) FROM sf_commit_line cc 
           WHERE cc.step_id = 'จังหวัด' 
