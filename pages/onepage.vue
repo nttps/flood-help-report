@@ -12,7 +12,7 @@
                     <img src="~/assets/images/logo.png" class="h-[100px] lg:h-[120px] min-w-max" alt="">
                 </div>
                 <div class="lg:pt-6 lg:w-5/6">
-                    <h3 class="lg:mb-3 text-center text-lg lg:text-2xl ">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 <br class="hidden lg:block" /> ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567</h3>
+                    <h3 class="lg:mb-3 text-lg lg:text-2xl ">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 <br class="hidden lg:block" />  ตามมติคณะรัฐมนตรี 17 กันยายน 2567</h3>
                     <div class="text-right">
                         <div class="rounded-full bg-[#FFB800] text-[#051445] py-2 px-4 ml-auto inline-flex items-center justify-center" >
                             ณ วันที่ {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}
@@ -171,7 +171,7 @@
             const timestampX = pageWidth - timestampWidth - 10; // Right-align timestamp with some padding
 
             pdf.text(`${timestamp}`, timestampX, timestampY); // Position timestamp
-            pdf.save('จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 ในระดับจังหวัด ตามมติคณะรัฐมนตรี 17 กันยายน 2567.pdf');
+            pdf.save('จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567  ตามมติคณะรัฐมนตรี 17 กันยายน 2567.pdf');
 
             htmlContent.value.classList.remove('desktop-view');
         });
