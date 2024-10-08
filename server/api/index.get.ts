@@ -38,18 +38,13 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       COUNT(cl.payment_status) AS send_bank,  -- ส่งออมสิน
       COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
       SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
-      SUM(CASE WHEN cl.payment_status != 'สำเร็จ' THEN 1 ELSE 0 END) AS unsuccessful_payments,  -- โอนไม่สำเร็จ
-      (SELECT COUNT(*) 
-        FROM sf_commit_head cc 
-        WHERE step_id = 'จังหวัด' 
-        AND commit_type = 'ตีกลับ' 
-        AND rq.p_no = cc.pcode) AS count_back_to_province,  -- นับจำนวนจังหวัดที่ยังรอดำเนินการ
-      (SELECT COUNT(*) 
-        FROM sf_commit_head cc 
-        WHERE step_id = 'จังหวัด' 
-        AND commit_type = 'ตีกลับ' 
-        AND status_confirm = 'รอยืนยัน' 
-        AND rq.p_no = cc.pcode) AS outstanding  -- คงค้าง
+      SUM(CASE WHEN cl.payment_status = 'ปฏิเสธ' THEN 1 ELSE 0 END) AS unsuccessful_payments,  -- โอนไม่สำเร็จ
+      COUNT(DISTINCT CASE WHEN cl.payment_date IS NOT NULL THEN CONCAT(cl.payment_date, cl.commit_id) END) AS count_payment_date,
+      SUM(CASE WHEN cl.payment_status != 'สำเร็จ' THEN 1 ELSE 0 END) AS count_back_to_province,  -- นับจำนวนจังหวัดที่ยังรอดำเนินการ
+      isnull((SELECT count(*) FROM sf_commit_line cc 
+          WHERE cc.step_id = 'จังหวัด' 
+          AND cc.commit_type = 'ตีกลับ' 
+          AND cc.step_status = 'รอดำเนินการ' AND rq.p_no = cc.origin_pcode),0) AS outstanding 
     FROM sf_commit_line cl
     LEFT JOIN sf_commit_head ch ON ch.commit_id = cl.commit_id
     LEFT JOIN sf_help_request rq ON rq.req_id = cl.req_id
@@ -95,21 +90,17 @@ const getSub = async (sql: typeof import('mssql'), p_no: number, startDate: any,
         COUNT(DISTINCT cl.commit_id) AS send,  -- ส่งปกครอง
         SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage, --ไม่ผ่าน Linkage
         COUNT(cl.payment_status) AS send_bank, --- ส่งออมสิน
-        MAX(cl.payment_date) AS latest_payment_date, -- วันที่โอนเงินล่าสุด
+        MAX(ch.export_bank_trn_date) AS latest_payment_date, -- วันที่โอนเงินล่าสุด
+        DENSE_RANK() OVER (ORDER BY MAX(ch.export_bank_trn_date) ASC) AS payment_sequence,
+        COUNT(DISTINCT CASE WHEN cl.payment_date IS NOT NULL THEN cl.payment_date END) AS count_payment_date,
         COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
         SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  --โอนสำเร็จ
-        SUM(CASE WHEN cl.payment_status != 'สำเร็จ' THEN 1 ELSE 0 END) AS unsuccessful_payments,  -- โอนไม่สำเร็จ
-        (SELECT COUNT(*) 
-          FROM sf_commit_head cc 
-          WHERE step_id = 'จังหวัด' 
-          AND commit_type = 'ตีกลับ' 
-          AND rq.p_no = cc.pcode) AS count_back_to_province,  -- นับจำนวนจังหวัดที่ยังรอดำเนินการ
-        (SELECT COUNT(*) 
-          FROM sf_commit_head cc 
-          WHERE step_id = 'จังหวัด' 
-          AND commit_type = 'ตีกลับ' 
-          AND status_confirm = 'รอยืนยัน' 
-          AND rq.p_no = cc.pcode) AS outstanding  -- คงค้าง
+        SUM(CASE WHEN cl.payment_status = 'ปฏิเสธ' THEN 1 ELSE 0 END) AS unsuccessful_payments,  -- โอนไม่สำเร็จ
+        SUM(CASE WHEN cl.payment_status != 'สำเร็จ' THEN 1 ELSE 0 END) AS count_back_to_province,  -- นับจำนวนจังหวัดที่ยังรอดำเนินการ
+        isnull((SELECT count(*) FROM sf_commit_line cc 
+          WHERE cc.step_id = 'จังหวัด' 
+          AND cc.commit_type = 'ตีกลับ' 
+          AND cc.step_status = 'รอดำเนินการ' and cc.origin_commit_id = ch.commit_id),0) AS outstanding  -- คงค้าง
     FROM sf_commit_head ch
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id
     LEFT JOIN sf_help_request rq ON rq.req_id = cl.req_id
@@ -119,7 +110,7 @@ const getSub = async (sql: typeof import('mssql'), p_no: number, startDate: any,
     )
     SELECT *,
     0 AS retreat,
-          count_back_to_province - outstanding AS send_from_province  -- จังหวัดส่งคืนผลตรวจสอบ (calculated as count_back_to_province - outstanding)
+          count_back_to_province - isnull(outstanding,0) AS send_from_province  -- จังหวัดส่งคืนผลตรวจสอบ (calculated as count_back_to_province - outstanding)
     FROM sub_counts;
     `); 
   return result.recordset;

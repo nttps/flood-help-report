@@ -38,13 +38,7 @@
                                     จำนวน <br />ก.ช.ก.จ
                                 </th>
                                 <th class="border border-zinc-700">
-                                    ส่ง ปค.
-                                </th>
-                                <th class="border border-zinc-700">
                                     ไม่ผ่าน <br />Linkage
-                                </th>
-                                <th class="border border-zinc-700">
-
                                 </th>
                                 <th class="border border-zinc-700">
                                     ส่งออมสิน
@@ -56,9 +50,6 @@
                                     ครั้ง <br />ที่
                                 </th>
                                 <th class="border border-zinc-700">
-
-                                </th>
-                                <th class="border border-zinc-700">
                                     โอนสำเร็จ
                                 </th>
                                 <th class="border border-zinc-700">
@@ -66,9 +57,6 @@
                                 </th>
                                 <th class="border border-zinc-700">
                                     ส่งคืนจังหวัด <br /> ตรวจสอบ
-                                </th>
-                                <th class="border border-zinc-700">
-
                                 </th>
                                 <th class="border border-zinc-700">
                                     จังหวัดส่งคืน <br /> ผลตรวจสอบ
@@ -93,33 +81,27 @@
                                 <td class="border border-b-0 border-zinc-500">
 
                                 </td>
-                                <td class="border border-b-0 border-zinc-500 text-right">
-                                    Sum:
-                                </td>
                                 <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
-                                    Count:
+                                   Sum:
                                 </td>
                                 <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
                                     Sum:
                                 </td>
                                 <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
-                                    Count:
-                                </td>
-                                <td class="border border-b-0 border-zinc-500 text-right">
                                     Sum:
                                 </td>
                                 <td class="border border-b-0 border-zinc-500 text-right" colspan="2">
                                     Count (Unique):
                                 </td>
-                                <td class="border border-b-0 border-zinc-500"></td>
-                                <td class="border border-b-0 border-zinc-500"></td>
-                                <td class="border border-b-0 border-zinc-500 text-right">
+                                <td class="border border-b-0 border-zinc-500 text-right"> 
                                     Sum:
                                 </td>
                                 <td class="border border-b-0 border-zinc-500 text-right">
                                     Sum:
                                 </td>
-                                <td class="border border-b-0 border-zinc-500 p-2"></td>
+                                <td class="border border-b-0 border-zinc-500 text-right">
+                                    Sum:
+                                </td>
                                 <td class="border border-b-0 border-zinc-500 text-right">
                                     Sum:
                                 </td>
@@ -147,24 +129,14 @@
                                         {{ head.person_qty.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.sub.length }}
-                                    </td>
-                                    <td class="border border-t-0 border-zinc-500 text-right">
                                         {{ head.failed_linkage.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.sub.length }}
-                                    </td>
-                                    <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.send_bank.toLocaleString()}}
+                                        {{ (head.person_qty- head.failed_linkage).toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500"></td>
-
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.sub.length.toLocaleString() }}
-                                    </td>
-                                    <td class="border border-t-0 border-zinc-500">
-
+                                        {{ head.count_payment_date.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
                                         {{ head.successful_payments.toLocaleString() }}
@@ -174,9 +146,6 @@
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right" >
                                         {{ head.count_back_to_province.toLocaleString() }}
-                                    </td>
-                                    <td class="border border-t-0 border-zinc-500">
-
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
                                         {{ head.send_from_province.toLocaleString() }}
@@ -207,29 +176,17 @@
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.person_qty.toLocaleString() }}
                                             </td>
-                                            <td class="border bg-lime-300 border-zinc-500 ">
-                                                <UCheckbox class="justify-center" color="gray" disabled
-                                                    v-bind:model-value="true" />
-                                            </td>
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.failed_linkage.toLocaleString() }}
                                             </td>
-                                            <td class="border bg-lime-300 border-zinc-500">
-                                                <UCheckbox class="justify-center" color="gray" disabled
-                                                    v-bind:model-value="true" />
-                                            </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{ sub.send_bank.toLocaleString() }}
+                                                {{  (sub.person_qty - sub.failed_linkage).toLocaleString() }}
                                             </td>
                                             <td class="border bg-white border-zinc-500">
                                                 {{ sub.latest_payment_date ? format(sub.latest_payment_date, 'dd MMM yyyy') : '' }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{ sub.send.toLocaleString() }}
-                                            </td>
-                                            <td class="border bg-lime-300 border-zinc-500">
-                                                <UCheckbox class="justify-center" color="gray" disabled
-                                                    v-bind:model-value="true" />
+                                                {{ sub.payment_sequence.toLocaleString() }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right text-blue-500">
                                                 {{ sub.successful_payments.toLocaleString() }}
@@ -238,14 +195,12 @@
                                                 {{ sub.unsuccessful_payments.toLocaleString() }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600': sub.count_back_to_province > 0}">
-                                                {{ sub.count_back_to_province.toLocaleString() }}
-                                            </td>
-                                            <td class="border bg-sky-300 border-zinc-500 text-right">
-                                                <UCheckbox class="justify-center" color="gray" disabled
-                                                    v-bind:model-value="true" />
+                     
+                                                {{ sub.outstanding == 0 ? 0 : sub.count_back_to_province.toLocaleString()}}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right " :class="{ 'text-red-600': sub.send_from_province > 0}">
-                                                {{ sub.send_from_province.toLocaleString() }}
+                                                {{ sub.outstanding == 0 ? sub.send_from_province.toLocaleString() : 0 }}
+                                                
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.retreat.toLocaleString() }}
