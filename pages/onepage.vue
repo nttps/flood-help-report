@@ -23,45 +23,49 @@
             <main class="px-4 lg:px-8 mt-2" v-if="pending">
                 <section class="bg-primary rounded-2xl p-3">
                 <div class="flex flex-wrap lg:flex-nowrap gap-4 lg:gap-2">
-                    <div class="bg-secondary py-8 rounded-xl w-full lg:w-3/5 text-center">
-                        <div class="font-semibold text-2xl mb-2">จำนวนคำร้องที่ขอรับการช่วยเหลือ</div>
-                        <div class="text-lg">{{ format(new Date(), 'dd MMMM yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }} (ในแต่ละจังหวัด)</div>
-                        <div class="text-lg">คำร้องทั้งหมด <span class="text-4xl">{{ report.countRequest.toLocaleString() }}</span> คำร้อง  </div>
+                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-2/5 text-center font-extrabold">
+                        <div class="text-2xl mb-2">ผู้ยื่นคำร้องทั้งหมด <br /> (รวมทุกจังหวัด)</div>
+                        <div class="text-4xl">{{ report.countRequest.toLocaleString() }}  </div>
+                        <div class="text-2xl mt-3">ครัวเรือน</div>
                     </div>
-                    <div class="bg-secondary py-8 rounded-xl w-full lg:w-2/5 text-center">
-                        <div class="font-semibold text-2xl mb-2">จำนวนคำร้องสูงสุด</div>
-                        <div class="text-2xl font-semibold mb-2">{{ report.topRequest.p_name }}</div>
-                        <div class="text-2xl">{{ report.topRequest?.top_count?.toLocaleString() }}</div>
+                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-2/5 text-center font-extrabold">
+                        <div class="text-2xl mb-2">โอนช่วยเหลือผ่าน <br /> บัญชี Promt pay สำเร็จ</div>
+                        <div class="text-4xl">{{ report.allTransfer?.toLocaleString() }}  </div>
+                        <div class="text-2xl mt-3">ครัวเรือน</div>
+                    </div>
+                    <div class="bg-[#082174] text-[#FFB800] py-8 rounded-xl w-full lg:w-3/5 text-center font-extrabold">
+                        <div class="text-2xl mb-2">จำนวนเงินช่วยเหลือ <br />โอนผ่านบัญชี Promt pay สำเร็จ</div>
+                        <div class="text-4xl">{{ report.allMoneyTransfer?.toLocaleString() }}  </div>
+                        <div class="text-2xl mt-3">บาท</div>
                     </div>
                 </div>
-                <div class="flex flex-wrap lg:flex-nowrap text-primary mt-5 items-center">
-                        <div class="w-full mb-4 lg:w-1/3 text-center">
-                            <div>ครัวเรือนที่ได้รับเงินแล้ว</div>
-                            <div><span class="text-3xl">{{ report.allTransfer?.toLocaleString() }}</span> ครัวเรือน</div>
-                        </div>
-                        <div class="w-full mb-4 lg:w-1/3 text-center">
-                            <div>จำนวนเงินที่โอนแล้ว</div>
-                            <div><span class="text-3xl">{{ report.allMoneyTransfer?.toLocaleString() }}</span> บาท</div>
-                        </div>
-                        <div class="w-full mb-4 lg:w-1/3 text-center">
-                            <div>จังหวัดที่ได้รับเงินแล้ว <br class="hidden lg:block" />/ จังหวัดที่กรอกคำร้อง</div>
-                            <div class="text-3xl">{{report.provinceRetrieveMoney?.toLocaleString() }}/{{ report.provinceRequest?.toLocaleString() }}</div>
+                <div class="flex flex-wrap lg:flex-nowrap justify-center gap-4 lg:gap-2 my-3">
+                    <div class="bg-secondary py-8 rounded-xl w-full lg:w-3/5 text-center text-2xl">
+                        <div class=" mb-2">จังหวัดที่มีผู้ยื่นคำร้อง <span class="font-bold underline">สูงสุด</span></div>
+                        <div class="text-4xl">{{ report.allRequest[0].p_name }}</div>
+                        <div class="text-lg">ยื่น: <span class="text-2xl">{{report.allRequest[0].top_count.toLocaleString()}}</span>  </div>
+                        <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{report.allRequest[0].total.toLocaleString()}}</span>)  </div>
 
-                        </div>
+                    </div>
+                    <div class="bg-[#FFE196] py-8 rounded-xl items-center flex flex-col justify-center w-full lg:w-2/5 text-center " v-for="d in report.allRequest.slice(1, 3)" :key="d">
+                        <div class="text-2xl ">{{d.p_name}}</div>
+                        <div class="text-lg">ยื่น: <span class="text-2xl">{{d.top_count.toLocaleString()}}</span>  </div>
+                        <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{ d.total.toLocaleString() ??  0 }}</span>)  </div>
+                    </div>
                 </div>
                 <div class="lg:grid flex flex-wrap lg:grid-cols-5 lg:gap-2 justify-center ">
-                        <div class="w-1/3 p-1 lg:p-0 lg:w-auto" v-for="d in report.allRequest.slice(1, 6)" :key="d">
-                            <div class="bg-[#FFE196] rounded-xl py-2 lg:p-4 text-center text-lg " >
+                        <div class="w-1/3 p-1 lg:p-0 lg:w-auto" v-for="d in report.allRequest.slice(3, 8)" :key="d">
+                            <div class="bg-white rounded-xl py-2 lg:p-4 text-center text-lg " >
                                 <div>{{d.p_name}}</div>
-                                <div>{{d.top_count.toLocaleString()}}</div>
+                                <div>{{d.top_count.toLocaleString()}} ({{d.total.toLocaleString()}})</div>
                             </div>
                         </div>
                 </div>
                 </section>
                 <section class="rounded-2xl bg-white/10 backdrop-blur-3xl px-2 lg:px-8 py-4">
                     <div class="grid grid-cols-3 lg:grid-cols-5 lg:gap-2 lg:items-center">
-                        <div class="mb-5 text-white break-words lg:py-0" v-for="a in report.allRequest.slice(6)" :key="a">
-                            {{ `${a.p_name} (${a.top_count.toLocaleString()})` }}
+                        <div class="mb-5 text-white break-words lg:py-0" v-for="a in report.allRequest.slice(8)" :key="a">
+                            {{ `${a.p_name} (${a.top_count.toLocaleString()}/ ${a.total.toLocaleString()})` }}
                         </div>
                 </div>
                 </section>
