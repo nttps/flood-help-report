@@ -51,13 +51,13 @@
 
                     </div>
                     <div class="bg-[#FFE196] py-8 rounded-xl items-center flex flex-col justify-center w-full lg:w-2/5 text-center " v-for="d in report.allRequest.slice(1, 3)" :key="d">
-                        <div class="text-2xl mb-2">{{d.p_name}}</div>
+                        <div class="text-2xl mb-2 ">{{d.p_name}}</div>
                         <div class="text-lg">ยื่น: <span class="text-2xl">{{d.top_count.toLocaleString()}}</span>  </div>
                         <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{ d.total.toLocaleString() ??  0 }} </span> ) </div>
                     </div>
                 </div>
-                <div class="lg:grid flex flex-wrap lg:grid-cols-4 lg:gap-2 justify-center ">
-                        <div class="w-1/3 p-1 lg:p-0 lg:w-auto" v-for="d in report.allRequest.slice(3, 7)" :key="d">
+                <div class="grid grid-cols-2 lg:grid-cols-4 lg:gap-2 justify-center ">
+                        <div class="p-1 lg:p-0 lg:w-auto" v-for="d in report.allRequest.slice(3, 7)" :key="d">
                             <div class="bg-white rounded-xl py-2 lg:p-4 text-center text-lg" >
                                 <div class="mb-4 text-xl">{{d.p_name}}</div>
                                 <div>{{d.top_count.toLocaleString()}} <span class="font-bold">({{d.total.toLocaleString()}})</span></div>
