@@ -21,7 +21,6 @@ export default defineEventHandler(async (event) => {
   const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request where p_name is not null or p_name != '';`
   const countRequest = await sql.query(queryCountRequestString);
 
-
   const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request GROUP BY p_name ORDER BY top_count DESC;`
   const topRequest = await sql.query(queryTopRequestString);
 
