@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request GROUP BY p_name ORDER BY top_count DESC;`
   const topRequest = await sql.query(queryTopRequestString);
 
-  const queryAllRequestString = `SELECT COUNT(*) AS top_count, SUM(case when current_status = 'โอนเงินแล้ว'  then 1 ELSE 0 end) AS total , p_name from vw_sf_help_request GROUP BY p_name ORDER BY top_count DESC`
+  const queryAllRequestString = `SELECT COUNT(*) AS top_count, SUM(case when current_status = 'โอนเงินแล้ว'  then 1 ELSE 0 end) AS total , p_name from vw_sf_help_request where p_name is not null GROUP BY p_name ORDER BY top_count DESC`
   const allRequest = await sql.query(queryAllRequestString);
 
   const queryAllTransferString = `SELECT COUNT(*) AS total from sf_help_request WHERE current_status ='โอนเงินแล้ว';`
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
   return { 
     countRequest: countRequest.recordset[0]['total'],
     topRequest: topRequest.recordset[0],
-    allRequest: allRequest.recordset,
+    allRequest: allRequest.recordset.filter(a => a.p_name !== ''),
     allTransfer: allTransfer.recordset[0]['total'],
     provinceRequest: provinceRequest.recordset[0]['total'],
     provinceRetrieveMoney: provinceRetrieveMoney.recordset[0]['total'],
