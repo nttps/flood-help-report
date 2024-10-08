@@ -31,7 +31,7 @@
                     </div>
                     <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full lg:w-2/5 text-center ">
                         <UIcon name="disaster-5290058" size="50" class="mb-2" />
-                        <div class="text-2xl mb-2">โอนเงินช่วยเหลือผ่าน <br /> บัญชี Promt pay สำเร็จ</div>
+                        <div class="text-2xl mb-2">โอนเงินช่วยเหลือผ่าน <br /> บัญชี Promptpay สำเร็จ</div>
                         <div class="text-4xl font-bold">{{ report.allTransfer?.toLocaleString() }}  </div>
                         <div class="text-2xl mt-3">ครัวเรือน</div>
                     </div>
