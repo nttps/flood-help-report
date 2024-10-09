@@ -233,7 +233,7 @@
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ (sub.send_bank).toLocaleString() }} 
                                             </td>
-                                            <td class="border bg-white border-zinc-500">
+                                            <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.latest_payment_date ? format(sub.latest_payment_date, 'dd MMM yyyy') : '' }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
