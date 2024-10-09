@@ -154,7 +154,7 @@
                                 </td>
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
                                     {{ dataHead.reduce((total, region) => {
-                                    const subTotal = region.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.outstanding, 0);
+                                    const subTotal = region.sub.reduce((subTotal, item) => subTotal + item.outstanding, 0);
                                     return total + subTotal;
                                     }, 0).toLocaleString() }}
                                 </td>
