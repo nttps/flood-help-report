@@ -202,7 +202,7 @@
                                         {{ head.retreat.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((total, current) => total + current.outstanding, 0).toLocaleString() }}
+                                        {{ head.sub.reduce((total, current) => total + current.outstanding, 0).toLocaleString() }}
                                     </td>
                                 </tr>
 
