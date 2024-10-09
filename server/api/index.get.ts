@@ -35,12 +35,9 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       COUNT(ch.person_qty) AS person_qty,  -- จำนวน ก.ช.ภ.จ
       COUNT(DISTINCT cl.commit_id) AS send,  -- ส่งปกครอง
       SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
-      COUNT(cl.payment_status) AS send_bank,  -- ส่งออมสิน
       COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
       SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
-      SUM(CASE WHEN cl.payment_status = 'ปฏิเสธ' THEN 1 ELSE 0 END) AS unsuccessful_payments,  -- โอนไม่สำเร็จ
-      COUNT(DISTINCT CASE WHEN ch.export_bank_trn_date IS NOT NULL THEN CONCAT(ch.export_bank_trn_date, cl.commit_id) END) AS count_payment_date,
-      SUM(CASE WHEN cl.payment_status != 'สำเร็จ' THEN 1 ELSE 0 END) AS count_back_to_province,  -- นับจำนวนจังหวัดที่ยังรอดำเนินการ
+      COUNT(DISTINCT CASE WHEN ch.export_bank_trn_date IS NOT NULL THEN ch.export_bank_trn_date END) AS count_payment_date,
       isnull((SELECT count(*) FROM sf_commit_line cc 
           WHERE cc.step_id = 'จังหวัด' 
           AND cc.commit_type = 'ตีกลับ' 
@@ -55,8 +52,10 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
     )
 
     SELECT *,
-    0 AS retreat,
-        count_back_to_province - outstanding AS send_from_province  -- จังหวัดส่งคืนผลตรวจสอบ (calculated as count_back_to_province - outstanding)
+      person_qty - failed_linkage AS send_bank,  -- ส่งออมสิน
+      person_qty - failed_linkage - successful_payments AS unsuccessful_payments,
+      failed_linkage + (person_qty - failed_linkage - successful_payments) as count_back_to_province,
+      0 AS retreat
     FROM counts order by p_name;
     `); 
 
@@ -70,11 +69,11 @@ const getSub = async (sql: typeof import('mssql'), p_no: number, startDate: any,
   
   let where = '';
   if(startDate) {
-    where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}'`
+    where += ` AND CAST(commit_date AS DATE) >= '${startDate}'`
   }
 
   if(endDate) {
-    where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}'`
+    where += ` AND CAST(commit_date AS DATE) <= '${endDate}'`
   }
 
   const result = await sql.query(`
@@ -86,32 +85,36 @@ const getSub = async (sql: typeof import('mssql'), p_no: number, startDate: any,
         ch.commit_no, -- จังหวัด
         ch.commit_date, -- จังหวัด
         ch.commit_id,
+        ch.status_confirm,
         COUNT(ch.person_qty) AS person_qty, -- จำนวน ก.ช.ภ.จ
         COUNT(DISTINCT cl.commit_id) AS send,  -- ส่งปกครอง
         SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage, --ไม่ผ่าน Linkage
-        COUNT(cl.payment_status) AS send_bank, --- ส่งออมสิน
         MAX(ch.export_bank_trn_date) AS latest_payment_date, -- วันที่โอนเงินล่าสุด
-        DENSE_RANK() OVER (ORDER BY MAX(ch.export_bank_trn_date) ASC) AS payment_sequence,
         COUNT(DISTINCT CASE WHEN cl.payment_date IS NOT NULL THEN cl.payment_date END) AS count_payment_date,
         COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
         SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  --โอนสำเร็จ
-        SUM(CASE WHEN cl.payment_status = 'ปฏิเสธ' THEN 1 ELSE 0 END) AS unsuccessful_payments,  -- โอนไม่สำเร็จ
-        SUM(CASE WHEN cl.payment_status != 'สำเร็จ' THEN 1 ELSE 0 END) AS count_back_to_province,  -- นับจำนวนจังหวัดที่ยังรอดำเนินการ
-        isnull((SELECT count(*) FROM sf_commit_line cc 
-          WHERE cc.step_id = 'จังหวัด' 
-          AND cc.commit_type = 'ตีกลับ' 
-          AND cc.step_status = 'รอดำเนินการ' and cc.origin_commit_id = ch.commit_id),0) AS outstanding  -- คงค้าง
+        isnull((SELECT person_qty FROM sf_commit_head ccl
+          WHERE ccl.commit_no = CONCAT('99',ch.commit_no) ),0) AS send_from_province
     FROM sf_commit_head ch
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id
     LEFT JOIN sf_help_request rq ON rq.req_id = cl.req_id
-    WHERE ch.step_id = 'ปภ.' AND cl.is_active = 1 AND rq.p_no = '${p_no}'
-    ${where}
-    GROUP BY rq.p_no, rq.p_name,  ch.commit_date, ch.commit_no, ch.commit_id
-    )
-    SELECT *,
+    WHERE ch.step_id = 'ปภ.' AND cl.is_active = 1
+    GROUP BY rq.p_no, rq.p_name, ch.commit_date, ch.commit_no, ch.commit_id, ch.status_confirm
+  ),
+  RankedSequence AS (
+      SELECT *,
+        person_qty - failed_linkage AS send_bank,  -- ส่งออมสิน
+        person_qty - failed_linkage - successful_payments AS unsuccessful_payments,
+        failed_linkage + (person_qty - failed_linkage - successful_payments) as count_back_to_province,
+            DENSE_RANK() OVER (ORDER BY latest_payment_date ASC) AS payment_sequence -- Apply DENSE_RANK() in this second step
+      FROM sub_counts
+  )
+  SELECT *,
     0 AS retreat,
-          count_back_to_province - isnull(outstanding,0) AS send_from_province  -- จังหวัดส่งคืนผลตรวจสอบ (calculated as count_back_to_province - outstanding)
-    FROM sub_counts;
+          count_back_to_province - isnull(send_from_province,0) AS outstanding 
+    FROM RankedSequence 
+    WHERE p_no = '${p_no}' ${where}
+    order by commit_date asc;
     `); 
   return result.recordset;
 }

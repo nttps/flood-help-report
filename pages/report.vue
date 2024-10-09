@@ -25,7 +25,7 @@
                                 <th class="border border-zinc-700">
 
                                 </th>
-                                <th class="border border-zinc-700">
+                                <th class=" border-zinc-700">
                                     จังหวัด
                                 </th>
                                 <th class="border border-b-0 border-zinc-700">
@@ -47,7 +47,7 @@
                                     วันที่โอนเงิน
                                 </th>
                                 <th class="border border-zinc-700">
-                                    ครั้ง <br />ที่
+                                    ครั้งที่
                                 </th>
                                 <th class="border border-zinc-700">
                                     โอนสำเร็จ
@@ -71,45 +71,92 @@
                         </thead>
                         <tbody>
                             <tr class="bg-zinc-200/70 font-semibold">
-                                <td class="border border-b-0 border-t-0 border-zinc-500">
+                                <td class="border-r border-0 border-zinc-500 text-center" rowspan="2">
                                     จังหวัด :
                                 </td>
-                                <td class="border border-b-0 border-t-0 border-zinc-500">
+                                <td class="border-r border-zinc-500">
 
                                 </td>
-                                <td class="border border-b-0 border-zinc-500"></td>
-                                <td class="border border-b-0 border-zinc-500">
+                                <td class="border-r border-zinc-500"></td>
+                                <td class="border-r border-zinc-500">
 
                                 </td>
-                                <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
+                                <td class="border-r border-t-0 border-zinc-500 text-right">
                                    Sum:
                                 </td>
-                                <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
+                                <td class="border-r border-t-0 border-zinc-500 text-right">
                                     Sum:
                                 </td>
-                                <td class="border border-b-0 border-t-0 border-zinc-500 text-right">
+                                <td class="border-r border-t-0 border-zinc-500 text-right">
                                     Sum:
                                 </td>
-                                <td class="border border-b-0 border-zinc-500 text-right" colspan="2">
+                                <td class="border-r border-zinc-500 text-right" colspan="2">
                                     Count (Unique):
                                 </td>
-                                <td class="border border-b-0 border-zinc-500 text-right"> 
+                                <td class="border-r border-zinc-500 text-right"> 
+                                    Sum:
+                                </td>
+                                <td class="border-r border-zinc-500 text-right">
+                                    Sum:
+                                </td>
+                                <td class="border-r border-zinc-500 text-right">
+                                    Sum:
+                                </td>
+                                <td class="border-r border-zinc-500 text-right">
+                                    Sum:
+                                </td>
+                                <td class="border-r border-zinc-500 text-right">
                                     Sum:
                                 </td>
                                 <td class="border border-b-0 border-zinc-500 text-right">
                                     Sum:
                                 </td>
-                                <td class="border border-b-0 border-zinc-500 text-right">
-                                    Sum:
+                            </tr>
+                            <tr class="bg-zinc-200/70 font-semibold">
+                              
+                                <td class="border-r border-zinc-500">
+
                                 </td>
-                                <td class="border border-b-0 border-zinc-500 text-right">
-                                    Sum:
+                                <td class="border-r border-zinc-500"></td>
+                                <td class="border-r border-zinc-500">
+
                                 </td>
-                                <td class="border border-b-0 border-zinc-500 text-right">
-                                    Sum:
+                                <td class="border-r border-b-2  border-zinc-500 text-right">
+                                    {{ dataHead.reduce((total, current) => total + current.person_qty, 0).toLocaleString() }}
                                 </td>
-                                <td class="border border-b-0 border-zinc-500 text-right">
-                                    Sum:
+                                <td class="border-r border-b-2  border-zinc-500 text-right">
+                                    {{ dataHead.reduce((total, current) => total + current.failed_linkage, 0).toLocaleString() }}
+                                </td>
+                                <td class="border-r border-b-2  border-zinc-500 text-right">
+                                    {{ dataHead.reduce((total, current) => total + current.send_bank, 0).toLocaleString() }}
+                                </td>
+                                <td class="border-r border-b-2 border-zinc-500 text-right" colspan="2">
+                                    {{ dataHead.reduce((total, current) => total + current.count_payment_date, 0).toLocaleString() }}
+                                </td>
+                                <td class="border-r border-b-2 border-zinc-500 text-right"> 
+                                    {{ dataHead.reduce((total, current) => total + current.successful_payments, 0).toLocaleString() }}
+                                </td>
+                                <td class="border-r border-b-2 border-zinc-500 text-right">
+                                    {{ dataHead.reduce((total, current) => total + current.unsuccessful_payments, 0).toLocaleString() }}
+                                </td>
+                                <td class="border-r border-b-2 border-zinc-500 text-right">
+                                    {{ dataHead.reduce((total, current) => total + current.count_back_to_province, 0).toLocaleString() }}
+                                </td>
+                                <td class="border-r border-b-2 border-zinc-500 text-right">
+                                 {{ dataHead.reduce((total, region) => {
+                                    const subTotal = region.sub.reduce((subTotal, item) => subTotal + item.send_from_province, 0);
+                                    return total + subTotal;
+                                    }, 0).toLocaleString() }}
+                                </td>
+                                
+                                <td class="border-r border-b-2 border-zinc-500 text-right">
+                                    0
+                                </td>
+                                <td class="border-r border-b-2 border-zinc-500 text-right">
+                                    {{ dataHead.reduce((total, region) => {
+                                    const subTotal = region.sub.reduce((subTotal, item) => subTotal + item.outstanding, 0);
+                                    return total + subTotal;
+                                    }, 0).toLocaleString() }}
                                 </td>
                             </tr>
                             <template v-for="(head, index) in dataHead" :key="head.p_no" >
@@ -132,7 +179,7 @@
                                         {{ head.failed_linkage.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ (head.person_qty - head.failed_linkage).toLocaleString() }}  
+                                        {{ (head.send_bank).toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500"></td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
@@ -142,19 +189,20 @@
                                         {{ head.successful_payments.toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ ((head.person_qty - head.failed_linkage) - head.successful_payments).toLocaleString() }}
+                                        {{ head.unsuccessful_payments.toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right" >
-                                        {{ (head.failed_linkage + (head.person_qty - head.failed_linkage - head.successful_payments)).toLocaleString() }}
+                                        {{ head.count_back_to_province.toLocaleString() }}
+                                        
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.send_from_province.toLocaleString() }}
+                                        {{ head.sub.reduce((total, current) => total + current.send_from_province, 0).toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
                                         {{ head.retreat.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.outstanding.toLocaleString() }}
+                                        {{ head.sub.reduce((total, current) => total + current.outstanding, 0).toLocaleString() }}
                                     </td>
                                 </tr>
 
@@ -180,7 +228,7 @@
                                                 {{ sub.failed_linkage.toLocaleString() }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{  (sub.person_qty - sub.failed_linkage).toLocaleString() }}
+                                                {{ (sub.send_bank).toLocaleString() }} 
                                             </td>
                                             <td class="border bg-white border-zinc-500">
                                                 {{ sub.latest_payment_date ? format(sub.latest_payment_date, 'dd MMM yyyy') : '' }}
@@ -192,15 +240,13 @@
                                                 {{ sub.successful_payments.toLocaleString() }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{ ((sub.person_qty - sub.failed_linkage) - sub.successful_payments).toLocaleString() }}
+                                                {{ sub.unsuccessful_payments.toLocaleString() }} 
                                             </td>
-                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600':  (sub.failed_linkage + (sub.person_qty - sub.failed_linkage - sub.successful_payments)) > 0}">
-                     
-                                                {{ (sub.failed_linkage + (sub.person_qty - sub.failed_linkage - sub.successful_payments)).toLocaleString() }}
+                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600':  sub.status_confirm == 'ยืนยันแล้ว' && sub.count_back_to_province > 0}">
+                                                {{ sub.status_confirm == 'ยืนยันแล้ว' ? sub.count_back_to_province.toLocaleString(): 0 }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right " :class="{ 'text-red-600': sub.send_from_province > 0}">
-                                                {{ sub.outstanding == 0 ? sub.send_from_province.toLocaleString() : 0 }}
-                                                
+                                                {{ sub.send_from_province.toLocaleString() }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.retreat.toLocaleString() }}
