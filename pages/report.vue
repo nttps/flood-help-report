@@ -144,7 +144,7 @@
                                 </td>
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
                                  {{ dataHead.reduce((total, region) => {
-                                    const subTotal = region.sub.reduce((subTotal, item) => subTotal + item.send_from_province, 0);
+                                    const subTotal = region.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.send_from_province, 0);
                                     return total + subTotal;
                                     }, 0).toLocaleString() }}
                                 </td>
@@ -154,7 +154,7 @@
                                 </td>
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
                                     {{ dataHead.reduce((total, region) => {
-                                    const subTotal = region.sub.reduce((subTotal, item) => subTotal + item.outstanding, 0);
+                                    const subTotal = region.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.outstanding, 0);
                                     return total + subTotal;
                                     }, 0).toLocaleString() }}
                                 </td>
@@ -192,7 +192,7 @@
                                         {{ head.unsuccessful_payments.toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right" >
-                                        {{ head.sub.reduce((total, current) => total + current.count_back_to_province, 0).toLocaleString() }}
+                                        {{ head.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((total, current) => total + current.count_back_to_province, 0).toLocaleString() }}
                                         
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
@@ -202,7 +202,7 @@
                                         {{ head.retreat.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.sub.reduce((total, current) => total + current.outstanding, 0).toLocaleString() }}
+                                        {{ head.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((total, current) => total + current.outstanding, 0).toLocaleString() }}
                                     </td>
                                 </tr>
 
@@ -242,8 +242,8 @@
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.unsuccessful_payments.toLocaleString() }} 
                                             </td>
-                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600': sub.count_back_to_province > 0}">
-                                                {{ sub.count_back_to_province.toLocaleString() }}
+                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600': sub.status_confirm == 'ยืนยันแล้ว' && sub.count_back_to_province > 0}">
+                                                {{ sub.status_confirm == 'ยืนยันแล้ว' ? sub.count_back_to_province.toLocaleString() : 0 }}
 
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right " :class="{ 'text-red-600': sub.send_from_province > 0}">
@@ -252,8 +252,8 @@
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.retreat.toLocaleString() }}
                                             </td>
-                                            <td class="border border-zinc-500 text-right" :class="{ 'bg-red-400': sub.outstanding > 0, 'bg-[#90db92]': sub.outstanding == 0}">
-                                                {{ sub.outstanding.toLocaleString() }}
+                                            <td class="border border-zinc-500 text-right" :class="{ 'bg-red-400': sub.status_confirm == 'ยืนยันแล้ว' && sub.outstanding > 0, 'bg-[#90db92]': sub.status_confirm == 'ยืนยันแล้ว' &&  sub.outstanding == 0}">
+                                                {{ sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : 0 }}
                                             </td>
                                         </tr>
                                     </template>
