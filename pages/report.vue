@@ -140,7 +140,10 @@
                                     {{ dataHead.reduce((total, current) => total + current.unsuccessful_payments, 0).toLocaleString() }}
                                 </td>
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
-                                    {{ dataHead.reduce((total, current) => total + current.count_back_to_province, 0).toLocaleString() }}
+                                    {{ dataHead.reduce((total, region) => {
+                                    const subTotal = region.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.count_back_to_province, 0);
+                                    return total + subTotal;
+                                    }, 0).toLocaleString() }}
                                 </td>
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
                                  {{ dataHead.reduce((total, region) => {
