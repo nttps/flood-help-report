@@ -242,8 +242,8 @@
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.unsuccessful_payments.toLocaleString() }} 
                                             </td>
-                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600':  sub.status_confirm == 'ยืนยันแล้ว' && sub.count_back_to_province > 0}">
-                                                {{ sub.status_confirm == 'ยืนยันแล้ว' ? sub.count_back_to_province.toLocaleString(): 0 }}
+                                            <td class="border bg-white border-zinc-500 text-right" :class="{ 'text-red-600': sub.count_back_to_province > 0}">
+                                                {{ sub.count_back_to_province.toLocaleString() }}
 
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right " :class="{ 'text-red-600': sub.send_from_province > 0}">
