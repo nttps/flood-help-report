@@ -144,7 +144,7 @@
                                 </td>
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
                                  {{ dataHead.reduce((total, region) => {
-                                    const subTotal = region.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.send_from_province, 0);
+                                    const subTotal = region.sub.reduce((subTotal, item) => subTotal + item.send_from_province, 0);
                                     return total + subTotal;
                                     }, 0).toLocaleString() }}
                                 </td>
@@ -192,7 +192,7 @@
                                         {{ head.unsuccessful_payments.toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right" >
-                                        {{ head.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((total, current) => total + current.count_back_to_province, 0).toLocaleString() }}
+                                        {{ head.sub.reduce((total, current) => total + current.count_back_to_province, 0).toLocaleString() }}
                                         
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
