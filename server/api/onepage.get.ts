@@ -18,7 +18,10 @@ export default defineEventHandler(async (event) => {
   await sql.connect(config);
 
 
-  const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request where p_name != '' and current_status != 'ปฏิเสธคำขอ';`
+  const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request WHERE 
+  t_step_status != 'ปฏิเสธคำขอ' AND
+  (current_status != 'ปฏิเสธคำขอ' OR current_status != 'โอนไม่สำเร็จ') AND
+  (p_name is not null or p_name != '');`
   const countRequest = await sql.query(queryCountRequestString);
 
   const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request where current_status != 'ปฏิเสธคำขอ' GROUP BY p_name ORDER BY top_count DESC;`
@@ -30,7 +33,8 @@ export default defineEventHandler(async (event) => {
     p_name 
   from vw_sf_help_request 
   WHERE 
-    current_status != 'ปฏิเสธคำขอ' 
+    t_step_status != 'ปฏิเสธคำขอ' AND
+    (current_status != 'ปฏิเสธคำขอ' OR current_status != 'โอนไม่สำเร็จ')
     AND (p_name is not null or p_name != '')  
   GROUP BY p_name 
   ORDER BY top_count DESC`
