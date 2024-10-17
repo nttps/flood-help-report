@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
 
   const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request WHERE 
-  (current_status != 'ปฏิเสธคำขอ') AND
+  current_status != 'ปฏิเสธคำขอ' AND
   (p_name is not null or p_name != '');`
   const countRequest = await sql.query(queryCountRequestString);
 
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     p_name 
   from vw_sf_help_request 
   WHERE 
-    (current_status != 'ปฏิเสธคำขอ')
+    current_status != 'ปฏิเสธคำขอ'
     AND (p_name is not null or p_name != '')  
   GROUP BY p_name 
   ORDER BY top_count DESC`
