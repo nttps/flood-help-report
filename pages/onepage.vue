@@ -60,7 +60,7 @@
                         <div class="p-1 lg:p-0 lg:w-auto" v-for="d in report.allRequest.slice(3, 7)" :key="d">
                             <div class="bg-white rounded-xl py-2 lg:p-4 text-center text-lg" >
                                 <div class="mb-4 text-xl">{{d.p_name}}</div>
-                                <div>{{d.top_count.toLocaleString()}} <span class="font-bold">({{d.total.toLocaleString()}})</span></div>
+                                <div>{{d.top_count.toLocaleString()}} <span class="font-bold">(<span :class="{ 'text-green-300': d.total > 0}">{{d.total.toLocaleString()}}</span>)</span></div>
                             </div>
                         </div>
                 </div>
@@ -68,7 +68,7 @@
                 <section class="rounded-2xl bg-white/10 backdrop-blur-3xl px-2 lg:px-8 py-4">
                     <div class="grid grid-cols-3 lg:grid-cols-5 lg:gap-2 lg:items-center">
                         <div class="mb-5 text-white break-words lg:py-0" v-for="a in report.allRequest.slice(7)" :key="a">
-                            {{ `${a.p_name} (${a.top_count.toLocaleString()}/ ${a.total.toLocaleString()})` }}
+                            {{ a.p_name }}({{ a.top_count.toLocaleString() }}/<span :class="{ 'text-green-300': a.total > 0}">{{ a.total.toLocaleString() }}</span>)
                         </div>
                 </div>
                 </section>
@@ -118,10 +118,7 @@
     import { jsPDF } from 'jspdf';
     import {pdfFonts} from '~/assets/fonts/vfs_fonts.js'
 
-    const { data: report, status } = await useFetch('/api/onepage', {
-        cacheKey: 'ddpm-onepage',
-        cacheTime: 1000 * 60 * 5,
-    })
+    const { data: report, status } = await useFetch('/api/onepage?nocache='+ new Date().toISOString())
     const pending = computed(() => status.value === 'success')
 
     const htmlContent = ref(null)

@@ -18,16 +18,25 @@ export default defineEventHandler(async (event) => {
   await sql.connect(config);
 
 
-  const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request where p_name != '';`
+  const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request where p_name != '' and current_status != 'ปฏิเสธคำขอ';`
   const countRequest = await sql.query(queryCountRequestString);
 
-  const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request GROUP BY p_name ORDER BY top_count DESC;`
+  const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request where current_status != 'ปฏิเสธคำขอ' GROUP BY p_name ORDER BY top_count DESC;`
   const topRequest = await sql.query(queryTopRequestString);
 
-  const queryAllRequestString = `SELECT COUNT(*) AS top_count, SUM(case when current_status = 'โอนเงินแล้ว'  then 1 ELSE 0 end) AS total , p_name from vw_sf_help_request where p_name is not null  or p_name != '' GROUP BY p_name ORDER BY top_count DESC`
+  const queryAllRequestString = `SELECT 
+    COUNT(*) AS top_count, 
+    SUM(case when current_status = 'โอนเงินแล้ว'  then 1 ELSE 0 end) AS total, 
+    p_name 
+  from vw_sf_help_request 
+  WHERE 
+    current_status != 'ปฏิเสธคำขอ' 
+    AND (p_name is not null or p_name != '')  
+  GROUP BY p_name 
+  ORDER BY top_count DESC`
   const allRequest = await sql.query(queryAllRequestString);
 
-  const queryAllTransferString = `SELECT COUNT(*) AS total from sf_help_request WHERE current_status ='โอนเงินแล้ว' ;`
+  const queryAllTransferString = `SELECT COUNT(*) AS total from sf_help_request WHERE current_status ='โอนเงินแล้ว' and current_status != 'ปฏิเสธคำขอ';`
   const allTransfer = await sql.query(queryAllTransferString);
 
   const queryProvinceRetrieveMoneyString = `SELECT COUNT(*) AS total
