@@ -93,8 +93,9 @@ const getSub = async (sql: typeof import('mssql'), p_no: number, startDate: any,
         COUNT(DISTINCT CASE WHEN cl.payment_date IS NOT NULL THEN cl.payment_date END) AS count_payment_date,
         COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
         SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  --โอนสำเร็จ
-        isnull((SELECT person_qty FROM sf_commit_head ccl
-          WHERE ccl.commit_no = CONCAT('99',ch.commit_no) ),0) AS send_from_province
+        isnull((SELECT COUNT(*) AS person_qty FROM sf_commit_head ccl
+        LEFT join  sf_commit_line cco on ccl.commit_id =  cco.commit_id
+        WHERE ccl.commit_no = CONCAT('99', ch.commit_no) and cco.origin_pcode = rq.p_no),0) AS send_from_province
     FROM sf_commit_head ch
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id
     LEFT JOIN sf_help_request rq ON rq.req_id = cl.req_id
@@ -106,7 +107,10 @@ const getSub = async (sql: typeof import('mssql'), p_no: number, startDate: any,
         person_qty - failed_linkage AS send_bank,  -- ส่งออมสิน
         person_qty - failed_linkage - successful_payments AS unsuccessful_payments,
         failed_linkage + (person_qty - failed_linkage - successful_payments) as count_back_to_province,
-            DENSE_RANK() OVER (ORDER BY latest_payment_date ASC) AS payment_sequence -- Apply DENSE_RANK() in this second step
+      CASE 
+           WHEN latest_payment_date IS NULL THEN 0  -- กำหนด "ครั้งที่ 0" หากค่าวันที่ว่าง
+           ELSE DENSE_RANK() OVER (ORDER BY latest_payment_date ASC)  -- จัดอันดับเฉพาะแถวที่มีค่าวันที่
+       END AS payment_sequence
       FROM sub_counts
   )
   SELECT *,
