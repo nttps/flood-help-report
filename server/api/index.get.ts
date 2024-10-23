@@ -34,7 +34,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       cl.origin_pname AS p_name,
       COUNT(ch.person_qty) AS person_qty,  -- จำนวน ก.ช.ภ.จ
       COUNT(DISTINCT cl.commit_id) AS send,  -- ส่งปกครอง
-      SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
+      SUM(DISTINCT ch.invalid_qty) AS failed_linkage,  -- ไม่ผ่าน Linkage
       COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
       SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
       COUNT(DISTINCT CASE WHEN ch.export_bank_trn_date IS NOT NULL THEN ch.export_bank_trn_date END) AS count_payment_date,
@@ -86,7 +86,7 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
         ch.status_confirm,
         COUNT(ch.person_qty) AS person_qty,  -- จำนวน ก.ช.ภ.จ
         COUNT(DISTINCT cl.commit_id) AS send,  -- ส่งปกครอง
-        SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
+        SUM(DISTINCT ch.invalid_qty) AS failed_linkage, -- ไม่ผ่าน Linkage
         MAX(ch.export_bank_trn_date) AS latest_payment_date,  -- วันที่โอนเงินล่าสุด
         COUNT(DISTINCT cl.payment_date) AS count_payment_date,  -- วันที่จ่ายเงิน (ไม่ซ้ำ)
         SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
