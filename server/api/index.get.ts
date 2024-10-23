@@ -24,7 +24,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
   }
 
   if(pcode != 'all') {
-    where += ` AND rq.p_no = '${pcode}' `
+    where += ` AND cl.origin_pcode = '${pcode}' `
   }
 
   const result = await sql.query(`
@@ -68,11 +68,11 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
   
   let where = '';
   if(startDate) {
-    where += ` AND CAST(commit_date AS DATE) >= '${startDate}'`
+    where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}'`
   }
 
   if(endDate) {
-    where += ` AND CAST(commit_date AS DATE) <= '${endDate}'`
+    where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}'`
   }
 
   const result = await sql.query(`
@@ -96,6 +96,7 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
     FROM sf_commit_head ch
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id AND cl.is_active = 1
     WHERE ch.step_id = 'ปภ.'
+    ${where}
     GROUP BY 
         cl.origin_pcode, 
         cl.origin_pname, 
