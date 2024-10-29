@@ -382,21 +382,23 @@
             });
                
         }else{
-            html2canvas(table.value, { scale: 2 }).then((canvas) => {
+            html2canvas(table.value).then((canvas) => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
+                
                 const imgWidth = canvas.width;
                 const imgHeight = canvas.height;
-                const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
-                
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth * ratio, imgHeight * ratio);
+                let ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+
+                const x = (pageWidth - (imgWidth * ratio)) / 2; // จัดกลางแนวนอน
+                const y = (pageHeight - (imgHeight * ratio)) / 2; // จัดกลางแนวตั้ง
+
+                pdf.addImage(imgData, 'PNG', x, y, pageWidth * ratio, pageHeight * ratio);
                 pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
             });
         }
-
-       
     }
 
     onMounted(() => {
