@@ -90,9 +90,9 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
         MAX(ch.export_bank_trn_date) AS latest_payment_date,  -- วันที่โอนเงินล่าสุด
         COUNT(DISTINCT cl.payment_date) AS count_payment_date,  -- วันที่จ่ายเงิน (ไม่ซ้ำ)
         SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
-        isnull((SELECT COUNT(*) AS person_qty FROM sf_commit_head ccl
+        isnull((SELECT DISTINCT count(ccl.person_qty) AS person_qty FROM sf_commit_head ccl
         LEFT join  sf_commit_line cco on ccl.commit_id =  cco.commit_id
-        WHERE ccl.commit_no = CONCAT('99', ch.commit_no) and cco.origin_pcode = cl.origin_pcode),0) AS send_from_province
+        WHERE ccl.commit_no = CONCAT('99', ch.commit_no) and cco.origin_pcode = cl.origin_pcode GROUP BY ccl.commit_id),0) AS send_from_province
     FROM sf_commit_head ch
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id AND cl.is_active = 1
     WHERE ch.step_id = 'ปภ.'
