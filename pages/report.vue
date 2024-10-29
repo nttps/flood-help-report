@@ -329,7 +329,7 @@
         const title = "สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม."; // Define your title
         const timestamp = format(new Date(), 'dd MMM yyyy') ; // Get the current timestamp
 
-        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdf = new jsPDF();
         if(isMobile.value) {
             html2canvas(mainTable.value).then((canvas) => {
                 const imgData = canvas.toDataURL('image/png');
