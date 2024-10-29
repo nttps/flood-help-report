@@ -329,72 +329,72 @@
         const title = "สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม."; // Define your title
         const timestamp = format(new Date(), 'dd MMM yyyy') ; // Get the current timestamp
 
+        const pdf = new jsPDF('p', 'mm', 'a4');
         if(isMobile.value) {
             html2canvas(mainTable.value).then((canvas) => {
                 const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
 
-                // Define margins
-                const marginTop = 15;    // Top margin
-                const marginBottom = 15; // Bottom margin
-                const marginLeft = 10;   // Left margin
-                const marginRight = 10;  // Right margin
-                const titleFontSize = 16; // Font size for title
-                const timestampFontSize = 10; // Font size for timestamp
+            // Define margins
+            const marginTop = 15;    // Top margin
+            const marginBottom = 15; // Bottom margin
+            const marginLeft = 10;   // Left margin
+            const marginRight = 10;  // Right margin
+            const titleFontSize = 16; // Font size for title
+            const timestampFontSize = 10; // Font size for timestamp
 
-                // Calculate page dimensions
-                const pageWidth = pdf.internal.pageSize.getWidth() - marginLeft - marginRight;
-                const pageHeight = pdf.internal.pageSize.getHeight() - marginTop - marginBottom;
+            // Calculate page dimensions
+            const pageWidth = pdf.internal.pageSize.getWidth() - marginLeft - marginRight;
+            const pageHeight = pdf.internal.pageSize.getHeight() - marginTop - marginBottom;
 
-                // Calculate image dimensions
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
-                const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+            // Calculate image dimensions
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            const ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
 
-                // Positioning for image
-                const x = marginLeft; // Left margin
-                const y = marginTop + 20; // Top margin plus space for title
+            // Positioning for image
+            const x = marginLeft; // Left margin
+            const y = marginTop + 20; // Top margin plus space for title
 
-                // Set the font to Sarabun
-                pdf.addFileToVFS("Sarabun-Regular.ttf", pdfFonts['THSarabunNew Bold.ttf']);
-                pdf.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
-                pdf.setFont("Sarabun");
+            // Set the font to Sarabun
+            pdf.addFileToVFS("Sarabun-Regular.ttf", pdfFonts['THSarabunNew Bold.ttf']);
+            pdf.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
+            pdf.setFont("Sarabun");
 
 
-                 // Calculate the title's position to center it
-                const titleWidth = pdf.getStringUnitWidth(title) * titleFontSize / pdf.internal.scaleFactor; 
-                const titleX = (pdf.internal.pageSize.getWidth() - titleWidth) / 2; // Center title horizontally
-               
+              // Calculate the title's position to center it
+            const titleWidth = pdf.getStringUnitWidth(title) * titleFontSize / pdf.internal.scaleFactor; 
+            const titleX = (pdf.internal.pageSize.getWidth() - titleWidth) / 2; // Center title horizontally
 
-                // Add title
-                pdf.setFontSize(titleFontSize); // Set font size for title
-                pdf.text(title, titleX, marginTop + 10); // Position title
-                // Add timestamp
-                pdf.setFontSize(timestampFontSize); // Set font size for timestamp
-                  // Calculate the timestamp's position to align it to the right
-                const timestampWidth = pdf.getStringUnitWidth(`ข้อมูล ณ วันที่: ${timestamp}`) * timestampFontSize / pdf.internal.scaleFactor;
-                const timestampX = pageWidth - timestampWidth - marginLeft + 20; // Right-align timestamp
-                pdf.text(`ข้อมูล ณ วันที่: ${timestamp}`, timestampX, marginTop); // Position timestamp
+            // Add title
+            pdf.setFontSize(titleFontSize); // Set font size for title
+            pdf.text(title, titleX, marginTop + 10); // Position title
+            // Add timestamp
+            pdf.setFontSize(timestampFontSize); // Set font size for timestamp
+              // Calculate the timestamp's position to align it to the right
+            const timestampWidth = pdf.getStringUnitWidth(`ข้อมูล ณ วันที่: ${timestamp}`) * timestampFontSize / pdf.internal.scaleFactor;
+            const timestampX = pageWidth - timestampWidth - marginLeft + 20; // Right-align timestamp
+            pdf.text(`ข้อมูล ณ วันที่: ${timestamp}`, timestampX, marginTop); // Position timestamp
 
-                // Add image
-                pdf.addImage(imgData, 'PNG', x, y - 5, imgWidth * ratio, imgHeight * ratio);
-                pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
-            });
-               
+            // Add image
+            pdf.addImage(imgData, 'PNG', x, y - 5, imgWidth * ratio, imgHeight * ratio);
+            pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
+          });
         }else{
-            html2canvas(table.value).then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
-                let ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
-                
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth * ratio, imgHeight * ratio);
-                pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
-            });
+          html2canvas(table.value).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            let ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
+            const x = (pageWidth - (imgWidth * ratio)) / 2; // จัดกลางแนวนอน
+            const y = (pageHeight - (imgHeight * ratio)) / 2; // จัดกลางแนวตั้ง
+
+            pdf.addImage(imgData, 'PNG', x, y, imgWidth * ratio, imgHeight * ratio);
+            
+            pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
+          });
         }
     }
 
