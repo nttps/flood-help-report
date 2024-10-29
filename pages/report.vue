@@ -391,11 +391,8 @@
                 const imgWidth = canvas.width;
                 const imgHeight = canvas.height;
                 let ratio = Math.min(pageWidth / imgWidth, pageHeight / imgHeight);
-
-                const x = (pageWidth - (imgWidth * ratio)) / 2; // จัดกลางแนวนอน
-                const y = (pageHeight - (imgHeight * ratio)) / 2; // จัดกลางแนวตั้ง
-
-                pdf.addImage(imgData, 'PNG', x, y, pageWidth * ratio, pageHeight * ratio);
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth * ratio, imgHeight * ratio);
                 pdf.save('สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม..pdf');
             });
         }
