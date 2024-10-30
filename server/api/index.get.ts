@@ -41,7 +41,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       COUNT(ch.person_qty) AS person_qty,  -- จำนวน ก.ช.ภ.จ
       SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
       COUNT(*) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
-      SUM(DISTINCT ch.pass_qty) AS successful_payments,  -- โอนสำเร็จ
+      SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
       COUNT(DISTINCT CASE WHEN ch.export_bank_trn_date IS NOT NULL THEN ch.export_bank_trn_date END) AS count_payment_date
     FROM sf_commit_line cl
     LEFT JOIN sf_commit_head ch ON ch.commit_id = cl.commit_id
