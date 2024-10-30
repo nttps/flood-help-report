@@ -8,7 +8,9 @@ const config = {
   options: {
     encrypt: false, // ถ้าเชื่อมต่อแบบ SSL
     trustServerCertificate: true, // ถ้าไม่ใช้ SSL
-  }
+  },
+  connectionTimeout: 30000, // 30 seconds for connection timeout
+  requestTimeout: 60000, // 60 seconds for query request timeout
 };
 
 const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any) => {
@@ -33,10 +35,9 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       cl.origin_pcode AS p_no,
       cl.origin_pname AS p_name,
       COUNT(ch.person_qty) AS person_qty,  -- จำนวน ก.ช.ภ.จ
-      COUNT(DISTINCT cl.commit_id) AS send,  -- ส่งปกครอง
       SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
       COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
-      SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
+      SUM(DISTINCT ch.pass_qty) AS successful_payments,  -- โอนสำเร็จ
       COUNT(DISTINCT CASE WHEN ch.export_bank_trn_date IS NOT NULL THEN ch.export_bank_trn_date END) AS count_payment_date,
       isnull((SELECT count(*) FROM sf_commit_line cc 
           WHERE cc.step_id = 'จังหวัด' 
@@ -85,14 +86,12 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
         ch.commit_id,
         ch.status_confirm,
         COUNT(ch.person_qty) AS person_qty,  -- จำนวน ก.ช.ภ.จ
-        COUNT(DISTINCT cl.commit_id) AS send,  -- ส่งปกครอง
         SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
         MAX(ch.export_bank_trn_date) AS latest_payment_date,  -- วันที่โอนเงินล่าสุด
         COUNT(DISTINCT cl.payment_date) AS count_payment_date,  -- วันที่จ่ายเงิน (ไม่ซ้ำ)
         SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
-        isnull((SELECT DISTINCT count(ccl.person_qty) AS person_qty FROM sf_commit_head ccl
-        LEFT join  sf_commit_line cco on ccl.commit_id =  cco.commit_id
-        WHERE ccl.commit_no = CONCAT('99', ch.commit_no) and cco.origin_pcode = cl.origin_pcode GROUP BY ccl.commit_id),0) AS send_from_province
+        isnull((SELECT DISTINCT count(*) AS person_qty FROM sf_commit_line cco
+        WHERE cco.commit_id = CONCAT('99', ch.commit_no) and cco.origin_pcode = cl.origin_pcode GROUP BY cco.commit_id),0) AS send_from_province
     FROM sf_commit_head ch
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id AND cl.is_active = 1
     WHERE ch.step_id = 'ปภ.'
@@ -128,7 +127,6 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
 
 
 export default defineEventHandler(async (event) => {
-  try {
    
     const {startDate, endDate, pcode} = getQuery(event)
 
@@ -156,7 +154,4 @@ export default defineEventHandler(async (event) => {
       };
     });
     return result;
-  } catch (err) {
-    console.error(err);
-  }
 })

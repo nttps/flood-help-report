@@ -15,11 +15,9 @@
                     <div>{{ format(new Date(), 'dd MMM yyyy') }}</div>
                 </div>
             </div>
-           
             <div class="max-w-screen-2xl mx-auto mt-8 px-4 rounded-lg">
                 <div class="overflow-x-auto print:overflow-visible" >
                     <table class="w-full border border-black" ref="mainTable">
-                        
                         <thead class="text-center border border-black">
                             <tr class="bg-zinc-300/70 font-bold border-b-2 border-black">
                                 <th class="border border-zinc-700">
@@ -149,7 +147,7 @@
                                     }, 0).toLocaleString() }}
                                 </td>
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
-                                 {{ dataHead.reduce((total, region) => {
+                                {{ dataHead.reduce((total, region) => {
                                     const subTotal = region.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.send_from_province, 0);
                                     return total + subTotal;
                                     }, 0).toLocaleString() }}
