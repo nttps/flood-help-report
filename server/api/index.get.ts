@@ -13,7 +13,7 @@ const config = {
   requestTimeout: 60000, // 60 seconds for query request timeout
 };
 
-const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any) => {
+const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any, paymentDate: any) => {
   await sql.connect(config);
 
   let where = '';
@@ -23,6 +23,10 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
 
   if(endDate ) {
     where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}' `
+  }
+
+  if(paymentDate ) {
+    where += ` AND CAST(cl.payment_date AS DATE) = '${paymentDate}' `
   }
 
   if(pcode != 'all') {
@@ -36,13 +40,9 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       cl.origin_pname AS p_name,
       COUNT(ch.person_qty) AS person_qty,  -- จำนวน ก.ช.ภ.จ
       SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
-      COUNT(DISTINCT cl.commit_id) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
+      COUNT(*) AS count_total_commit,  -- จำนวนประชุมทั้งหมด / ครั้ง
       SUM(DISTINCT ch.pass_qty) AS successful_payments,  -- โอนสำเร็จ
-      COUNT(DISTINCT CASE WHEN ch.export_bank_trn_date IS NOT NULL THEN ch.export_bank_trn_date END) AS count_payment_date,
-      isnull((SELECT count(*) FROM sf_commit_line cc 
-          WHERE cc.step_id = 'จังหวัด' 
-          AND cc.commit_type = 'ตีกลับ' 
-          AND cc.step_status = 'รอดำเนินการ' AND cl.origin_pcode = cc.origin_pcode),0) AS outstanding 
+      COUNT(DISTINCT CASE WHEN ch.export_bank_trn_date IS NOT NULL THEN ch.export_bank_trn_date END) AS count_payment_date
     FROM sf_commit_line cl
     LEFT JOIN sf_commit_head ch ON ch.commit_id = cl.commit_id
       WHERE ch.step_id = 'ปภ.' 
@@ -63,7 +63,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
 }
 
 
-const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, endDate: any) => {
+const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, endDate: any, paymentDate: any) => {
   await sql.connect(config);
 
   
@@ -75,6 +75,11 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
   if(endDate) {
     where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}'`
   }
+
+  if(paymentDate ) {
+    where += ` AND CAST(cl.payment_date AS DATE) = '${paymentDate}' `
+  }
+
 
   const result = await sql.query(`
     WITH sub_counts AS (
@@ -89,7 +94,7 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
         SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
         MAX(ch.export_bank_trn_date) AS latest_payment_date,  -- วันที่โอนเงินล่าสุด
         COUNT(DISTINCT cl.payment_date) AS count_payment_date,  -- วันที่จ่ายเงิน (ไม่ซ้ำ)
-        SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
+        SUM(DISTINCT ch.pass_qty) AS successful_payments,  -- โอนสำเร็จ
         isnull((SELECT DISTINCT count(*) AS person_qty FROM sf_commit_line cco
         WHERE cco.commit_id = CONCAT('99', ch.commit_no) and cco.origin_pcode = cl.origin_pcode GROUP BY cco.commit_id),0) AS send_from_province
     FROM sf_commit_head ch
@@ -128,14 +133,14 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
 
 export default defineEventHandler(async (event) => {
    
-    const {startDate, endDate, pcode} = getQuery(event)
+    const {startDate, endDate, pcode, paymentDate} = getQuery(event)
 
     const results = []
-    const resultHead = await getHeader(sql, startDate, endDate, pcode);
+    const resultHead = await getHeader(sql, startDate, endDate, pcode, paymentDate);
 
     const pNoArray = resultHead.map(item => item.p_no);
 
-    const childData = await getSub(sql, pNoArray, startDate, endDate);
+    const childData = await getSub(sql, pNoArray, startDate, endDate, paymentDate);
 
     // Group child data by p_no
     const groupedChildren = childData.reduce((acc, child) => {

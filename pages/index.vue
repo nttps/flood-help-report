@@ -23,11 +23,19 @@
                     <UFormGroup label="จังหวัด" size="xl">
                         <USelectMenu searchable v-model="form.pcode" placeholder="เลือกจังหวัด" value-attribute="pcode" option-attribute="pname" :options="provinces"/>
                     </UFormGroup>
-                    <div class="text-center self-end">
-                        <UButton type="submit" label="ค้นหา" size="xl" />
-                    </div>
+                    <UFormGroup label="วันที่โอนเงิน" name="paymentDate" size="xl">
+                        <UPopover :popper="{ placement: 'bottom-start' }">
+                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="form.paymentDate ? format(form.paymentDate, 'd MMM yyy', { locale: th}): 'เลือกวันที่โอนเงิน'" size="xl" />
+                            <template #panel="{ close }">
+                                <DatePicker v-model="form.paymentDate" is-required @close="close" />
+                            </template>
+                        </UPopover>
+                    </UFormGroup>
+                    
                 </div>
-              
+              <div class="text-center self-end mt-8">
+                <UButton type="submit" label="ค้นหา" size="xl" />
+              </div>
             </UForm>
         </UContainer>
     </div>
@@ -41,14 +49,15 @@
 
 
     const form = reactive({
-        startDate: new Date(2024, 8, 26),
-        endDate: new Date(),
-        pcode: 'all'
+      startDate: new Date(2024, 8, 26),
+      endDate: new Date(),
+      pcode: 'all',
+      paymentDate: null
     })
 
     const schema = z.object({
-        startDate: z.date({ message: 'กรุณาเลือกวันที่เริ่มต้น'}),
-        endDate: z.date({ message:  'กรุณาเลือกวันที่เริ่มต้น' }),
+      startDate: z.date({ message: 'กรุณาเลือกวันที่เริ่มต้น'}),
+      endDate: z.date({ message: 'กรุณาเลือกวันที่เริ่มต้น' }),
 
     })
 
@@ -59,10 +68,11 @@
     type Schema = z.infer<typeof schema>;
     const submit = (event: FormSubmitEvent<Schema>) => {
 
-        const formattedStartDate = format(form.startDate, 'yyyy-MM-dd')
-        const formattedEndDate = format(form.endDate, 'yyyy-MM-dd')
+      const formattedStartDate = format(form.startDate, 'yyyy-MM-dd')
+      const formattedEndDate = format(form.endDate, 'yyyy-MM-dd')
+      const formattedPaymentDate = format(form.paymentDate, 'yyyy-MM-dd')
 
-        router.push(`/report?startDate=${formattedStartDate}&endDate=${formattedEndDate}${form.pcode ? `&pcode=${form.pcode}`: ''}`)
+      router.push(`/report?startDate=${formattedStartDate}&endDate=${formattedEndDate}${form.pcode ? `&pcode=${form.pcode}`: ''}${form.paymentDate ? `&paymentDate=${formattedPaymentDate}`: ''}`)
     }
 </script>
 

@@ -190,7 +190,7 @@
                                         {{ head.count_payment_date.toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.successful_payments.toLocaleString() }} 
+                                        {{ head.sub.reduce((total, current) => total + current.successful_payments, 0).toLocaleString() }} 
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
                                         {{ head.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((total, current) => total + current.unsuccessful_payments, 0).toLocaleString() }} 
@@ -403,7 +403,7 @@
     })
     
     const query = async () => {
-        const res = await $fetch(`/api/?startDate=${route.query?.startDate}&endDate=${route.query?.endDate}${route.query.pcode ? `&pcode=${route.query.pcode}`: ''}`)
+        const res = await $fetch(`/api/?startDate=${route.query?.startDate}&endDate=${route.query?.endDate}${route.query.pcode ? `&pcode=${route.query.pcode}`: ''}${route.query.paymentDate ? `&paymentDate=${route.query.paymentDate}`: ''}`)
         dataHead.value = res ?? []
         pending.value = true
     }
