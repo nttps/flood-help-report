@@ -94,7 +94,7 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
         SUM(CASE WHEN cl.linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage,  -- ไม่ผ่าน Linkage
         MAX(ch.export_bank_trn_date) AS latest_payment_date,  -- วันที่โอนเงินล่าสุด
         COUNT(DISTINCT cl.payment_date) AS count_payment_date,  -- วันที่จ่ายเงิน (ไม่ซ้ำ)
-        SUM(DISTINCT ch.pass_qty) AS successful_payments,  -- โอนสำเร็จ
+        SUM(CASE WHEN cl.payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments,  -- โอนสำเร็จ
         isnull((SELECT DISTINCT count(ccl.person_qty) AS person_qty FROM sf_commit_head ccl
         LEFT join  sf_commit_line cco on ccl.commit_id =  cco.commit_id
         WHERE ccl.commit_no = CONCAT('99', ch.commit_no) and cco.origin_pcode = cl.origin_pcode GROUP BY ccl.commit_id),0) AS send_from_province
