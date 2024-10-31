@@ -135,7 +135,7 @@ linkage_failed AS (
 send_from_province_counts AS (
     SELECT 
         cco.origin_pcode AS p_no,
-        COUNT(DISTINCT ccl.person_qty) AS send_from_province,
+        SUM(DISTINCT ccl.person_qty) AS send_from_province,
         ccl.commit_no
     FROM sf_commit_head ccl 
     LEFT JOIN sf_commit_line cco ON ccl.commit_id = cco.commit_id 
