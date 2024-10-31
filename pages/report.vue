@@ -403,7 +403,7 @@
     })
     
     const query = async () => {
-        const res = await $fetch(`/api/?startDate=${route.query?.startDate}&endDate=${route.query?.endDate}${route.query.pcode ? `&pcode=${route.query.pcode}`: ''}${route.query.paymentDate ? `&paymentDate=${route.query.paymentDate}`: ''}`)
+        const res = await $fetch(`/api/?startDate=${route.query?.startDate}&endDate=${route.query?.endDate}${route.query.pcode ? `&pcode=${route.query.pcode}`: ''}${route.query.paymentDateStart ? `&paymentDateStart=${route.query.paymentDateStart}`: ''}${route.query.paymentDateStart ? `&paymentDateEnd=${route.query.paymentDateEnd}`: ''}`)
         dataHead.value = res ?? []
         pending.value = true
     }
@@ -429,7 +429,6 @@
         // ล้างฟังก์ชันเมื่อ component ถูกถอดออก
         window.onbeforeprint = null;
         window.onafterprint = null;
-       
     });
 
     onUnmounted(() => {

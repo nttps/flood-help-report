@@ -7,7 +7,15 @@ const props = defineProps({
   modelValue: {
     type: [Date, Object] as PropType<DatePickerDate | DatePickerRangeObject | null>,
     default: null
-  }
+  },
+  maxDate: {
+    type: Date,
+    default: new Date()
+  },
+  minDate: {
+    type: Date,
+    default: new Date(2024, 4, 20)
+  },
 })
 
 const emit = defineEmits(['update:model-value', 'close'])
@@ -30,10 +38,22 @@ const attrs = {
   locale: 'th-TH',
   masks: { input: 'DD/MM/YYYY' },
 }
+
+const isRangeObject = computed(() => {
+  const value = date.value as DatePickerRangeObject
+  return value && value.start && value.end
+})
 </script>
 
 <template>
-  <VCalendarDatePicker v-model="date" :min-date="new Date(2024, 4, 20)" :max-date="new Date()" v-bind="{ ...attrs, ...$attrs }" @dayclick="
+  <VCalendarDatePicker
+    v-if="isRangeObject"
+    v-model.range="date"
+    :columns="2"
+    v-bind="{ ...attrs, ...$attrs }"
+    :min-date="minDate" :max-date="maxDate"
+  />
+  <VCalendarDatePicker v-else v-model="date" :min-date="minDate" :max-date="maxDate" v-bind="{ ...attrs, ...$attrs }" @dayclick="
             (_, event) => {
                 event.target.blur();
             }

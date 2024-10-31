@@ -13,7 +13,7 @@ const config = {
   requestTimeout: 60000, // 60 seconds for query request timeout
 };
 
-const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any, paymentDate: any) => {
+const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
   await sql.connect(config);
 
   let where = '';
@@ -25,8 +25,12 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
     where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}' `
   }
 
-  if(paymentDate ) {
-    where += ` AND CAST(cl.payment_date AS DATE) = '${paymentDate}' `
+  if(paymentDateStart ) {
+    where += ` AND CAST(ch.export_bank_trn_date AS DATE) >= '${paymentDateStart}' `
+  }
+
+  if(paymentDateEnd ) {
+    where += ` AND CAST(ch.export_bank_trn_date AS DATE) <= '${paymentDateEnd}' `
   }
 
   if(pcode != 'all') {
@@ -63,7 +67,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
 }
 
 
-const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, endDate: any, paymentDate: any) => {
+const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any) => {
   await sql.connect(config);
 
   
@@ -76,8 +80,12 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
     where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}'`
   }
 
-  if(paymentDate ) {
-    where += ` AND CAST(cl.payment_date AS DATE) = '${paymentDate}' `
+  if(paymentDateStart) {
+    where += ` AND CAST(ch.export_bank_trn_date AS DATE) >= '${paymentDateStart}' `
+  }
+
+  if(paymentDateEnd) {
+    where += ` AND CAST(ch.export_bank_trn_date AS DATE) <= '${paymentDateEnd}' `
   }
 
 
@@ -134,14 +142,14 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
 
 export default defineEventHandler(async (event) => {
    
-    const {startDate, endDate, pcode, paymentDate} = getQuery(event)
+    const {startDate, endDate, pcode, paymentDateStart, paymentDateEnd} = getQuery(event)
 
     const results = []
-    const resultHead = await getHeader(sql, startDate, endDate, pcode, paymentDate);
+    const resultHead = await getHeader(sql, startDate, endDate, pcode, paymentDateStart, paymentDateEnd);
 
     const pNoArray = resultHead.map(item => item.p_no);
 
-    const childData = await getSub(sql, pNoArray, startDate, endDate, paymentDate);
+    const childData = await getSub(sql, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd);
 
     // Group child data by p_no
     const groupedChildren = childData.reduce((acc, child) => {

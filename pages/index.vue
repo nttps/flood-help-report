@@ -25,9 +25,9 @@
                     </UFormGroup>
                     <UFormGroup label="วันที่โอนเงิน" name="paymentDate" size="xl">
                         <UPopover :popper="{ placement: 'bottom-start' }">
-                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="form.paymentDate ? format(form.paymentDate, 'd MMM yyy', { locale: th}): 'เลือกวันที่โอนเงิน'" size="xl" />
+                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="form.paymentDate.start ? format(form.paymentDate.start, 'd MMM yyy', { locale: th}) + ' - ' + format(form.paymentDate.end, 'd MMM yyy', { locale: th}): 'เลือกวันที่โอนเงิน'" size="xl" />
                             <template #panel="{ close }">
-                                <DatePicker v-model="form.paymentDate" is-required @close="close" />
+                                <DatePicker v-model="form.paymentDate" is-required @close="close" :min-date="new Date(2024, 8, 26)" :max-date="new Date(lastPaymentDate)"  />
                             </template>
                         </UPopover>
                     </UFormGroup>
@@ -48,11 +48,16 @@
     import type { FormSubmitEvent } from "#ui/types";
 
 
+    const { data: lastPaymentDate } = await useFetch('/api/get-last-payment')
+
     const form = reactive({
       startDate: new Date(2024, 8, 26),
       endDate: new Date(),
       pcode: 'all',
-      paymentDate: null
+      paymentDate: {
+        start: new Date(2024, 8, 26),
+        end: new Date(lastPaymentDate.value),
+      }
     })
 
     const schema = z.object({
@@ -63,6 +68,8 @@
 
     const { data: provinces, status } = await useFetch('/api/province')
 
+
+
     const router = useRouter()
 
     type Schema = z.infer<typeof schema>;
@@ -70,9 +77,11 @@
 
       const formattedStartDate = format(form.startDate, 'yyyy-MM-dd')
       const formattedEndDate = format(form.endDate, 'yyyy-MM-dd')
-      const formattedPaymentDate = format(form.paymentDate, 'yyyy-MM-dd')
+      const formattedPaymentDateStart = format(form.paymentDate.start, 'yyyy-MM-dd')
+      const formattedPaymentDateEnd = format(form.paymentDate.end, 'yyyy-MM-dd')
 
-      router.push(`/report?startDate=${formattedStartDate}&endDate=${formattedEndDate}${form.pcode ? `&pcode=${form.pcode}`: ''}${form.paymentDate ? `&paymentDate=${formattedPaymentDate}`: ''}`)
+
+      router.push(`/report?startDate=${formattedStartDate}&endDate=${formattedEndDate}${form.pcode ? `&pcode=${form.pcode}`: ''}${form.paymentDate.start ? `&paymentDateStart=${formattedPaymentDateStart}`: ''}${form.paymentDate.end ? `&paymentDateEnd=${formattedPaymentDateEnd}`: ''}`)
     }
 </script>
 
