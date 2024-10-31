@@ -41,8 +41,9 @@ const attrs = {
 
 const isRangeObject = computed(() => {
   const value = date.value as DatePickerRangeObject
-  return value && value.start && value.end
+  return value && typeof value === 'object' && 'start' in value && 'end' in value
 })
+
 </script>
 
 <template>
@@ -54,10 +55,10 @@ const isRangeObject = computed(() => {
     :min-date="minDate" :max-date="maxDate"
   />
   <VCalendarDatePicker v-else v-model="date" :min-date="minDate" :max-date="maxDate" v-bind="{ ...attrs, ...$attrs }" @dayclick="
-            (_, event) => {
-                event.target.blur();
-            }
-        "  />
+      (_, event) => {
+          event.target.blur();
+      }
+  "  />
 </template>
 
 <style>

@@ -403,7 +403,7 @@
     })
     
     const query = async () => {
-        const res = await $fetch(`/api/?startDate=${route.query?.startDate}&endDate=${route.query?.endDate}${route.query.pcode ? `&pcode=${route.query.pcode}`: ''}${route.query.paymentDateStart ? `&paymentDateStart=${route.query.paymentDateStart}`: ''}${route.query.paymentDateStart ? `&paymentDateEnd=${route.query.paymentDateEnd}`: ''}`)
+        const res = await $fetch(`/api/?${route.query.paymentDateStart ? '' : `startDate=${route.query?.startDate}&endDate=${route.query?.endDate}&`}${route.query.pcode ? `pcode=${route.query.pcode}`: ''}${route.query.paymentDateStart ? `&paymentDateStart=${route.query.paymentDateStart}`: ''}${route.query.paymentDateStart ? `&paymentDateEnd=${route.query.paymentDateEnd}`: ''}`)
         dataHead.value = res ?? []
         pending.value = true
     }

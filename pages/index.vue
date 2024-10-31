@@ -55,8 +55,8 @@
       endDate: new Date(),
       pcode: 'all',
       paymentDate: {
-        start: new Date(2024, 8, 26),
-        end: new Date(lastPaymentDate.value),
+        start: null,
+        end: null,
       }
     })
 
@@ -77,11 +77,11 @@
 
       const formattedStartDate = format(form.startDate, 'yyyy-MM-dd')
       const formattedEndDate = format(form.endDate, 'yyyy-MM-dd')
-      const formattedPaymentDateStart = format(form.paymentDate.start, 'yyyy-MM-dd')
-      const formattedPaymentDateEnd = format(form.paymentDate.end, 'yyyy-MM-dd')
+      const formattedPaymentDateStart = form.paymentDate.start ? format(form.paymentDate.start, 'yyyy-MM-dd') : ''
+      const formattedPaymentDateEnd = form.paymentDate.end ? format(form.paymentDate.end, 'yyyy-MM-dd') : ''
 
 
-      router.push(`/report?startDate=${formattedStartDate}&endDate=${formattedEndDate}${form.pcode ? `&pcode=${form.pcode}`: ''}${form.paymentDate.start ? `&paymentDateStart=${formattedPaymentDateStart}`: ''}${form.paymentDate.end ? `&paymentDateEnd=${formattedPaymentDateEnd}`: ''}`)
+      router.push(`/report?${form.paymentDate.start ? `` : `startDate=${formattedStartDate}&endDate=${formattedEndDate}&` }${form.pcode ? `pcode=${form.pcode}`: ''}${form.paymentDate.start ? `&paymentDateStart=${formattedPaymentDateStart}`: ''}${form.paymentDate.end ? `&paymentDateEnd=${formattedPaymentDateEnd}`: ''}`)
     }
 </script>
 
