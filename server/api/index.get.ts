@@ -96,6 +96,7 @@ WITH all_dates AS (
     SELECT DISTINCT 
         export_bank_trn_date
     FROM sf_commit_head
+    WHERE export_bank_trn_date IS NOT NULL
 ),
 ranked_dates AS (
     SELECT 
@@ -179,6 +180,7 @@ RankedSequence AS (
         (person_qty - failed_linkage - successful_payments) AS unsuccessful_payments,
         (failed_linkage + (person_qty - failed_linkage - successful_payments)) AS count_back_to_province,
         COALESCE(rd.payment_sequence, 0) AS payment_sequence
+        
     FROM sub_counts sc
     LEFT JOIN ranked_dates rd ON sc.latest_payment_date = rd.export_bank_trn_date
 )
