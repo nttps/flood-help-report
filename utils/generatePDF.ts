@@ -389,9 +389,9 @@ const headers = [
         { content: subItem.successful_payments.toLocaleString(), styles: { halign: 'right', textColor: [59, 130, 246] } }, // Green font for successful
         { content: subItem.unsuccessful_payments.toLocaleString(), styles: { halign: 'right', } }, // Red font for unsuccessful
         { content: subItem.count_back_to_province.toLocaleString(), styles: { halign: 'right', textColor: subItem.count_back_to_province > 0 ? [153, 0, 0] : 'black' } }, // Red font for unsuccessful
-        { content: subItem.send_from_province.toLocaleString(), styles: { halign: 'right', textColor: subItem.send_from_province > 0 ? [153, 0, 0] : 'black' } }, // Red font for unsuccessful
+        { content: subItem.send_from_province.toLocaleString(), styles: { halign: 'right', textColor:  subItem.send_from_province > 0 ? [153, 0, 0] : 'black' } }, // Red font for unsuccessful
         { content: "0", styles: { halign: 'right', } }, // Red font for unsuccessful
-        { content: subItem.status_confirm == 'ยืนยันแล้ว' ? subItem.outstanding.toLocaleString() : 0, styles: { halign: 'right',textColor : 'black', fillColor: subItem.outstanding > 0 ? [248, 113, 113] : [144,219,146] } }, // Red font for unsuccessful
+        { content: subItem.status_confirm == 'ยืนยันแล้ว' ? subItem.outstanding.toLocaleString() : 0, styles: { halign: 'right',textColor : 'black', fillColor: subItem.status_confirm == 'ยืนยันแล้ว' && subItem.outstanding > 0 ? [248, 113, 113] : [144,219,146] } }, // Red font for unsuccessful
       ]);
     });
   });
