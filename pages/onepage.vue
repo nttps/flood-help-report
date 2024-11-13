@@ -68,7 +68,7 @@
                 <section class="rounded-2xl bg-white/10 backdrop-blur-3xl px-2 lg:px-8 py-4">
                     <div class="grid grid-cols-3 lg:grid-cols-5 lg:gap-2 lg:items-center">
                         <div class="mb-5 text-white break-words lg:py-0" v-for="a in report.allRequest.slice(7)" :key="a">
-                            {{ a.p_name }}({{ a.top_count.toLocaleString() }}/<span :class="{ 'text-green-500': a.total > 0}">{{ a.total.toLocaleString() }}</span>)
+                            {{ a.p_name }}(<span :class="{ 'text-green-500': a.total == a.top_count}">{{ a.top_count.toLocaleString() }}</span>/<span :class="{ 'text-green-500': a.total > 0}">{{ a.total.toLocaleString() }}</span>)
                         </div>
                 </div>
                 </section>
