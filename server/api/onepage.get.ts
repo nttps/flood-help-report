@@ -17,13 +17,25 @@ export default defineEventHandler(async (event) => {
 
   await sql.connect(config);
 
+  const {phase} = getQuery(event);
+
+  let where = ``;
+  if(phase == '1') {
+    where += ` and ph  in ('1.0', '1.1') AND people_id not in ('3570500716650', '5550500508247', '3579900263278')`
+  }else {
+    where += ` and ph  in ('${phase}')`
+  }
+
 
   const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request WHERE 
-  t_step_status != 'ปฏิเสธคำขอ' AND
-  (p_name is not null or p_name != '');`
+  t_step_status != 'ปฏิเสธคำขอ' ${where} AND
+  (p_name is not null or p_name != '') ;`
+
+
+  console.log(queryCountRequestString)
   const countRequest = await sql.query(queryCountRequestString);
 
-  const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request where t_step_status != 'ปฏิเสธคำขอ' GROUP BY p_name ORDER BY top_count DESC;`
+  const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request where t_step_status != 'ปฏิเสธคำขอ' ${where} GROUP BY p_name ORDER BY top_count DESC;`
   const topRequest = await sql.query(queryTopRequestString);
 
   const queryAllRequestString = `SELECT 
@@ -34,18 +46,19 @@ export default defineEventHandler(async (event) => {
   WHERE 
     t_step_status != 'ปฏิเสธคำขอ'
     AND (p_name is not null or p_name != '')  
+    ${where}
   GROUP BY p_name 
   ORDER BY top_count DESC`
   const allRequest = await sql.query(queryAllRequestString);
 
-  const queryAllTransferString = `SELECT COUNT(*) AS total from sf_help_request WHERE current_status ='โอนเงินแล้ว' and t_step_status != 'ปฏิเสธคำขอ';`
+  const queryAllTransferString = `SELECT COUNT(*) AS total from sf_help_request WHERE current_status ='โอนเงินแล้ว' and t_step_status != 'ปฏิเสธคำขอ' ${where};`
   const allTransfer = await sql.query(queryAllTransferString);
 
   const queryProvinceRetrieveMoneyString = `SELECT COUNT(*) AS total
     FROM (
         SELECT COUNT(p_no) AS total
         FROM sf_help_request
-        WHERE current_status = 'โอนเงินแล้ว' 
+        WHERE current_status = 'โอนเงินแล้ว' ${where}
         GROUP BY p_no
     ) AS grouped_result`
 
@@ -62,7 +75,8 @@ export default defineEventHandler(async (event) => {
 
   const queryallMoneyTransfer = ` SELECT SUM(help_amt) AS total
         FROM vw_sf_help_request
-        WHERE current_status = 'โอนเงินแล้ว'`
+        WHERE current_status = 'โอนเงินแล้ว' ${where}`
+        
 
   const allMoneyTransfer = await sql.query(queryallMoneyTransfer);
 

@@ -38,7 +38,7 @@
                     <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full lg:w-3/5 text-center">
                         <UIcon name="disaster-10369894" size="50" class="mb-2" />
                         <div class="text-2xl mb-2">จำนวนเงินช่วยเหลือ <br />โอนผ่านบัญชี Promptpay สำเร็จ</div>
-                        <div class="text-4xl font-bold">{{ report.allMoneyTransfer?.toLocaleString() }}  </div>
+                        <div class="text-4xl font-bold">{{ (report.allTransfer * 9000 ).toLocaleString() }}  </div>
                         <div class="text-2xl mt-3">บาท</div>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
     import { jsPDF } from 'jspdf';
     import {pdfFonts} from '~/assets/fonts/vfs_fonts.js'
 
-    const { data: report, status } = await useFetch('/api/onepage?nocache='+ new Date().toISOString())
+    const { data: report, status } = await useFetch('/api/onepage?phase=1&nocache='+ new Date().toISOString())
     const pending = computed(() => status.value === 'success')
 
     const htmlContent = ref(null)
