@@ -12,7 +12,7 @@
                   <img src="~/assets/images/logo.png" class="h-[100px] lg:h-[120px] min-w-max" alt="">
               </div>
               <div class="lg:pt-6 lg:w-5/6">
-                  <h3 class="lg:mb-3 text-lg lg:text-2xl ">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 <br class="hidden lg:block" />  ตามมติคณะรัฐมนตรี 3 ธันวาคม 2567</h3>
+                  <h3 class="lg:mb-3 text-lg lg:text-xl ">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 (เพิ่มเติม) <br class="hidden lg:block" />  ตามมติคณะรัฐมนตรี 3 ธันวาคม 2567</h3>
                   <div class="text-right">
                       <div class="rounded-full bg-[#FFB800] text-[#051445] py-2 px-4 ml-auto inline-flex items-center justify-center" >
                           ณ วันที่ {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}
@@ -117,6 +117,10 @@
   import html2canvas from 'html2canvas';
   import { jsPDF } from 'jspdf';
   import {pdfFonts} from '~/assets/fonts/vfs_fonts.js'
+
+  useSeoMeta({
+    title: 'จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 (เพิ่มเติม) ตามมติคณะรัฐมนตรี 3 ธันวาคม 2567'
+  })
 
   const { data: report, status } = await useFetch('/api/onepage?phase=2.0&nocache='+ new Date().toISOString())
   const pending = computed(() => status.value === 'success')
