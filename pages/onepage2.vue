@@ -46,8 +46,8 @@
                   <div class="bg-secondary py-8 rounded-xl w-full lg:w-3/5 text-center text-2xl">
                       <div class=" mb-2">จังหวัดที่มีผู้ยื่นคำร้อง <span class="font-bold underline">สูงสุด</span></div>
                       <div class="text-4xl">{{ report?.allRequest[0] ? report?.allRequest[0].p_name: 'ยังไม่มีรายการคำร้อง'  }}</div>
-                      <div class="text-lg">ยื่น: <span class="text-2xl">{{report?.allRequest[0] ? report.allRequest[0].top_count.toLocaleString() : 'ยังไม่มีรายการคำร้อง'}}</span>  </div>
-                      <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{report?.allRequest[0] ? report.allRequest[0].total.toLocaleString() : 'ยังไม่มีรายการคำร้อง'}}</span> )  </div>
+                      <div class="text-lg">ยื่น: <span class="text-2xl">{{report?.allRequest[0] ? report.allRequest[0].top_count.toLocaleString() : '0'}}</span>  </div>
+                      <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{report?.allRequest[0] ? report.allRequest[0].total.toLocaleString() : '0'}}</span> )  </div>
 
                   </div>
                   <div class="bg-[#FFE196] py-4 lg:py-8 rounded-xl items-center flex flex-col justify-center w-full lg:w-2/5 text-center " v-for="d in report.allRequest.slice(1, 3)" :key="d">
