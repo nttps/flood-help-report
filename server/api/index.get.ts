@@ -13,7 +13,7 @@ const config = {
   requestTimeout: 300000 , // 60 seconds for query request timeout
 };
 
-const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
+const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any, phase: any) => {
   await sql.connect(config);
 
   let where = '';
@@ -53,6 +53,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       WHERE ch.step_id = 'ปภ.' 
       ${where}
       AND cl.is_active = 1
+      ${phase}
       GROUP BY cl.origin_pname, cl.origin_pcode
     )
 
@@ -68,7 +69,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
 }
 
 
-const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any) => {
+const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any, phase: any) => {
   await sql.connect(config);
 
   
@@ -97,6 +98,7 @@ WITH all_dates AS (
         export_bank_trn_date
     FROM sf_commit_head
     WHERE export_bank_trn_date IS NOT NULL
+    AND ph in ${phase}
 ),
 ranked_dates AS (
     SELECT 
@@ -114,6 +116,7 @@ pre_filtered_head AS (
         ch.person_qty
     FROM sf_commit_head  ch
     WHERE step_id = 'ปภ.' 
+    AND ph in ${phase}
     ${where}
 ),
 payment_counts AS (
@@ -123,6 +126,7 @@ payment_counts AS (
         SUM(CASE WHEN payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments
     FROM sf_commit_line
     WHERE is_active = 1
+    AND ph in ${phase}
     GROUP BY commit_id
 ),
 linkage_failed AS (
@@ -131,6 +135,7 @@ linkage_failed AS (
         SUM(CASE WHEN linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage
     FROM sf_commit_line
     WHERE is_active = 1
+    AND ph in ${phase}
     GROUP BY commit_id
 ),
 send_from_province_counts AS (
@@ -141,6 +146,7 @@ send_from_province_counts AS (
     FROM sf_commit_head ccl 
     LEFT JOIN sf_commit_line cco ON ccl.commit_id = cco.commit_id 
     WHERE ccl.commit_no LIKE '99%' 
+    AND ccl.ph in ${phase}
     GROUP BY cco.origin_pcode, ccl.commit_no
 ),
 sub_counts AS (
@@ -197,10 +203,21 @@ ORDER BY commit_date,commit_no ASC;
 
 export default defineEventHandler(async (event) => {
    
-    const {startDate, endDate, pcode, paymentDateStart, paymentDateEnd} = getQuery(event)
+    const {startDate, endDate, pcode, paymentDateStart, paymentDateEnd, phase } = getQuery(event)
 
+    let phaseHead = ''
+    let phaseSub = ''
+    if(phase == '1') {
+      phaseHead = ` and cl.ph in ('1.0', '1.1')`
+      phaseSub = ` ('1.0', '1.1')`
+    }else {
+      phaseHead = ` and cl.ph in ('2.0')`
+      phaseSub = ` ('2.0')`
+    }
+
+    
     const results = []
-  const resultHead = await getHeader(sql, startDate, endDate, pcode, paymentDateStart, paymentDateEnd);
+  const resultHead = await getHeader(sql, startDate, endDate, pcode, paymentDateStart, paymentDateEnd, phaseHead);
 
   const pNoArray = resultHead.map(item => item.p_no);
   
@@ -208,7 +225,7 @@ export default defineEventHandler(async (event) => {
     return resultHead;
   }
 
-    const childData = await getSub(sql, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd);
+    const childData = await getSub(sql, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd, phaseSub);
 
     // Group child data by p_no
     const groupedChildren = childData.reduce((acc, child) => {

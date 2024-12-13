@@ -291,11 +291,11 @@
   import {
       format
   } from 'date-fns'
-  import jsPDF from 'jspdf';
-  import html2canvas from 'html2canvas';
   import "@fontsource/sarabun"; // Import the Google Font
-  import {pdfFonts} from '~/assets/fonts/vfs_fonts.js'
 
+  useSeoMeta({
+    title: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม.'
+  })
   const route = useRoute()
   interface Sub {
       sub_id: number;
@@ -332,7 +332,7 @@
   })
   
   const query = async () => {
-      const res = await $fetch(`/api/?${route.query.paymentDateStart ? '' : `startDate=${route.query?.startDate}&endDate=${route.query?.endDate}&`}${route.query.pcode ? `pcode=${route.query.pcode}`: ''}${route.query.paymentDateStart ? `&paymentDateStart=${route.query.paymentDateStart}`: ''}${route.query.paymentDateStart ? `&paymentDateEnd=${route.query.paymentDateEnd}`: ''}`)
+      const res = await $fetch(`/api/?phase=${route.query.phase}&${route.query.paymentDateStart ? '' : `startDate=${route.query?.startDate}&endDate=${route.query?.endDate}&`}${route.query.pcode ? `pcode=${route.query.pcode}`: ''}${route.query.paymentDateStart ? `&paymentDateStart=${route.query.paymentDateStart}`: ''}${route.query.paymentDateStart ? `&paymentDateEnd=${route.query.paymentDateEnd}`: ''}`)
       dataHead.value = res ?? []
       pending.value = true
   }
