@@ -71,7 +71,7 @@
       startDate: new Date(2024, 8, 26),
       endDate: new Date(),
       pcode: 'all',
-      phase: null,
+      phase: 1,
       paymentDate: {
         start: null,
         end: null,
