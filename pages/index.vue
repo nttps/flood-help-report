@@ -7,7 +7,7 @@
                     
                     <UFormGroup label="มติคณะรัฐมนตรี" size="xl" name="phase" >
                         <USelect placeholder="เลือกมติคณะรัฐมนตรี" v-model="form.phase" :options="[{
-                            label: 'มติฯ 3 ต.ค.',
+                            label: 'มติฯ 8 ต.ค.',
                             value: '1'
                         },
                         {
