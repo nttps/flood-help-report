@@ -73,6 +73,12 @@
               </div>
               </section>
           </main>
+          <main v-else>
+            <div class="flex flex-col justify-center items-center bg-white/10 backdrop-blur-3xl h-[80vh]">
+                <UIcon name="line-md-loading-twotone-loop" size="80" />
+                <div class="text-4xl">กำลังประมวลผลข้อมูล</div>
+            </div>
+        </main>
           <!-- Show loading spinner while data is loading -->
           
           <footer>

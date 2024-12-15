@@ -21,7 +21,7 @@
                 </div>
             </header>
             
-            <main class="px-4 lg:px-8 mt-2 transition-all  duration-[2s]" v-if="pending" v-bind:class="!pending ? 'article-list-enter':''">
+            <main class="px-4 lg:px-8 mt-2 transition-all  duration-[2s] opacity-0 " v-if="pending"  v-bind:class="pending ? 'article-list-enter':''">
                 <section class="bg-primary rounded-2xl p-3">
                 <div class="flex flex-wrap lg:flex-nowrap gap-4 lg:gap-2">
                     <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full lg:w-2/5 text-center">
@@ -210,7 +210,7 @@
         margin: 0 auto; /* จัดกลางในแนวนอน */
     }
     .article-list-enter{
-  opacity: 0;
+  opacity: 1 !important;
 }
     
 </style>
