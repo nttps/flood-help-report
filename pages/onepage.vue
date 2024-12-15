@@ -20,7 +20,8 @@
                     </div>
                 </div>
             </header>
-            <main class="px-4 lg:px-8 mt-2" v-if="pending">
+            
+            <main class="px-4 lg:px-8 mt-2 transition-all  duration-[2s]" v-if="pending" v-bind:class="!pending ? 'article-list-enter':''">
                 <section class="bg-primary rounded-2xl p-3">
                 <div class="flex flex-wrap lg:flex-nowrap gap-4 lg:gap-2">
                     <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full lg:w-2/5 text-center">
@@ -72,6 +73,12 @@
                         </div>
                 </div>
                 </section>
+            </main>
+            <main v-else>
+                <div class="flex flex-col justify-center items-center bg-white/10 backdrop-blur-3xl h-[80vh]">
+                    <UIcon name="line-md-loading-twotone-loop" size="80" />
+                    <div class="text-4xl">กำลังประมวลผลข้อมูล</div>
+                </div>
             </main>
             <!-- Show loading spinner while data is loading -->
             
@@ -202,4 +209,8 @@
         width: 980px !important; /* ปรับให้เหมาะสมกับหน้าจอ PC */
         margin: 0 auto; /* จัดกลางในแนวนอน */
     }
+    .article-list-enter{
+  opacity: 0;
+}
+    
 </style>
