@@ -4,14 +4,16 @@ const config = {
   user: 'dalert',
   password: '@min#DSS',
   database: 'DPM_HELP67',
-  server: '122.154.29.20',
+  server: 'gis-db.disaster.go.th',
+  port: 9002,
   options: {
     encrypt: false, // ถ้าเชื่อมต่อแบบ SSL
     trustServerCertificate: true, // ถ้าไม่ใช้ SSL
   },
-  connectionTimeout: 30000, // 30 seconds for connection timeout
-  requestTimeout: 60000, // 60 seconds for query request timeout
+  connectionTimeout: 300000 , // 30 seconds for connection timeout
+  requestTimeout: 300000 , // 60 seconds for query request timeout
 };
+
 
 const getSub = async (sql: typeof import('mssql'), p_no: any, startDate: any, endDate: any) => {
   await sql.connect(config);
