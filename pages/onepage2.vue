@@ -22,20 +22,20 @@
           </header>
           <main class="px-4 lg:px-8 mt-2" v-if="pending">
               <section class="bg-primary rounded-2xl p-3">
-              <div class="flex flex-wrap lg:flex-nowrap gap-4 lg:gap-2">
-                  <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full lg:w-2/5 text-center">
+              <div class="flex flex-wrap sm:flex-nowrap gap-4 sm:gap-2">
+                  <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full sm:w-2/5 text-center">
                       <UIcon name="disaster-10" size="50" class="mb-2" />
                       <div class="text-2xl mb-2">ผู้ยื่นคำร้องทั้งหมด <br /> (รวมทุกจังหวัด)</div>
                       <div class="text-4xl font-bold">{{ report.countRequest.toLocaleString() }}  </div>
                       <div class="text-2xl mt-3">ครัวเรือน</div>
                   </div>
-                  <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full lg:w-2/5 text-center ">
+                  <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full sm:w-2/5 text-center ">
                       <UIcon name="disaster-5290058" size="50" class="mb-2" />
                       <div class="text-2xl mb-2">โอนเงินช่วยเหลือผ่าน <br /> บัญชี Promptpay สำเร็จ</div>
                       <div class="text-4xl font-bold">{{ report.allTransfer?.toLocaleString() }}  </div>
                       <div class="text-2xl mt-3">ครัวเรือน</div>
                   </div>
-                  <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full lg:w-3/5 text-center">
+                  <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full sm:w-3/5 text-center">
                       <UIcon name="disaster-10369894" size="50" class="mb-2" />
                       <div class="text-2xl mb-2">จำนวนเงินช่วยเหลือ <br />โอนผ่านบัญชี Promptpay สำเร็จ</div>
                       <div class="text-4xl font-bold">{{ report.allMoneyTransfer?.toLocaleString() || 0 }}  </div>
@@ -52,11 +52,11 @@
                   </div>
                  
               </div>
-              <div class="grid grid-cols-2 lg:grid-cols-3 lg:gap-2 justify-center ">
+              <div class="grid grid-cols-3 lg:grid-cols-5 gap-2 justify-center ">
                 <div class="bg-[#FFE196] py-4 lg:py-8 rounded-xl items-center flex flex-col justify-center text-center " v-for="d in report.allRequest.slice(1)" :key="d">
-                      <div class="text-2xl mb-2 ">{{d.p_name}}</div>
-                      <div class="text-lg">ยื่น: <span class="text-2xl">{{d.top_count.toLocaleString()}}</span>  </div>
-                      <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{ d.total.toLocaleString() ??  0 }} </span> ) </div>
+                      <div class="text-lg lg:text-xl mb-1 ">{{d.p_name}}</div>
+                      <div class="text-base lg:text-lg">ยื่น: <span class="text-xl">{{d.top_count.toLocaleString()}}</span>  </div>
+                      <div class="text-base lg:text-lg">( โอนสำเร็จ: <span class="text-xl">{{ d.total.toLocaleString() ??  0 }} </span> ) </div>
                   </div>
               </div>
               </section>
