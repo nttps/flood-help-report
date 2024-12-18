@@ -69,7 +69,7 @@
         </main>
           <!-- Show loading spinner while data is loading -->
           
-          <footer>
+          <footer class="mt-2">
               <div class="flex flex-wrap lg:flex-nowrap bg-primary px-5 lg:px-10 py-4 lg:space-x-8 justify-between items-center text-white rounded-t-3xl">
                   <div class="text-lg pt-4 pb-2">
                       <div class="mb-2 text-center lg:text-left">ศูนย์เทคโนโลยีสารสนเทศและการสื่อสาร กรมป้องกันและบรรเทาสาธารณภัย</div>
