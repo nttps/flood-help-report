@@ -50,26 +50,14 @@
                       <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{report?.allRequest[0] ? report.allRequest[0].total.toLocaleString() : '0'}}</span> )  </div>
 
                   </div>
-                  <div class="bg-[#FFE196] py-4 lg:py-8 rounded-xl items-center flex flex-col justify-center w-full lg:w-2/5 text-center " v-for="d in report.allRequest.slice(1, 3)" :key="d">
+                 
+              </div>
+              <div class="grid grid-cols-2 lg:grid-cols-3 lg:gap-2 justify-center ">
+                <div class="bg-[#FFE196] py-4 lg:py-8 rounded-xl items-center flex flex-col justify-center text-center " v-for="d in report.allRequest.slice(1)" :key="d">
                       <div class="text-2xl mb-2 ">{{d.p_name}}</div>
                       <div class="text-lg">ยื่น: <span class="text-2xl">{{d.top_count.toLocaleString()}}</span>  </div>
                       <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{ d.total.toLocaleString() ??  0 }} </span> ) </div>
                   </div>
-              </div>
-              <div class="grid grid-cols-2 lg:grid-cols-4 lg:gap-2 justify-center ">
-                      <div class="p-1 lg:p-0 lg:w-auto" v-for="d in report.allRequest.slice(3, 7)" :key="d">
-                          <div class="bg-white rounded-xl py-2 lg:p-4 text-center text-lg" >
-                              <div class="mb-4 text-xl">{{d.p_name}}</div>
-                              <div>{{d.top_count.toLocaleString()}} <span class="font-bold">(<span :class="{ 'text-green-500': d.total > 0}">{{d.total.toLocaleString()}}</span>)</span></div>
-                          </div>
-                      </div>
-              </div>
-              </section>
-              <section class="rounded-2xl bg-white/10 backdrop-blur-3xl px-2 lg:px-8 py-4">
-                  <div class="grid grid-cols-3 lg:grid-cols-5 lg:gap-2 lg:items-center">
-                      <div class="mb-5 text-white break-words lg:py-0" v-for="a in report.allRequest.slice(7)" :key="a">
-                          {{ a.p_name }}(<span :class="{ 'text-green-500': a.total == a.top_count}">{{ a.top_count.toLocaleString() }}</span>/<span :class="{ 'text-green-500': a.total > 0}">{{ a.total.toLocaleString() }}</span>)
-                      </div>
               </div>
               </section>
           </main>
