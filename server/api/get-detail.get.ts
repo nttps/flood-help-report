@@ -7,7 +7,7 @@ const config = {
   server: 'gis-db.disaster.go.th',
   port: 9002,
   options: {
-    encrypt: false, // ถ้าเชื่อมต่อแบบ SSL
+    encrypt: true, // ถ้าเชื่อมต่อแบบ SSL
     trustServerCertificate: true, // ถ้าไม่ใช้ SSL
   },
   connectionTimeout: 300000 , // 30 seconds for connection timeout
