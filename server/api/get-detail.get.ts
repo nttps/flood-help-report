@@ -4,8 +4,8 @@ const config = {
   user: 'dalert',
   password: '@min#DSS',
   database: 'DPM_HELP67',
-  server: 'gis-db.disaster.go.th',
-  port: 9002,
+  server: '192.168.213.42',
+  port: 1433,
   options: {
     encrypt: true, // ถ้าเชื่อมต่อแบบ SSL
     trustServerCertificate: true, // ถ้าไม่ใช้ SSL

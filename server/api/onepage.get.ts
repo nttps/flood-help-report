@@ -5,8 +5,8 @@ const config = {
   user: 'dalert',
   password: '@min#DSS',
   database: 'DPM_HELP67',
-  server: 'gis-db.disaster.go.th',
-  port: 9002,
+  server: '192.168.213.42',
+  port: 1433,
   options: {
     encrypt: false, // ถ้าเชื่อมต่อแบบ SSL
     trustServerCertificate: true, // ถ้าไม่ใช้ SSL
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
   let where = ``;
   if(phase == '1') {
-    where += ` and ph  in ('1.0', '1.1') AND people_id not in ('3570500716650', '5550500508247', '3579900263278')`
+    where += ` and ph  in ('1.0', '1.1') AND people_id not in ('3570500716650', '5550500508247', '3579143363278')`
   }else {
     where += ` and ph  in ('${phase}')`
   }
