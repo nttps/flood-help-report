@@ -56,7 +56,12 @@
                 <div class="bg-white py-4 lg:py-8 rounded-xl items-center flex flex-col justify-center text-center " v-for="d in report.allRequest.slice(1)" :key="d">
                       <div class="text-lg lg:text-xl mb-1 font-bold">{{d.p_name}}</div>
                       <div class="text-base lg:text-lg" :class="{ 'text-green-600 font-bold': d.total == d.top_count}">ยื่น: <span class="text-xl">{{d.top_count.toLocaleString()}}</span>  </div>
-                      <div class="text-base lg:text-lg" :class="{ 'text-green-600 font-bold': d.total > 0}">( โอนสำเร็จ: <span class="text-xl">{{ d.total.toLocaleString() ??  0 }} </span> ) </div>
+                      <div class="text-base lg:text-lg" :class="{ 'text-green-600 font-bold': d.total > 0}">
+                        ( โอนสำเร็จ: 
+                        <span class="text-xl">
+                        {{ d.p_name == 'สุราษฎร์ธานี' ? (d.total + 4).toLocaleString() ??  0 : d.total.toLocaleString() ??  0 }} 
+                        </span> ) 
+                      </div>
                   </div>
               </div>
               </section>
