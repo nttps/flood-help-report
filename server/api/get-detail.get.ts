@@ -3,7 +3,7 @@ import sql from 'mssql';
 const config = {
   user: 'dalert',
   password: '@min#DSS',
-  database: 'DPM_HELP67',
+  database: 'DPM_HELP68',
   server: '192.168.213.42',
   port: 1433,
   options: {
@@ -13,7 +13,6 @@ const config = {
   connectionTimeout: 300000 , // 30 seconds for connection timeout
   requestTimeout: 300000 , // 60 seconds for query request timeout
 };
-
 
 const getSub = async (sql: typeof import('mssql'), p_no: any, startDate: any, endDate: any) => {
   await sql.connect(config);

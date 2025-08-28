@@ -4,7 +4,7 @@ import sql from 'mssql';
 const config = {
   user: 'dalert',
   password: '@min#DSS',
-  database: 'DPM_HELP67',
+  database: 'DPM_HELP68',
   server: '192.168.213.42',
   port: 1433,
   options: {

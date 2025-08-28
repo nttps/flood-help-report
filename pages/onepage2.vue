@@ -12,7 +12,7 @@
                   <img src="~/assets/images/logo.png" class="h-[100px] lg:h-[120px] min-w-max" alt="">
               </div>
               <div class="lg:pt-6 lg:w-5/6">
-                  <h3 class="lg:mb-3 text-lg lg:text-xl ">จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 (เพิ่มเติม) <br class="hidden lg:block" />  ตามมติคณะรัฐมนตรี 3 ธันวาคม 2567</h3>
+                  <h3 class="lg:mb-3 text-lg lg:text-xl ">จำนวนคำร้องขอรับเงินช่วยเหลืออันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี พ.ศ.2568 (เพิ่มเติม) <br class="hidden lg:block" />  ตามมติคณะรัฐมนตรี 26 สิงหาคม 2568</h3>
                   <div class="text-right">
                       <div class="rounded-full bg-[#FFB800] text-[#051445] py-2 px-4 ml-auto inline-flex items-center justify-center" >
                           ณ วันที่ {{ format(new Date(), 'dd/MM/yyyy', { locale: th }).replace((new Date().getFullYear()).toString(), (new Date().getFullYear() + 543).toString()) }}
@@ -73,7 +73,7 @@
               <div class="flex flex-wrap lg:flex-nowrap bg-primary px-5 lg:px-10 py-4 lg:space-x-8 justify-between items-center text-white rounded-t-3xl">
                   <div class="text-lg pt-4 pb-2">
                       <div class="mb-2 text-center lg:text-left">ศูนย์เทคโนโลยีสารสนเทศและการสื่อสาร กรมป้องกันและบรรเทาสาธารณภัย</div>
-                      <div class="mb-4 text-center lg:text-left">ตรวจสอบสถานะคำร้องตนเองได้ที่ : <span class="font-semibold"><a target="_blank" href="https://flood67.disaster.go.th/HELP/CheckStatusHelpRequest/Desktop">https://flood67.disaster.go.th</a></span></div>
+                      <div class="mb-4 text-center lg:text-left">ตรวจสอบสถานะคำร้องตนเองได้ที่ : <span class="font-semibold"><a target="_blank" href="https://relief68.disaster.go.th/HELP/CheckStatusHelpRequest/Desktop">https://relief68.disaster.go.th</a></span></div>
                       <div class="flex flex-wrap justify-between items-center">
                           <a href="https://www.facebook.com/DDPMNews" target="_blank" class="flex items-center  mb-2">
                               <UIcon name="disaster-facebook" size="40" />
