@@ -32,7 +32,7 @@
                     <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full sm:w-2/5 text-center ">
                         <UIcon name="disaster-5290058" size="50" class="mb-2" />
                         <div class="text-2xl mb-2">โอนเงินช่วยเหลือผ่าน <br /> บัญชี Promptpay สำเร็จ</div>
-                        <div class="text-4xl font-bold">{{ (report.allTransfer + 4)?.toLocaleString() }}  </div>
+                        <div class="text-4xl font-bold">{{ (report.allTransfer )?.toLocaleString() }}  </div>
                         <div class="text-2xl mt-3">ครัวเรือน</div>
                     </div>
                     <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full sm:w-3/5 text-center">
@@ -51,9 +51,14 @@
   
                     </div>
                    
+                  <div class="bg-[#FFE196] py-4 lg:py-8 rounded-xl items-center flex flex-col justify-center w-full lg:w-2/5 text-center " v-for="d in report.allRequest.slice(1, 3)" :key="d">
+                      <div class="text-2xl mb-2 ">{{d.p_name}}</div>
+                      <div class="text-lg">ยื่น: <span class="text-2xl">{{d.top_count.toLocaleString()}}</span>  </div>
+                      <div class="text-lg">( โอนสำเร็จ: <span class="text-2xl">{{ d.total.toLocaleString() ??  0 }} </span> ) </div>
+                  </div>
                 </div>
-                <div class="grid grid-cols-3 lg:grid-cols-5 gap-2 justify-center ">
-                  <div class="bg-white py-4 lg:py-8 rounded-xl items-center flex flex-col justify-center text-center " v-for="d in report.allRequest.slice(1)" :key="d">
+                <div class="grid grid-cols-3 lg:grid-cols-4 gap-2 justify-center ">
+                  <div class="bg-white py-4 lg:py-8 rounded-xl items-center flex flex-col justify-center text-center " v-for="d in report.allRequest.slice(3, 7)" :key="d">
                         <div class="text-lg lg:text-xl mb-1 font-bold">{{d.p_name}}</div>
                         <div class="text-base lg:text-lg" :class="{ 'text-green-600 font-bold': d.total == d.top_count}">ยื่น: <span class="text-xl">{{d.top_count.toLocaleString()}}</span>  </div>
                         <div class="text-base lg:text-lg" :class="{ 'text-green-600 font-bold': d.total > 0}">
@@ -121,7 +126,9 @@
       title: 'จำนวนคำร้องขอรับเงินช่วยเหลืออันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี พ.ศ.2568 ตามมติคณะรัฐมนตรี 26 สิงหาคม 2568'
     })
   
-    const { data: report, status } = await useFetch('/api/onepage-2568?phase=1.0&nocache='+ new Date().toISOString())
+    const { data: report, status } = await useFetch('/api/onepage-2568?phase=1.0&nocache='+ new Date().toISOString(), {
+        cache: 'no-store'
+    })
     const pending = computed(() => status.value === 'success')
   
     const htmlContent = ref(null)

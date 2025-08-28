@@ -81,9 +81,6 @@ export default defineEventHandler(async (event) => {
   
     const allMoneyTransfer = await sql.query(queryallMoneyTransfer);
 
-    console.log(queryAllRequestString)
-    console.log(countRequest)
-
     console.log({ 
       countRequest: countRequest.recordset[0]['total'],
       topRequest: topRequest.recordset[0],
