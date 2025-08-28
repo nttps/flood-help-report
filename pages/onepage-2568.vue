@@ -59,7 +59,7 @@
                         <div class="text-base lg:text-lg" :class="{ 'text-green-600 font-bold': d.total > 0}">
                           ( โอนสำเร็จ: 
                           <span class="text-xl">
-                          {{ d.p_name == 'สุราษฎร์ธานี' ? (d.total + 4).toLocaleString() ??  0 : d.total.toLocaleString() ??  0 }} 
+                          {{ d.total.toLocaleString() ??  0 }} 
                           </span> ) 
                         </div>
                     </div>
