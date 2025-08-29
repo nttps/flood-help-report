@@ -137,7 +137,6 @@
 
     const htmlContent = ref(null)
     const downloadPDF = () => {
-
         htmlContent.value.classList.add('desktop-view');
         const isMobile = window.innerWidth < 1024;
 
