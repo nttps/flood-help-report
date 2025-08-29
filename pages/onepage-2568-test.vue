@@ -6,7 +6,6 @@
             </button>
         </div>
         <div class="font-kanit lg:w-[980px] mx-auto bg-[#F1F1F1] relative bg-[url('~/assets/images/bg-bottom.jpg')] bg-bottom bg-no-repeat bg-cover" ref="htmlContent" >
-            <!-- <img src="~/assets/images/bg-bottom.jpg" class="absolute bottom-0 w-full left-0 right-0" alt=""> -->
             <header class="flex bg-primary px-5 lg:px-10 py-2 space-x-4 items-center text-white rounded-b-3xl">
                 <div class="min-w-max lg:w-1/6">
                     <img src="~/assets/images/logo.png" class="h-[100px] lg:h-[120px] min-w-max" alt="">
@@ -22,6 +21,13 @@
             </header>
             <main class="px-4 lg:px-8 mt-2" v-if="pending">
                 <section class="bg-primary rounded-2xl p-3">
+                <!-- Debug info -->
+                <div class="bg-yellow-200 p-4 mb-4 rounded-lg">
+                    <h4 class="font-bold">Debug Info:</h4>
+                    <p>Year: {{ report?.year || 'N/A' }}</p>
+                    <p>Database: {{ report?.year === '2568' ? 'DPM_HELP68' : 'DPM_HELP67' }}</p>
+                    <p>Status: {{ status }}</p>
+                </div>
                 
                 <div class="flex flex-wrap sm:flex-nowrap gap-4 sm:gap-2">
                     <div class="bg-[#082174] text-[#FFB800] py-4 rounded-xl w-full sm:w-2/5 text-center">
@@ -78,7 +84,6 @@
                   <div class="text-4xl">กำลังประมวลผลข้อมูล</div>
               </div>
           </main>
-            <!-- Show loading spinner while data is loading -->
             
             <footer class="mt-2">
                 <div class="flex flex-wrap lg:flex-nowrap bg-primary px-5 lg:px-10 py-4 lg:space-x-8 justify-between items-center text-white rounded-t-3xl">
@@ -127,7 +132,8 @@
       title: 'จำนวนคำร้องขอรับเงินช่วยเหลืออันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี พ.ศ.2568 ตามมติคณะรัฐมนตรี 26 สิงหาคม 2568'
     })
   
-    const { data: report, status, refresh } = await useFetch('/api/onepage-unified?phase=1.0&year=2568', {
+    // Use the unified API with year parameter
+    const { data: report, status, refresh } = await useFetch('/api/onepage-unified?phase=1.0&nocache='+ new Date().getTime(), {
         cache: 'no-store',
         headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -140,7 +146,7 @@
     // Debug: Log the report data
     watch(report, (newReport) => {
         if (newReport) {
-            console.log('Report data received:', newReport);
+            console.log('Report data received (unified API):', newReport);
             console.log('Year:', newReport.year);
             console.log('Count request:', newReport.countRequest);
         }

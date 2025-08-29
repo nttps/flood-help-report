@@ -1,4 +1,3 @@
-
 import sql from 'mssql';
 import { getDbConfig, createConnection, getPool } from '../config/database';
 
@@ -10,9 +9,15 @@ export default defineEventHandler(async (event) => {
     'Expires': '0'
   });
 
-  const config = getDbConfig('2568'); // Use 2568 database
-  console.log('=== onepage-2568 API Debug ===');
-  console.log('Using database config:', config.database);
+  const { phase, year } = getQuery(event);
+  
+  console.log('=== API Request Debug ===');
+  console.log('Requested year:', year);
+  console.log('Requested phase:', phase);
+  
+  // Determine which database to use based on year parameter
+  const config = getDbConfig(year as string);
+  console.log('Selected database config:', config.database);
   
   try {
     await createConnection(config);
@@ -25,9 +30,6 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const {phase} = getQuery(event);
-  console.log('Query phase:', phase);
-
   let where = ``;
   if(phase == '1') {
     where += ` and ph  in ('1.0', '1.1') AND people_id not in ('3570500716650', '5550500508247', '3579143363278')`
@@ -36,14 +38,14 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // Get the appropriate pool for 2568
-    const pool = getPool('2568');
+    // Get the appropriate pool for this year
+    const pool = getPool(year as string);
     console.log('Using pool for database:', config.database);
     
     const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request WHERE 
     t_step_status != 'ปฏิเสธคำขอ' ${where} AND
     (p_name is not null or p_name != '') ;`
-  
+
     console.log('Executing query on database:', config.database);
     const countRequest = await pool.request().query(queryCountRequestString);
   
@@ -61,6 +63,8 @@ export default defineEventHandler(async (event) => {
       ${where}
     GROUP BY p_name 
     ORDER BY top_count DESC`
+
+    console.log('Query string:', queryAllRequestString);
     const allRequest = await pool.request().query(queryAllRequestString);
   
     const queryAllTransferString = `SELECT COUNT(*) AS total from sf_help_request WHERE current_status ='โอนเงินแล้ว' and t_step_status != 'ปฏิเสธคำขอ' ${where};`
@@ -93,7 +97,7 @@ export default defineEventHandler(async (event) => {
     const allMoneyTransfer = await pool.request().query(queryallMoneyTransfer);
 
     const result = { 
-      year: '2568',
+      year: year || '2567',
       database: config.database,
       countRequest: countRequest.recordset[0]['total'],
       topRequest: topRequest.recordset[0],
@@ -104,8 +108,9 @@ export default defineEventHandler(async (event) => {
       allMoneyTransfer: allMoneyTransfer.recordset[0]['total']
     };
 
-    console.log('=== Query Results (2568) ===');
+    console.log('=== Query Results ===');
     console.log('Database used:', config.database);
+    console.log('Year requested:', year);
     console.log('Count request:', result.countRequest);
     console.log('All transfer:', result.allTransfer);
     console.log('Top province:', result.topRequest?.p_name);
