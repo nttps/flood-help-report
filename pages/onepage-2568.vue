@@ -147,9 +147,6 @@
         })
     })
 
-    const refreshData = () => {
-        refresh()
-    }
 
     const htmlContent = ref(null)
     const downloadPDF = () => {
