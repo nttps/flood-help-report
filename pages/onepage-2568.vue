@@ -126,11 +126,31 @@
       title: 'จำนวนคำร้องขอรับเงินช่วยเหลืออันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี พ.ศ.2568 ตามมติคณะรัฐมนตรี 26 สิงหาคม 2568'
     })
   
-    const { data: report, status } = await useFetch('/api/onepage-2568?phase=1.0&nocache='+ new Date().toISOString(), {
-        cache: 'no-store'
+    const { data: report, status, refresh } = await useFetch('/api/onepage-2568?phase=1.0&nocache='+ new Date().getTime(), {
+        cache: 'no-store',
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
     })
     const pending = computed(() => status.value === 'success')
-  
+
+        // Auto refresh data every minute
+    onMounted(() => {
+        const interval = setInterval(() => {
+            refresh()
+        }, 60000) // Refresh every 60 seconds
+
+        onUnmounted(() => {
+            clearInterval(interval)
+        })
+    })
+
+    const refreshData = () => {
+        refresh()
+    }
+
     const htmlContent = ref(null)
     const downloadPDF = () => {
   

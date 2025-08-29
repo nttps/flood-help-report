@@ -15,6 +15,12 @@ const config = {
 
 
 export default defineEventHandler(async (event) => {
+  // Set cache headers to prevent caching
+  setResponseHeaders(event, {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
 
   await sql.connect(config);
 
