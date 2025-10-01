@@ -4,9 +4,10 @@ import "@fontsource/sarabun"; // Import the Google Font
 import { pdfFonts } from '~/assets/fonts/vfs_fonts.js'
 import { format } from 'date-fns';
 import { textAlign } from 'html2canvas/dist/types/css/property-descriptors/text-align';
+import { th } from "date-fns/locale";
     
 // Add the Sarabun font to jsPDF
-const addSarabunFont = (doc) => {
+const addSarabunFont = (doc: any) => {
   // Add the base64 encoded Sarabun font
   doc.addFileToVFS("Sarabun-Regular.ttf", pdfFonts['THSarabunNew Bold.ttf']);
   doc.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
@@ -14,7 +15,7 @@ const addSarabunFont = (doc) => {
 };
 
 
-const generatePDF = (dataHead) => {
+const generatePDF = (dataHead: any) => {
 const doc = new jsPDF('p', 'mm', 'a4'); // p คือ portrait (แนวตั้ง), mm คือหน่วยมิลลิเมตร
 
   // Load and set Sarabun font
@@ -22,7 +23,7 @@ const doc = new jsPDF('p', 'mm', 'a4'); // p คือ portrait (แนวตั
 
  // Define the title and timestamp
   const title = 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568';
-  const timestamp = format(new Date(), 'dd/MM/yyyy HH:mm:ss');
+  const timestamp = format(new Date(), 'dd/MM/yyyy HH:mm:ss', { locale: th });
 
   // Title - Centered
   doc.setFontSize(16);
@@ -169,7 +170,7 @@ const headers = [
     },
     '', '', '',
     {
-      content:  `Sum:\n${dataHead.reduce((total, current) => total + current.person_qty, 0).toLocaleString()}`,
+      content:  `Sum:\n${dataHead.reduce((total: any, current: any) => total + current.person_qty, 0).toLocaleString()}`,
       styles: {
         fontStyle: 'bold',
         textColor: 'black', // Dark blue font color
@@ -177,7 +178,7 @@ const headers = [
       }
     },
     {
-      content: `Sum:\n${dataHead.reduce((total, current) => total + current.failed_linkage, 0).toLocaleString()}`,
+      content: `Sum:\n${dataHead.reduce((total: any, current: any) => total + current.failed_linkage, 0).toLocaleString()}`,
       styles: {
         fontStyle: 'bold',
         textColor: 'black', // Dark blue font color
@@ -185,7 +186,7 @@ const headers = [
       }
     },
     {
-      content: `Sum:\n${dataHead.reduce((total, current) => total + current.send_bank, 0).toLocaleString()}`,
+      content: `Sum:\n${dataHead.reduce((total: any, current: any) => total + current.send_bank, 0).toLocaleString()}`,
       styles: {
         fontStyle: 'bold',
         textColor: 'black', // Dark blue font color
@@ -193,7 +194,7 @@ const headers = [
       }
     },
     {
-      content: `Count (Unique):\n${dataHead.reduce((total, current) => total + current.count_payment_date, 0).toLocaleString()}`,
+      content: `Count (Unique):\n${dataHead.reduce((total: any, current: any) => total + current.count_payment_date, 0).toLocaleString()}`,
       colSpan: 2,
       styles: {
         fontStyle: 'bold',
@@ -202,7 +203,7 @@ const headers = [
       }
     },
     {
-      content: `Sum:\n${dataHead.reduce((total, current) => total + current.successful_payments, 0).toLocaleString()}`,
+      content: `Sum:\n${dataHead.reduce((total: any, current: any) => total + current.successful_payments, 0).toLocaleString()}`,
       styles: {
         fontStyle: 'bold',
         textColor: 'black', // Dark blue font color
@@ -210,7 +211,7 @@ const headers = [
       }
     },
     {
-      content: `Sum:\n${dataHead.reduce((total, region) => {
+      content: `Sum:\n${dataHead.reduce((total: any, region: any) => {
         return total + region.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.unsuccessful_payments, 0);
       }, 0).toLocaleString()}`,
       textAlign: 'right',
@@ -221,7 +222,7 @@ const headers = [
       }
     },
     {
-      content: `Sum:\n${dataHead.reduce((total, region) => {
+      content: `Sum:\n${dataHead.reduce((total: any, region: any) => {
         return total + region.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.count_back_to_province, 0);
       }, 0).toLocaleString()}`,
       textAlign: 'right',
@@ -232,7 +233,7 @@ const headers = [
       }
     },  
     {
-      content: `Sum:\n${dataHead.reduce((total, region) => {
+      content: `Sum:\n${dataHead.reduce((total: any, region: any) => {
         return total + region.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.send_from_province, 0);
       }, 0).toLocaleString()}`,
       textAlign: 'right',
@@ -252,7 +253,7 @@ const headers = [
       }
     },   
     {
-      content:  `Sum:\n${dataHead.reduce((total, region) => {
+      content:  `Sum:\n${dataHead.reduce((total: any, region: any) => {
         return total + region.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.outstanding, 0);
       }, 0).toLocaleString()}`,
       textAlign: 'right',
@@ -322,28 +323,28 @@ const headers = [
         fillColor: [240, 240, 240],
           halign: 'right'
         } }, // Light gray
-      { content: head.sub.reduce((total, current) => total + current.successful_payments, 0).toLocaleString(), styles: {
+      { content: head.sub.reduce((total: any, current: any) => total + current.successful_payments, 0).toLocaleString(), styles: {
           fontStyle: 'bold',
           textColor: 'black',// Dark blue font color 
         fillColor: [240, 240, 240],
           halign: 'right'
         } }, // Light gray
       { content: head.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว')
-        .reduce((total, current) => total + current.unsuccessful_payments, 0).toLocaleString(), styles: {
+        .reduce((total: any, current: any) => total + current.unsuccessful_payments, 0).toLocaleString(), styles: {
           fontStyle: 'bold',
           textColor: 'black',// Dark blue font color 
         fillColor: [240, 240, 240],
           halign: 'right'
         } }, // Light gray
       { content: head.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว')
-        .reduce((total, current) => total + current.count_back_to_province, 0).toLocaleString(), styles: {
+        .reduce((total: any, current: any) => total + current.count_back_to_province, 0).toLocaleString(), styles: {
           fontStyle: 'bold',
           textColor: 'black',// Dark blue font color 
         fillColor: [240, 240, 240],
           halign: 'right'
         } }, // Light gray
       { content:  head.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว')
-        .reduce((total, current) => total + current.send_from_province, 0).toLocaleString(), styles: {
+        .reduce((total: any, current: any) => total + current.send_from_province, 0).toLocaleString(), styles: {
           fontStyle: 'bold',
           textColor: 'black',// Dark blue font color 
         fillColor: [240, 240, 240],
@@ -356,7 +357,7 @@ const headers = [
           halign: 'right'
         }  }, // Date
       { content: head.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว')
-        .reduce((total, current) => total + current.outstanding, 0).toLocaleString(), styles: {
+        .reduce((total: any, current: any) => total + current.outstanding, 0).toLocaleString(), styles: {
           fontStyle: 'bold',
           textColor: 'black',// Dark blue font color 
         fillColor: [240, 240, 240],
@@ -380,11 +381,11 @@ const headers = [
         }, // Province name in sub
         
         { content: subItem.commit_no || "", styles: { halign: 'center', } }, // Payment round
-        { content: subItem.commit_date ? format(subItem.commit_date, 'dd MMM yyyy') : "", styles: { halign: 'center', } }, // Date in subrow
+        { content: subItem.commit_date ? format(subItem.commit_date, 'dd MMM yyyy', { locale: th }) : "", styles: { halign: 'center', } }, // Date in subrow
         { content: subItem.person_qty.toLocaleString() || "", styles: { halign: 'right', } },
         { content: subItem.failed_linkage.toLocaleString() || "", styles: { halign: 'right', } },    
         { content: subItem.send_bank.toLocaleString() || "", styles: { halign: 'right', } },   
-        { content: subItem.latest_payment_date ? format(subItem.latest_payment_date, 'dd MMM yyyy') : "", styles: { halign: 'right', } },
+        { content: subItem.latest_payment_date ? format(subItem.latest_payment_date, 'dd MMM yyyy', { locale: th }) : "", styles: { halign: 'right', } },
         { content: subItem.payment_sequence.toLocaleString() || "", styles: { halign: 'right', } },   
         { content: subItem.successful_payments.toLocaleString(), styles: { halign: 'right', textColor: [59, 130, 246] } }, // Green font for successful
         { content: subItem.unsuccessful_payments.toLocaleString(), styles: { halign: 'right', } }, // Red font for unsuccessful

@@ -10,7 +10,7 @@
                 </div>
                 <div  class="print:text-right absolute right-4 top-4 print:fixed print:ml-0 print:right-0 lg:top-0 lg:right-0 lg:relative lg:block lg:ml-auto date-title text-xs lg:text-base">
                     <div class="font-bold">ข้อมูล ณ วันที่</div>
-                    <div>{{ format(new Date(), 'dd MMM yyyy') }}</div>
+                    <div>{{ format(new Date(), 'dd MMM yyyy', { locale: th }) }}</div>
                 </div>
             </div>
             <div class="max-w-screen-2xl mx-auto mt-8 px-4 rounded-lg">
@@ -221,7 +221,7 @@
                                                 {{ sub.commit_no }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{ format(sub.commit_date, 'dd MMM yyyy') }}
+                                                {{ format(sub.commit_date, 'dd MMM yyyy', { locale: th }) }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.person_qty.toLocaleString() }}
@@ -233,7 +233,7 @@
                                                 {{ (sub.send_bank).toLocaleString() }} 
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{ sub.latest_payment_date ? format(sub.latest_payment_date, 'dd MMM yyyy') : '' }}
+                                                {{ sub.latest_payment_date ? format(sub.latest_payment_date, 'dd MMM yyyy', { locale: th }) : '' }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.payment_sequence.toLocaleString() }}
@@ -290,7 +290,7 @@
       format
   } from 'date-fns'
   import "@fontsource/sarabun"; // Import the Google Font
-
+  import { th } from "date-fns/locale";
   useSeoMeta({
     title: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568'
   })
