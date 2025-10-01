@@ -279,7 +279,7 @@
         <NuxtLoadingIndicator />
         <div class="text-center print:hidden">
             <UButton @click="downloadBreakPDF" label="ปริ้น" class="mr-4" />
-            <UButton label="กลับ" to="/" />
+            <UButton label="กลับ" to="/summary" />
         </div>
     </div>
 </template>
