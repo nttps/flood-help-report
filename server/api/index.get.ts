@@ -1,26 +1,11 @@
-import sql from 'mssql';
+import { createConnection, getDbConfig, getPool } from '../config/database';
 
-const config = {
-  user: 'dalert',
-  password: '@min#DSS',
-  database: 'DPM_HELP68',
-  server: '192.168.213.42',
-  port: 1433,
-  options: {
-    encrypt: false,
-    trustServerCertificate: true,
-  },
-  connectionTimeout: 300000,
-  requestTimeout: 300000,
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000
-  }
-};
+const config = getDbConfig('2568'); // Use 2568 database
 
-const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any, phase: any) => {
-  await sql.connect(config);
+
+const getHeader = async (startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
+  await createConnection(config);
+  const pool = getPool('2568');
 
   let where = '';
   if(startDate && !paymentDateStart) {
@@ -44,7 +29,7 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
   }
 
 
-  const result = await sql.query(`
+  const result = await pool.request().query(`
     WITH counts AS (
     SELECT 
       cl.origin_pcode AS p_no,
@@ -59,7 +44,6 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
       WHERE ch.step_id = 'ปภ.' 
       ${where}
       AND cl.is_active = 1
-      ${phase}
       GROUP BY cl.origin_pname, cl.origin_pcode
     )
 
@@ -75,10 +59,10 @@ const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: a
 }
 
 
-const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any, phase: any) => {
-  await sql.connect(config);
+const getSub = async (p_no: any[], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any) => {
+  await createConnection(config);
+  const pool = getPool('2568');
 
-  
   let where = '';
 
   if(startDate && !paymentDateStart) {
@@ -97,14 +81,13 @@ const getSub = async (sql: typeof import('mssql'), p_no: [], startDate: any, end
     where += ` AND CAST(ch.export_bank_trn_date AS DATE) <= '${paymentDateEnd}' `
   }
 
-  
-  const result = await sql.query(`
+
+  const result = await pool.request().query(`
 WITH all_dates AS (
     SELECT DISTINCT 
         export_bank_trn_date
     FROM sf_commit_head
     WHERE export_bank_trn_date IS NOT NULL
-    AND ph in ${phase}
 ),
 ranked_dates AS (
     SELECT 
@@ -122,7 +105,6 @@ pre_filtered_head AS (
         ch.person_qty
     FROM sf_commit_head  ch
     WHERE step_id = 'ปภ.' 
-    AND ph in ${phase}
     ${where}
 ),
 payment_counts AS (
@@ -132,7 +114,6 @@ payment_counts AS (
         SUM(CASE WHEN payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments
     FROM sf_commit_line
     WHERE is_active = 1
-    AND ph in ${phase}
     GROUP BY commit_id
 ),
 linkage_failed AS (
@@ -141,7 +122,6 @@ linkage_failed AS (
         SUM(CASE WHEN linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage
     FROM sf_commit_line
     WHERE is_active = 1
-    AND ph in ${phase}
     GROUP BY commit_id
 ),
 send_from_province_counts AS (
@@ -152,7 +132,7 @@ send_from_province_counts AS (
     FROM sf_commit_head ccl 
     LEFT JOIN sf_commit_line cco ON ccl.commit_id = cco.commit_id 
     WHERE ccl.commit_no LIKE '99%' 
-    AND ccl.ph in ${phase}
+    AND ccl.ph in ('1.0')
     GROUP BY cco.origin_pcode, ccl.commit_no
 ),
 sub_counts AS (
@@ -214,16 +194,16 @@ export default defineEventHandler(async (event) => {
     let phaseHead = ''
     let phaseSub = ''
     if(phase == '1') {
-      phaseHead = ` and cl.ph in ('1.0', '1.1')`
-      phaseSub = ` ('1.0', '1.1')`
+      phaseHead = ` and cl.ph in ('1.0')`
+      phaseSub = ` and cl.ph in ('1.0')`
     }else {
       phaseHead = ` and cl.ph in ('2.0')`
-      phaseSub = ` ('2.0')`
+      phaseSub = ` and cl.ph in ('2.0')`
     }
 
     
     const results = []
-  const resultHead = await getHeader(sql, startDate, endDate, pcode, paymentDateStart, paymentDateEnd, phaseHead);
+  const resultHead = await getHeader(startDate, endDate, pcode, paymentDateStart, paymentDateEnd);
 
   const pNoArray = resultHead.map(item => item.p_no);
   
@@ -231,7 +211,7 @@ export default defineEventHandler(async (event) => {
     return resultHead;
   }
 
-    const childData = await getSub(sql, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd, phaseSub);
+    const childData = await getSub(pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd);
 
     // Group child data by p_no
     const groupedChildren = childData.reduce((acc, child) => {
@@ -242,7 +222,7 @@ export default defineEventHandler(async (event) => {
     }, {});
 
     // Map parent data and attach children
-    const result = resultHead.map(parent => {
+    const result = resultHead.map((parent: any) => {
       return {
         ...parent,
         showSub: true,
