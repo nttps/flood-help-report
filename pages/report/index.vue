@@ -10,7 +10,7 @@
                 </div>
                 <div  class="print:text-right absolute right-4 top-4 print:fixed print:ml-0 print:right-0 lg:top-0 lg:right-0 lg:relative lg:block lg:ml-auto date-title text-xs lg:text-base">
                     <div class="font-bold">ข้อมูล ณ วันที่</div>
-                    <div>{{ format(new Date(), 'dd MMM yyyy', { locale: th }) }}</div>
+                    <div>{{ formatDateTH(new Date()) }}</div>
                 </div>
             </div>
             <div class="max-w-screen-2xl mx-auto mt-8 px-4 rounded-lg">
@@ -221,7 +221,7 @@
                                                 {{ sub.commit_no }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{ format(sub.commit_date, 'dd MMM yyyy', { locale: th }) }}
+                                                {{ formatDateTH(sub.commit_date) }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.person_qty.toLocaleString() }}
@@ -233,7 +233,7 @@
                                                 {{ (sub.send_bank).toLocaleString() }} 
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
-                                                {{ sub.latest_payment_date ? format(sub.latest_payment_date, 'dd MMM yyyy', { locale: th }) : '' }}
+                                                {{ sub.latest_payment_date ? formatDateTH(sub.latest_payment_date) : '' }}
                                             </td>
                                             <td class="border bg-white border-zinc-500 text-right">
                                                 {{ sub.payment_sequence.toLocaleString() }}
@@ -295,6 +295,15 @@
     title: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568'
   })
   const route = useRoute()
+
+  // Helper function to format date with Buddhist Era year
+  const formatDateTH = (date: Date | string, formatString: string = 'dd MMM yyyy') => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    const formatted = format(dateObj, formatString, { locale: th })
+    const buddhistYear = dateObj.getFullYear() + 543
+    return formatted.replace(dateObj.getFullYear().toString(), buddhistYear.toString())
+  }
+
   interface Sub {
       sub_id: number;
       subField: string;

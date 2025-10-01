@@ -13,6 +13,13 @@ const addSarabunFont = (doc: any) => {
   doc.addFont("Sarabun-Regular.ttf", "Sarabun", "normal");
   doc.setFont("Sarabun"); // Set the font for the document
 };
+  // Helper function to format date with Buddhist Era year
+export const formatDateTH = (date: Date | string, formatString: string = 'dd MMM yyyy') => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    const formatted = format(dateObj, formatString, { locale: th })
+    const buddhistYear = dateObj.getFullYear() + 543
+    return formatted.replace(dateObj.getFullYear().toString(), buddhistYear.toString())
+  }
 
 
 const generatePDF = (dataHead: any) => {
@@ -23,7 +30,7 @@ const doc = new jsPDF('p', 'mm', 'a4'); // p คือ portrait (แนวตั
 
  // Define the title and timestamp
   const title = 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568';
-  const timestamp = format(new Date(), 'dd/MM/yyyy HH:mm:ss', { locale: th });
+  const timestamp = formatDateTH(new Date(), 'dd/MM/yyyy HH:mm:ss');
 
   // Title - Centered
   doc.setFontSize(16);
@@ -212,7 +219,7 @@ const headers = [
     },
     {
       content: `Sum:\n${dataHead.reduce((total: any, region: any) => {
-        return total + region.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.unsuccessful_payments, 0);
+        return total + region.sub.filter((i: any) => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal: any, item: any) => subTotal + item.unsuccessful_payments, 0);
       }, 0).toLocaleString()}`,
       textAlign: 'right',
       styles: {
@@ -223,7 +230,7 @@ const headers = [
     },
     {
       content: `Sum:\n${dataHead.reduce((total: any, region: any) => {
-        return total + region.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.count_back_to_province, 0);
+        return total + region.sub.filter((i: any) => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal: any, item: any) => subTotal + item.count_back_to_province, 0);
       }, 0).toLocaleString()}`,
       textAlign: 'right',
       styles: {
@@ -234,7 +241,7 @@ const headers = [
     },  
     {
       content: `Sum:\n${dataHead.reduce((total: any, region: any) => {
-        return total + region.sub.filter(i => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.send_from_province, 0);
+        return total + region.sub.filter((i: any) => i.status_confirm === 'ยืนยันแล้ว').reduce((subTotal: any, item: any) => subTotal + item.send_from_province, 0);
       }, 0).toLocaleString()}`,
       textAlign: 'right',
       styles: {
@@ -381,11 +388,11 @@ const headers = [
         }, // Province name in sub
         
         { content: subItem.commit_no || "", styles: { halign: 'center', } }, // Payment round
-        { content: subItem.commit_date ? format(subItem.commit_date, 'dd MMM yyyy', { locale: th }) : "", styles: { halign: 'center', } }, // Date in subrow
+        { content: subItem.commit_date ? formatDateTH(subItem.commit_date) : "", styles: { halign: 'center', } }, // Date in subrow
         { content: subItem.person_qty.toLocaleString() || "", styles: { halign: 'right', } },
         { content: subItem.failed_linkage.toLocaleString() || "", styles: { halign: 'right', } },    
         { content: subItem.send_bank.toLocaleString() || "", styles: { halign: 'right', } },   
-        { content: subItem.latest_payment_date ? format(subItem.latest_payment_date, 'dd MMM yyyy', { locale: th }) : "", styles: { halign: 'right', } },
+        { content: subItem.latest_payment_date ? formatDateTH(subItem.latest_payment_date) : "", styles: { halign: 'right', } },
         { content: subItem.payment_sequence.toLocaleString() || "", styles: { halign: 'right', } },   
         { content: subItem.successful_payments.toLocaleString(), styles: { halign: 'right', textColor: [59, 130, 246] } }, // Green font for successful
         { content: subItem.unsuccessful_payments.toLocaleString(), styles: { halign: 'right', } }, // Red font for unsuccessful
