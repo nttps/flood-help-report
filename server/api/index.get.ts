@@ -3,15 +3,20 @@ import sql from 'mssql';
 const config = {
   user: 'dalert',
   password: '@min#DSS',
-  database: 'DPM_HELP67',
+  database: 'DPM_HELP68',
   server: '192.168.213.42',
   port: 1433,
   options: {
-    encrypt: false, // ถ้าเชื่อมต่อแบบ SSL
-    trustServerCertificate: true, // ถ้าไม่ใช้ SSL
+    encrypt: false,
+    trustServerCertificate: true,
   },
-  connectionTimeout: 300000 , // 30 seconds for connection timeout
-  requestTimeout: 300000 , // 60 seconds for query request timeout
+  connectionTimeout: 300000,
+  requestTimeout: 300000,
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  }
 };
 
 const getHeader = async (sql: typeof import('mssql'), startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any, phase: any) => {

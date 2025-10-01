@@ -5,9 +5,7 @@
             <div class="mt-8 lg:mt-0 print:block lg:flex justify-between px-8 items-center">
                 <div class="ml-auto print:ml-0 print:hidden"></div>
                 <div >
-                    <h3 class="text-center font-bold text-lg lg:text-2xl print:text-lg">สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567
-                        ตามมติ
-                        ครม.
+                    <h3 class="text-center font-bold text-lg lg:text-2xl print:text-lg">สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568
                     </h3>
                 </div>
                 <div  class="print:text-right absolute right-4 top-4 print:fixed print:ml-0 print:right-0 lg:top-0 lg:right-0 lg:relative lg:block lg:ml-auto date-title text-xs lg:text-base">
@@ -294,7 +292,7 @@
   import "@fontsource/sarabun"; // Import the Google Font
 
   useSeoMeta({
-    title: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม.'
+    title: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568'
   })
   const route = useRoute()
   interface Sub {

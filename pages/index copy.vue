@@ -1,11 +1,11 @@
 <template>
     <div class="flex items-center justify-center min-h-screen px-4">
         <UContainer class="bg-zinc-200 p-10 rounded-lg border-2 border-black">
-            <h1 class="text-lg lg:text-2xl font-bold mb-4 text-center">ค้นหา จำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม.</h1>
+            <h1 class="text-lg lg:text-2xl font-bold mb-4 text-center">ค้นหา จำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568</h1>
             <UForm :state="form" :schema="schema" @submit.prevent="submit">
                 <div class="grid grid-cols-1 lg:grid-cols-2 items-center justify-center gap-4 mb-4">
                     
-                    <UFormGroup label="มติคณะรัฐมนตรี" size="xl" name="phase" >
+                    <!-- <UFormGroup label="มติคณะรัฐมนตรี" size="xl" name="phase" >
                         <USelect placeholder="เลือกมติคณะรัฐมนตรี" v-model="form.phase" :options="[{
                             label: 'มติฯ 8 ต.ค.',
                             value: '1'
@@ -13,8 +13,12 @@
                         {
                             label: 'มติฯ 3 ธ.ค.',
                             value: '2'
+                        },
+                        {
+                            label: 'มติฯ 8 ต.ค.',
+                            value: '2'
                         }]" required />
-                    </UFormGroup>
+                    </UFormGroup> -->
                     <UFormGroup label="จังหวัด" size="xl">
                         <USelectMenu searchable v-model="form.pcode" placeholder="เลือกจังหวัด" value-attribute="pcode" option-attribute="pname" :options="provinces"/>
                     </UFormGroup>
@@ -63,12 +67,12 @@
 
 
     useSeoMeta({
-        title: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอุทกภัยในช่วงฤดูฝน ปี 2567 ตามมติ ครม.'
+        title: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568'
     })
     const { data: lastPaymentDate } = await useFetch('/api/get-last-payment')
 
     const form = reactive({
-      startDate: new Date(2024, 8, 26),
+      startDate: new Date(2025, 8, 26),
       endDate: new Date(),
       pcode: 'all',
       phase: 1,
