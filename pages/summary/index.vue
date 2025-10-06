@@ -30,7 +30,7 @@
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="form.paymentDate.start ? format(form.paymentDate.start, 'd MMM yyy', { locale: th}) + ' - ' + format(form.paymentDate.end, 'd MMM yyy', { locale: th}): 'เลือกวันที่โอนเงิน'" size="xl" />
                             <template #panel="{ close }">
-                                <DatePicker v-model="form.paymentDate" is-required @close="close" :min-date="new Date(2024, 8, 26)" :max-date="new Date(lastPaymentDate)"  />
+                                <DatePicker v-model="form.paymentDate" is-required @close="close" :min-date="new Date(2025, 9, 6)" :max-date="new Date(lastPaymentDate)"  />
                             </template>
                         </UPopover>
                     </UFormGroup>
@@ -87,7 +87,7 @@
       const formattedPaymentDateEnd = form.paymentDate.end ? format(form.paymentDate.end, 'yyyy-MM-dd') : ''
 
 
-      router.push(`/report?phase=${form.phase}&${form.paymentDate.start ? `` : `startDate=${formattedStartDate}&endDate=${formattedEndDate}&` }${form.pcode ? `pcode=${form.pcode}`: ''}${form.paymentDate.start ? `&paymentDateStart=${formattedPaymentDateStart}`: ''}${form.paymentDate.end ? `&paymentDateEnd=${formattedPaymentDateEnd}`: ''}`)
+      router.push(`/report?${form.paymentDate.start ? `` : `startDate=${formattedStartDate}&endDate=${formattedEndDate}&` }${form.pcode ? `pcode=${form.pcode}`: ''}${form.paymentDate.start ? `&paymentDateStart=${formattedPaymentDateStart}`: ''}${form.paymentDate.end ? `&paymentDateEnd=${formattedPaymentDateEnd}`: ''}`)
     }
 </script>
 
