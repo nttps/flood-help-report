@@ -11,7 +11,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 items-center justify-center gap-4">
                     <UFormGroup label="ตั้งแต่วันที่" size="xl" name="startDate">
                         <UPopover :popper="{ placement: 'bottom-start' }">
-                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="format(form.startDate, 'd MMM yyy', { locale: th})" size="xl" />
+                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="formatDateTH(form.startDate, 'd MMM yyy')" size="xl" />
                             <template #panel="{ close }">
                                 <DatePicker v-model="form.startDate" is-required @close="close" />
                             </template>
@@ -19,7 +19,7 @@
                     </UFormGroup>
                     <UFormGroup label="ถึงวันที่" name="endDate" size="xl">
                         <UPopover :popper="{ placement: 'bottom-start' }">
-                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="format(form.endDate, 'd MMM yyy', { locale: th})" size="xl" />
+                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="formatDateTH(form.endDate, 'd MMM yyy')" size="xl" />
                             <template #panel="{ close }">
                                 <DatePicker v-model="form.endDate" is-required @close="close" />
                             </template>
@@ -28,7 +28,7 @@
                    
                     <UFormGroup label="วันที่โอนเงิน" name="paymentDate" size="xl">
                         <UPopover :popper="{ placement: 'bottom-start' }">
-                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="form.paymentDate.start ? format(form.paymentDate.start, 'd MMM yyy', { locale: th}) + ' - ' + format(form.paymentDate.end, 'd MMM yyy', { locale: th}): 'เลือกวันที่โอนเงิน'" size="xl" />
+                            <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="form.paymentDate.start ? formatDateTH(form.paymentDate.start, 'd MMM yyy') + ' - ' + formatDateTH(form.paymentDate.end, 'd MMM yyy'): 'เลือกวันที่โอนเงิน'" size="xl" />
                             <template #panel="{ close }">
                                 <DatePicker v-model="form.paymentDate" is-required @close="close" :min-date="new Date(2025, 9, 6)" :max-date="new Date(lastPaymentDate)"  />
                             </template>
