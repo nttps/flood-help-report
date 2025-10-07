@@ -31,12 +31,6 @@ export default defineEventHandler(async (event) => {
   }
 
   let where = ``;
-  if(phase == '1') {
-    where += ` and ph  in ('1.0', '1.1') AND people_id not in ('3570500716650', '5550500508247', '3579143363278')`
-  }else {
-    where += ` and ph  in ('${phase}')`
-  }
-
   try {
     // Get the appropriate pool for this year
     const pool = getPool(year as string);
@@ -60,7 +54,6 @@ export default defineEventHandler(async (event) => {
     WHERE 
       t_step_status != 'ปฏิเสธคำขอ'
       AND (p_name is not null or p_name != '')  
-      ${where}
     GROUP BY p_name 
     ORDER BY top_count DESC`
 
