@@ -127,7 +127,7 @@
       title: 'จำนวนคำร้องขอรับเงินช่วยเหลืออันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี พ.ศ.2568 ตามมติคณะรัฐมนตรี 26 สิงหาคม 2568'
     })
   
-    const { data: report, status, refresh } = await useFetch('/api/onepage-unified?phase=1.0&year=2568', {
+    const { data: report, status, refresh } = await useFetch('/api/onepage-unified?database=DPM_HELP68&phase=1.0', {
         cache: 'no-store',
         headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -141,7 +141,7 @@
     watch(report, (newReport) => {
         if (newReport) {
             console.log('Report data received:', newReport);
-            console.log('Year:', newReport.year);
+            console.log('Database:', newReport.database);
             console.log('Count request:', newReport.countRequest);
         }
     }, { immediate: true });

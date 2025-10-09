@@ -1,5 +1,4 @@
 
-import sql from 'mssql';
 import { getDbConfig, createConnection, getPool } from '../config/database';
 
 export default defineEventHandler(async (event) => {
@@ -10,7 +9,8 @@ export default defineEventHandler(async (event) => {
     'Expires': '0'
   });
 
-  const config = getDbConfig('2568'); // Use 2568 database
+  const { database } = getQuery(event);
+  const config = getDbConfig(database as string || 'DPM_HELP68'); // Default to DPM_HELP68
   console.log('=== onepage-2568 API Debug ===');
   console.log('Using database config:', config.database);
   
@@ -26,7 +26,6 @@ export default defineEventHandler(async (event) => {
   }
 
   const {phase} = getQuery(event);
-  console.log('Query phase:', phase);
 
   let where = ``;
   if(phase == '1') {
@@ -36,15 +35,14 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // Get the appropriate pool for 2568
-    const pool = getPool('2568');
+    // Get the appropriate pool for this database
+    const pool = getPool(config.database);
     console.log('Using pool for database:', config.database);
     
     const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request WHERE 
     t_step_status != 'ปฏิเสธคำขอ' ${where} AND
     (p_name is not null or p_name != '') ;`
   
-    console.log('Executing query on database:', config.database);
     const countRequest = await pool.request().query(queryCountRequestString);
   
     const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request where t_step_status != 'ปฏิเสธคำขอ' ${where} GROUP BY p_name ORDER BY top_count DESC;`
@@ -93,7 +91,6 @@ export default defineEventHandler(async (event) => {
     const allMoneyTransfer = await pool.request().query(queryallMoneyTransfer);
 
     const result = { 
-      year: '2568',
       database: config.database,
       countRequest: countRequest.recordset[0]['total'],
       topRequest: topRequest.recordset[0],
@@ -104,7 +101,7 @@ export default defineEventHandler(async (event) => {
       allMoneyTransfer: allMoneyTransfer.recordset[0]['total']
     };
 
-    console.log('=== Query Results (2568) ===');
+    console.log('=== Query Results ===');
     console.log('Database used:', config.database);
     console.log('Count request:', result.countRequest);
     console.log('All transfer:', result.allTransfer);

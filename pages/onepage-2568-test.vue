@@ -24,8 +24,7 @@
                 <!-- Debug info -->
                 <div class="bg-yellow-200 p-4 mb-4 rounded-lg">
                     <h4 class="font-bold">Debug Info:</h4>
-                    <p>Year: {{ report?.year || 'N/A' }}</p>
-                    <p>Database: {{ report?.year === '2568' ? 'DPM_HELP68' : 'DPM_HELP67' }}</p>
+                    <p>Database: {{ report?.database || 'N/A' }}</p>
                     <p>Status: {{ status }}</p>
                 </div>
                 
@@ -132,8 +131,8 @@
       title: 'จำนวนคำร้องขอรับเงินช่วยเหลืออันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี พ.ศ.2568 ตามมติคณะรัฐมนตรี 26 สิงหาคม 2568'
     })
   
-    // Use the unified API with year parameter
-    const { data: report, status, refresh } = await useFetch('/api/onepage-unified?phase=1.0&nocache='+ new Date().getTime(), {
+    // Use the unified API with database parameter
+    const { data: report, status, refresh } = await useFetch('/api/onepage-unified?database=DPM_HELP68&phase=1.0&nocache='+ new Date().getTime(), {
         cache: 'no-store',
         headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -147,7 +146,7 @@
     watch(report, (newReport) => {
         if (newReport) {
             console.log('Report data received (unified API):', newReport);
-            console.log('Year:', newReport.year);
+            console.log('Database:', newReport.database);
             console.log('Count request:', newReport.countRequest);
         }
     }, { immediate: true });

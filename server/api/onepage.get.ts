@@ -1,11 +1,9 @@
-
-import sql from 'mssql';
 import { getDbConfig, createConnection, getPool } from '../config/database';
 
 export default defineEventHandler(async (event) => {
-  const config = getDbConfig(); // Default to 2567
-  console.log('=== onepage API Debug ===');
-  console.log('Using database config:', config.database);
+  const { database } = getQuery(event);
+  const config = getDbConfig(database as string); // Default to DPM_HELP67 if not specified
+
   
   try {
     await createConnection(config);
@@ -19,25 +17,20 @@ export default defineEventHandler(async (event) => {
   }
 
   const {phase} = getQuery(event);
-  console.log('Query phase:', phase);
 
   let where = ``;
-  if(phase == '1') {
-    where += ` and ph  in ('1.0', '1.1') AND people_id not in ('3570500716650', '5550500508247', '3579143363278')`
-  }else {
+  if(phase) {
     where += ` and ph  in ('${phase}')`
   }
-
   try {
-    // Get the appropriate pool for 2567
-    const pool = getPool();
+    // Get the appropriate pool for this database
+    const pool = getPool(config.database);
     console.log('Using pool for database:', config.database);
     
     const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request WHERE 
     t_step_status != 'ปฏิเสธคำขอ' ${where} AND
     (p_name is not null or p_name != '') ;`
   
-    console.log('Executing query on database:', config.database);
     const countRequest = await pool.request().query(queryCountRequestString);
   
     const queryTopRequestString = `SELECT TOP 1 COUNT(*) AS top_count , p_name from sf_help_request where t_step_status != 'ปฏิเสธคำขอ' ${where} GROUP BY p_name ORDER BY top_count DESC;`
@@ -86,7 +79,6 @@ export default defineEventHandler(async (event) => {
     const allMoneyTransfer = await pool.request().query(queryallMoneyTransfer);
 
     const result = { 
-      year: '2567',
       database: config.database,
       countRequest: countRequest.recordset[0]['total'],
       topRequest: topRequest.recordset[0],
@@ -96,14 +88,6 @@ export default defineEventHandler(async (event) => {
       provinceRetrieveMoney: provinceRetrieveMoney.recordset[0]['total'],
       allMoneyTransfer: allMoneyTransfer.recordset[0]['total']
     };
-
-    console.log('=== Query Results (2567) ===');
-    console.log('Database used:', config.database);
-    console.log('Count request:', result.countRequest);
-    console.log('All transfer:', result.allTransfer);
-    console.log('Top province:', result.topRequest?.p_name);
-    console.log('=== End Debug ===');
-  
     return result;
   }catch(e: any) {
     console.error('Database query error:', e);

@@ -1,11 +1,9 @@
 import { createConnection, getDbConfig, getPool } from '../config/database';
 
-const config = getDbConfig('2568'); // Use 2568 database
-
-
-const getHeader = async (startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
+const getHeader = async (databaseName: string, startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
+  const config = getDbConfig(databaseName);
   await createConnection(config);
-  const pool = getPool('2568');
+  const pool = getPool(databaseName);
 
   let where = '';
   if(startDate && !paymentDateStart) {
@@ -59,9 +57,10 @@ const getHeader = async (startDate: any, endDate: any, pcode: any, paymentDateSt
 }
 
 
-const getSub = async (p_no: any[], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any) => {
+const getSub = async (databaseName: string, p_no: any[], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any) => {
+  const config = getDbConfig(databaseName);
   await createConnection(config);
-  const pool = getPool('2568');
+  const pool = getPool(databaseName);
 
   let where = '';
 
@@ -189,7 +188,10 @@ ORDER BY commit_date,commit_no ASC;
 
 export default defineEventHandler(async (event) => {
    
-    const {startDate, endDate, pcode, paymentDateStart, paymentDateEnd, phase } = getQuery(event)
+    const {startDate, endDate, pcode, paymentDateStart, paymentDateEnd, phase, database } = getQuery(event)
+
+    // Default to DPM_HELP68 if database not specified
+    const dbName = (database as string) || 'DPM_HELP68';
 
     let phaseHead = ''
     let phaseSub = ''
@@ -203,7 +205,7 @@ export default defineEventHandler(async (event) => {
 
     
     const results = []
-  const resultHead = await getHeader(startDate, endDate, pcode, paymentDateStart, paymentDateEnd);
+  const resultHead = await getHeader(dbName, startDate, endDate, pcode, paymentDateStart, paymentDateEnd);
 
   const pNoArray = resultHead.map(item => item.p_no);
   
@@ -211,7 +213,7 @@ export default defineEventHandler(async (event) => {
     return resultHead;
   }
 
-    const childData = await getSub(pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd);
+    const childData = await getSub(dbName, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd);
 
     // Group child data by p_no
     const groupedChildren = childData.reduce((acc, child) => {

@@ -1,10 +1,10 @@
 import sql from 'mssql';
 
-// Database configurations
-export const dbConfig67 = {
+// Base database configuration template
+const getBaseConfig = (databaseName: string) => ({
   user: 'dalert',
   password: '@min#DSS',
-  database: 'DPM_HELP67',
+  database: databaseName,
   server: '192.168.213.42',
   port: 1433,
   options: {
@@ -18,64 +18,60 @@ export const dbConfig67 = {
     min: 0,
     idleTimeoutMillis: 30000
   }
-};
+});
 
-export const dbConfig68 = {
-  user: 'dalert',
-  password: '@min#DSS',
-  database: 'DPM_HELP68',
-  server: '192.168.213.42',
-  port: 1433,
-  options: {
-    encrypt: false,
-    trustServerCertificate: true,
-  },
-  connectionTimeout: 300000,
-  requestTimeout: 300000,
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000
+// Dynamic connection pools storage
+const pools: Map<string, sql.ConnectionPool> = new Map();
+
+// Whitelist of allowed database names (for security)
+// เพิ่มชื่อ database ที่อนุญาตที่นี่
+const ALLOWED_DATABASES = [
+  'DPM_HELP67',
+  'DPM_HELP68',
+  'DPM_HELP68_FLOOD'
+];
+
+// Helper function to validate database name
+export const validateDatabaseName = (dbName: string): boolean => {
+  // ตรวจสอบว่าชื่อ database อยู่ใน whitelist
+  if (!ALLOWED_DATABASES.includes(dbName)) {
+    throw new Error(`Database "${dbName}" is not allowed. Allowed databases: ${ALLOWED_DATABASES.join(', ')}`);
   }
+  return true;
 };
 
-// Connection pools for each database
-let pool67: sql.ConnectionPool | null = null;
-let pool68: sql.ConnectionPool | null = null;
-
-// Helper function to get database connection based on year
-export const getDbConfig = (year?: string) => {
-  if (year === '2568') {
-    return dbConfig68;
-  }
-  return dbConfig67; // Default to 2567
+// Helper function to get database configuration dynamically
+export const getDbConfig = (databaseName?: string) => {
+  // Default to DPM_HELP67 if no database specified
+  const dbName = databaseName || 'DPM_HELP67';
+  
+  // Validate database name
+  validateDatabaseName(dbName);
+  
+  return getBaseConfig(dbName);
 };
 
-// Helper function to create database connection with separate pools
+// Helper function to create database connection with dynamic pool management
 export const createConnection = async (config: any) => {
   try {
-    // Determine which pool to use based on database name
-    let pool: sql.ConnectionPool | null = null;
+    const dbName = config.database;
     
-    if (config.database === 'DPM_HELP67') {
-      if (!pool67) {
-        console.log('Creating new connection pool for DPM_HELP67');
-        pool67 = await new sql.ConnectionPool(config).connect();
-      }
-      pool = pool67;
-    } else if (config.database === 'DPM_HELP68') {
-      if (!pool68) {
-        console.log('Creating new connection pool for DPM_HELP68');
-        pool68 = await new sql.ConnectionPool(config).connect();
-      }
-      pool = pool68;
+    // Validate database name
+    validateDatabaseName(dbName);
+    
+    // Check if pool already exists
+    if (!pools.has(dbName)) {
+      console.log(`Creating new connection pool for ${dbName}`);
+      const newPool = await new sql.ConnectionPool(config).connect();
+      pools.set(dbName, newPool);
     }
     
+    const pool = pools.get(dbName);
     if (!pool) {
-      throw new Error(`No pool available for database: ${config.database}`);
+      throw new Error(`Failed to get pool for database: ${dbName}`);
     }
     
-    console.log(`Using connection pool for database: ${config.database}`);
+    console.log(`Using connection pool for database: ${dbName}`);
     return pool;
   } catch (error) {
     console.error('Database connection error:', error);
@@ -84,33 +80,49 @@ export const createConnection = async (config: any) => {
 };
 
 // Helper function to get the appropriate pool for queries
-export const getPool = (year?: string) => {
-  if (year === '2568') {
-    if (!pool68) {
-      throw new Error('Pool for DPM_HELP68 not initialized');
-    }
-    return pool68;
+export const getPool = (databaseName?: string) => {
+  // Default to DPM_HELP67 if no database specified
+  const dbName = databaseName || 'DPM_HELP67';
+  
+  // Validate database name
+  validateDatabaseName(dbName);
+  
+  const pool = pools.get(dbName);
+  if (!pool) {
+    throw new Error(`Pool for ${dbName} not initialized. Please call createConnection first.`);
   }
-  if (!pool67) {
-    throw new Error('Pool for DPM_HELP67 not initialized');
-  }
-  return pool67;
+  
+  return pool;
 };
 
 // Helper function to close all pools (for cleanup)
 export const closeAllPools = async () => {
   try {
-    if (pool67) {
-      await pool67.close();
-      pool67 = null;
-      console.log('Closed pool for DPM_HELP67');
+    for (const [dbName, pool] of pools.entries()) {
+      await pool.close();
+      console.log(`Closed pool for ${dbName}`);
     }
-    if (pool68) {
-      await pool68.close();
-      pool68 = null;
-      console.log('Closed pool for DPM_HELP68');
-    }
+    pools.clear();
   } catch (error) {
     console.error('Error closing pools:', error);
   }
+};
+
+// Helper function to close specific pool
+export const closePool = async (databaseName: string) => {
+  try {
+    const pool = pools.get(databaseName);
+    if (pool) {
+      await pool.close();
+      pools.delete(databaseName);
+      console.log(`Closed pool for ${databaseName}`);
+    }
+  } catch (error) {
+    console.error(`Error closing pool for ${databaseName}:`, error);
+  }
+};
+
+// Helper function to get list of allowed databases
+export const getAllowedDatabases = () => {
+  return [...ALLOWED_DATABASES];
 };

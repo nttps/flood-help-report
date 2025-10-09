@@ -116,7 +116,7 @@
       title: 'จำนวนคำร้องขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2567 (เพิ่มเติม) ตามมติคณะรัฐมนตรี 3 ธันวาคม 2567'
     })
   
-    const { data: report, status } = await useFetch('/api/onepage-unified?phase=2.0', {
+    const { data: report, status } = await useFetch('/api/onepage-unified?database=DPM_HELP67&phase=2.0', {
         cache: 'no-store',
         headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',

@@ -5,7 +5,8 @@
             <div class="mt-8 lg:mt-0 print:block lg:flex justify-between px-8 items-center">
                 <div class="ml-auto print:ml-0 print:hidden"></div>
                 <div >
-                    <h3 class="text-center font-bold text-lg lg:text-2xl print:text-lg">สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568
+                    <h3 class="text-center font-bold text-lg lg:text-2xl print:text-lg">
+                        {{ title }}
                     </h3>
                 </div>
                 <div  class="print:text-right absolute right-4 top-4 print:fixed print:ml-0 print:right-0 lg:top-0 lg:right-0 lg:relative lg:block lg:ml-auto date-title text-xs lg:text-base">
@@ -291,10 +292,23 @@
   } from 'date-fns'
   import "@fontsource/sarabun"; // Import the Google Font
   import { th } from "date-fns/locale";
+
+  const titles = ref([{
+        value: 'DPM_HELP68',
+        label: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568',
+    }, {
+        value: 'DPM_HELP68_FLOOD',
+        label: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2568',
+    }])
+
+
+    const route = useRoute()
+
+const title = computed(() => titles.value.find(title => title.value == route.query.title)?.label || 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568')
+
   useSeoMeta({
-    title: 'สรุปจำนวนผู้ขอรับเงินช่วยเหลือผู้ประสบอันเนื่องมาจากการกระทำของกองกำลังจากนอกประเทศ ปี 2568'
+    title: title.value
   })
-  const route = useRoute()
 
   // Helper function to format date with Buddhist Era year
   const formatDateTH = (date: Date | string, formatString: string = 'dd MMM yyyy') => {
@@ -339,7 +353,9 @@
   })
   
   const query = async () => {
-      const res = await $fetch(`/api/?phase=${route.query.phase}&${route.query.paymentDateStart ? '' : `startDate=${route.query?.startDate}&endDate=${route.query?.endDate}&`}${route.query.pcode ? `pcode=${route.query.pcode}`: ''}${route.query.paymentDateStart ? `&paymentDateStart=${route.query.paymentDateStart}`: ''}${route.query.paymentDateStart ? `&paymentDateEnd=${route.query.paymentDateEnd}`: ''}`)
+      // Default to DPM_HELP68 if not specified
+      const database = route.query.title || 'DPM_HELP68';
+      const res = await $fetch(`/api/?database=${database}&phase=${route.query.phase}&${route.query.paymentDateStart ? '' : `startDate=${route.query?.startDate}&endDate=${route.query?.endDate}&`}${route.query.pcode ? `pcode=${route.query.pcode}`: ''}${route.query.paymentDateStart ? `&paymentDateStart=${route.query.paymentDateStart}`: ''}${route.query.paymentDateStart ? `&paymentDateEnd=${route.query.paymentDateEnd}`: ''}`)
       dataHead.value = res ?? []
       pending.value = true
   }

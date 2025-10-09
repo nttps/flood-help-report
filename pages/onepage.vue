@@ -125,7 +125,7 @@
     import { jsPDF } from 'jspdf';
     import {pdfFonts} from '~/assets/fonts/vfs_fonts.js'
 
-    const { data: report, status } = await useFetch('/api/onepage?phase=1&nocache='+ new Date().toISOString(), {
+    const { data: report, status } = await useFetch('/api/onepage?database=DPM_HELP67&phase=1&nocache='+ new Date().toISOString(), {
         cache: 'no-store',
         headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',

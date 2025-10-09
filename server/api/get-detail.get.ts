@@ -1,21 +1,9 @@
-import sql from 'mssql';
+import { createConnection, getDbConfig, getPool } from '../config/database';
 
-const config = {
-  user: 'dalert',
-  password: '@min#DSS',
-  database: 'DPM_HELP67',
-  server: '192.168.213.42',
-  port: 1433,
-  options: {
-    encrypt: true, // ถ้าเชื่อมต่อแบบ SSL
-    trustServerCertificate: true, // ถ้าไม่ใช้ SSL
-  },
-  connectionTimeout: 300000 , // 30 seconds for connection timeout
-  requestTimeout: 300000 , // 60 seconds for query request timeout
-};
-
-const getSub = async (sql: typeof import('mssql'), p_no: any, startDate: any, endDate: any) => {
-  await sql.connect(config);
+const getSub = async (databaseName: string, p_no: any, startDate: any, endDate: any) => {
+  const config = getDbConfig(databaseName);
+  await createConnection(config);
+  const pool = getPool(databaseName);
 
   
   let where = '';
@@ -27,7 +15,7 @@ const getSub = async (sql: typeof import('mssql'), p_no: any, startDate: any, en
     where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}'`
   }
 
-  const result = await sql.query(`
+  const result = await pool.request().query(`
     WITH sub_counts AS (
         SELECT 
         cl.origin_pcode AS p_no,
@@ -80,9 +68,10 @@ const getSub = async (sql: typeof import('mssql'), p_no: any, startDate: any, en
 
 export default defineEventHandler(async (event) => {
 
-    const {startDate, endDate, pcode} = getQuery(event)
+    const {startDate, endDate, pcode, database} = getQuery(event)
+    const dbName = (database as string) || 'DPM_HELP67'; // Default to DPM_HELP67
 
-    const childData = await getSub(sql, pcode, startDate, endDate);
+    const childData = await getSub(dbName, pcode, startDate, endDate);
 
     return childData;
 

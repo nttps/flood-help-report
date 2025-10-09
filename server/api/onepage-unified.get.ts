@@ -1,4 +1,3 @@
-import sql from 'mssql';
 import { getDbConfig, createConnection, getPool } from '../config/database';
 
 export default defineEventHandler(async (event) => {
@@ -9,14 +8,11 @@ export default defineEventHandler(async (event) => {
     'Expires': '0'
   });
 
-  const { phase, year } = getQuery(event);
+  const { phase, database } = getQuery(event);
   
-  console.log('=== API Request Debug ===');
-  console.log('Requested year:', year);
-  console.log('Requested phase:', phase);
   
-  // Determine which database to use based on year parameter
-  const config = getDbConfig(year as string);
+  // Determine which database to use based on database parameter
+  const config = getDbConfig(database as string);
   console.log('Selected database config:', config.database);
   
   try {
@@ -32,8 +28,8 @@ export default defineEventHandler(async (event) => {
 
   let where = ``;
   try {
-    // Get the appropriate pool for this year
-    const pool = getPool(year as string);
+    // Get the appropriate pool for this database
+    const pool = getPool(config.database);
     console.log('Using pool for database:', config.database);
     
     const queryCountRequestString = `SELECT COUNT(*) as total from sf_help_request WHERE 
@@ -90,7 +86,6 @@ export default defineEventHandler(async (event) => {
     const allMoneyTransfer = await pool.request().query(queryallMoneyTransfer);
 
     const result = { 
-      year: year || '2567',
       database: config.database,
       countRequest: countRequest.recordset[0]['total'],
       topRequest: topRequest.recordset[0],
@@ -103,7 +98,6 @@ export default defineEventHandler(async (event) => {
 
     console.log('=== Query Results ===');
     console.log('Database used:', config.database);
-    console.log('Year requested:', year);
     console.log('Count request:', result.countRequest);
     console.log('All transfer:', result.allTransfer);
     console.log('Top province:', result.topRequest?.p_name);
