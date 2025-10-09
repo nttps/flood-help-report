@@ -43,7 +43,7 @@
                       <div class="text-2xl mt-3">บาท</div>
                   </div>
               </div>
-              <div class="flex flex-wrap lg:flex-nowrap justify-center gap-4 lg:gap-2 my-3">
+              <div class="flex flex-wrap lg:flex-nowrap justify-center gap-4 lg:gap-2 my-3" v-if="report.allRequest.length > 0">
                   <div class="bg-secondary py-8 rounded-xl w-full lg:w-3/5 text-center text-2xl">
                       <div class=" mb-2">จังหวัดที่มีผู้ยื่นคำร้อง <span class="font-bold underline">สูงสุด</span></div>
                       <div class="text-4xl">{{ report.allRequest[0].p_name }}</div>
