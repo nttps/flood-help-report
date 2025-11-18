@@ -28,7 +28,8 @@ const pools: Map<string, sql.ConnectionPool> = new Map();
 const ALLOWED_DATABASES = [
   'DPM_HELP67',
   'DPM_HELP68',
-  'DPM_HELP68_FLOOD'
+  'DPM_HELP68_FLOOD',
+  'DPM_HELP68_FLOOD_PLUS'
 ];
 
 // Helper function to validate database name
