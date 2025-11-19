@@ -113,13 +113,9 @@
     const schema = z.object({
       startDate: z.date({ message: 'กรุณาเลือกวันที่เริ่มต้น'}),
       endDate: z.date({ message: 'กรุณาเลือกวันที่เริ่มต้น' }),
-
     })
 
     const { data: provinces, status } = await useFetch(() => `/api/province?database=${form.database}`)
-
-
-
     const router = useRouter()
 
     // ฟังก์ชันสำหรับเมื่อเปลี่ยน database
