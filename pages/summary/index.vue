@@ -69,18 +69,18 @@
     }, {
         value: 'DPM_HELP68_FLOOD',
         label: 'การช่วยเหลือผู้ประสบภัยในช่วงฤดูฝน ปี พ.ศ.2568',
-        minDate: new Date(2025, 9, 10), // 1 พฤศจิกายน 2568
+        minDate: new Date(2025, 9, 1), // 1 พฤศจิกายน 2568
         maxDate: new Date(2026, 0, 31), // 31 มกราคม 2569
-        defaultStartDate: new Date(2025, 9, 10),
-        defaultEndDate: new Date(new Date(2025, 9, 10).getTime() + 86400000),
+        defaultStartDate: new Date(2025, 9, 1),
+        defaultEndDate: new Date(new Date(2025, 9, 1).getTime() + 86400000),
         paymentMinDate: new Date(2025, 9, 10) // 11 ตุลาคม 2568
     }, {
         value: 'DPM_HELP68_FLOOD_PLUS',
         label: 'น้ำท่วมขังบริเวณที่อยู่อาศัยประจำเป็นระยะเวลานานในช่วงฤดูฝน ปี 2568',
-        minDate: new Date(2025, 9, 10), // 1 พฤศจิกายน 2568
+        minDate: new Date(2025, 9, 1), // 1 พฤศจิกายน 2568
         maxDate: new Date(2026, 0, 31), // 31 มกราคม 2569
-        defaultStartDate: new Date(2025, 9, 10),
-        defaultEndDate: new Date(new Date(2025, 9, 10).getTime() + 86400000),
+        defaultStartDate: new Date(2025, 9, 1),
+        defaultEndDate: new Date(new Date(2025, 9, 1).getTime() + 86400000),
         paymentMinDate: new Date(2025, 9, 10) // 11 ตุลาคม 2568
     }])
 
