@@ -86,7 +86,7 @@
 
     const form = reactive({
       database: 'DPM_HELP68_FLOOD', // ค่าเริ่มต้น
-      startDate: new Date(2025, 7, 26),
+      startDate: new Date(2025, 9, 1),
       endDate: new Date(),
       pcode: 'all',
       paymentDate: {
