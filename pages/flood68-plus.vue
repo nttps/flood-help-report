@@ -125,12 +125,18 @@
   import { jsPDF } from 'jspdf';
   import {pdfFonts} from '~/assets/fonts/vfs_fonts.js'
 
-  const { data: report, status } = await useFetch('/api/onepage?database=DPM_HELP68_FLOOD_PLUS&nocache='+ new Date().toISOString(), {
-      cache: 'no-store',
-      headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0'
+  // ใช้ cache เพื่อลด database load - refresh ทุก 1 นาที
+  const { data: report, status } = await useFetch('/api/onepage', {
+      query: {
+          database: 'DPM_HELP68_FLOOD_PLUS'
+      },
+      key: 'onepage-flood68-plus',
+      getCachedData(key) {
+          const data = useNuxtApp().payload.data[key] || useNuxtApp().static.data[key]
+          if (data) {
+              console.log('[Client Cache HIT] flood68-plus page')
+              return data
+          }
       }
   })
   const pending = computed(() => status.value === 'success')

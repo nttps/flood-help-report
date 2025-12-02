@@ -14,15 +14,18 @@ const getBaseConfig = (databaseName: string) => ({
   connectionTimeout: 25000,  // 25 seconds (ลดลง)
   requestTimeout: 35000,     // 35 seconds (ลดจาก 45s) - force queries to complete faster
   pool: {
-    max: 1000,                    // 1000 connections (OK กับ RAM 128GB!)
-    min: 50,                      // 50 warm connections (ใช้ RAM advantage)
-    idleTimeoutMillis: 60000,     // 60s - เก็บ connections ไว้นานขึ้น (มี RAM เยอะ)
-    acquireTimeoutMillis: 20000,  // 20s - ให้เวลารอ connection มากขึ้น
-    createTimeoutMillis: 20000,   // 20s - ให้เวลาสร้าง connection
+    max: 1000,                    // 1000 connections max (OK กับ RAM 128GB!)
+    min: 20,                      // 20 warm connections (ลดลงเพราะมี cache แล้ว)
+    idleTimeoutMillis: 30000,     // 30s - คืน idle connections เร็วขึ้น (มี cache แล้วไม่ต้องเก็บนาน)
+    acquireTimeoutMillis: 15000,  // 15s - ลดเวลารอ connection
+    createTimeoutMillis: 10000,   // 10s - สร้าง connection เร็วขึ้น
     destroyTimeoutMillis: 5000,   // 5s timeout for destroying
-    reapIntervalMillis: 10000,    // 10s - cleanup moderate (ไม่ต้องบ่อยมาก)
+    reapIntervalMillis: 5000,     // 5s - cleanup บ่อยขึ้นเพื่อคืน connections เร็ว
     createRetryIntervalMillis: 100, // 100ms retry
-    propagateCreateError: true
+    propagateCreateError: true,
+    // Connection validation - ช่วยให้ connections ที่เสียถูกทำลายและสร้างใหม่
+    evictionRunIntervalMillis: 10000, // 10s - ตรวจสอบ connections ที่ควรถูกทำลาย
+    softIdleTimeoutMillis: 15000      // 15s - connections ที่ idle เกิน 15s จะถูก evict ก่อน
   }
 });
 
