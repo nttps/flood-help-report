@@ -175,3 +175,31 @@ export const closePool = async (databaseName: string) => {
 export const getAllowedDatabases = () => {
   return [...ALLOWED_DATABASES];
 };
+
+// Helper function to get all pool states for monitoring
+export const getAllPoolStates = () => {
+  const states: any = {};
+  
+  for (const [dbName, pool] of pools.entries()) {
+    try {
+      states[dbName] = {
+        connected: pool.connected,
+        size: pool.size,
+        available: pool.available,
+        pending: pool.pending,
+        borrowed: pool.borrowed
+      };
+    } catch (error) {
+      states[dbName] = {
+        error: 'Unable to get pool state'
+      };
+    }
+  }
+  
+  return states;
+};
+
+// Helper function to check if pool exists
+export const hasPool = (databaseName: string): boolean => {
+  return pools.has(databaseName);
+};
