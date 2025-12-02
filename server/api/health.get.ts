@@ -6,9 +6,11 @@ export default defineEventHandler(async (event) => {
   try {
     // Import database utilities
     const { getAllowedDatabases, getAllPoolStates } = await import('../config/database');
+    const { getCacheStats } = await import('../utils/cache');
     
     const databases = getAllowedDatabases();
     const poolStates = getAllPoolStates();
+    const cacheStats = getCacheStats();
     
     // Calculate pool statistics
     const poolStats = {
@@ -24,11 +26,24 @@ export default defineEventHandler(async (event) => {
     const warnings: string[] = [];
     const criticalIssues: string[] = [];
     
+    // Check cache effectiveness
+    if (poolStats.borrowedConnections > 100 && cacheStats.totalEntries < 10) {
+      warnings.push(
+        `High connection usage (${poolStats.borrowedConnections}) but low cache entries (${cacheStats.totalEntries}). Cache may not be working effectively.`
+      );
+    }
+    
     for (const [dbName, state] of Object.entries(poolStates) as [string, any][]) {
       // Critical: Pool exhaustion with many pending requests
       if (state.available === 0 && state.pending > 10) {
         criticalIssues.push(
           `${dbName}: Pool exhausted! ${state.pending} requests waiting, 0 connections available`
+        );
+      }
+      // Warning: Too many borrowed connections (possible connection leak)
+      else if (state.borrowed > 100) {
+        warnings.push(
+          `${dbName}: Very high borrowed connections (${state.borrowed}) - check for connection leaks or missing cache`
         );
       }
       // Warning: High utilization
@@ -80,6 +95,7 @@ export default defineEventHandler(async (event) => {
         allowed: databases,
         count: databases.length
       },
+      cache: cacheStats,
       pools: poolStates,
       poolStats: poolStats,
       warnings: warnings.length > 0 ? warnings : undefined,
@@ -97,8 +113,10 @@ export default defineEventHandler(async (event) => {
         'Consider scaling horizontally with load balancing'
       ] : warnings.length > 0 ? [
         'Monitor pool utilization closely',
-        'Consider increasing pool size',
-        'Review and optimize database queries'
+        'Add cache to APIs that are frequently called',
+        'Check cache hit rate - if low, increase cache TTL',
+        'Review and optimize database queries',
+        `Current cache entries: ${cacheStats.totalEntries}, borrowed connections: ${poolStats.borrowedConnections}`
       ] : undefined
     };
   } catch (error: any) {

@@ -1,9 +1,28 @@
 import { getDbConfig, createConnection, getPool } from '../config/database';
+import { getCache, setCache } from '../utils/cache';
+
+// Cache TTL: 1 นาที (dashboard data - อัพเดทบ่อยพอสมควร)
+const ONEPAGE_CACHE_TTL = 1 * 60 * 1000;
 
 export default defineEventHandler(async (event) => {
-  const { database } = getQuery(event);
+  const { database, phase } = getQuery(event);
   const config = getDbConfig(database as string); // Default to DPM_HELP67 if not specified
 
+  // สร้าง cache key
+  const cacheKey = `onepage:${config.database}:${phase || 'all'}`;
+  
+  // ตรวจสอบ cache ก่อน
+  const cachedData = getCache(cacheKey, ONEPAGE_CACHE_TTL);
+  if (cachedData) {
+    console.log(`[Cache HIT] Onepage data for ${config.database}`);
+    setResponseHeaders(event, {
+      'Cache-Control': 'public, max-age=60', // 1 นาที
+      'X-Cache': 'HIT'
+    });
+    return cachedData;
+  }
+  
+  console.log(`[Cache MISS] Fetching onepage data from database: ${config.database}`);
   
   try {
     await createConnection(config);
@@ -15,8 +34,6 @@ export default defineEventHandler(async (event) => {
       statusMessage: `Database connection failed: ${error?.message || 'Unknown error'}`
     });
   }
-
-  const {phase} = getQuery(event);
 
   let where = ``;
   if(phase) {
@@ -88,6 +105,16 @@ export default defineEventHandler(async (event) => {
       provinceRetrieveMoney: provinceRetrieveMoney.recordset[0]['total'],
       allMoneyTransfer: allMoneyTransfer.recordset[0]['total']
     };
+    
+    // บันทึกลง cache
+    setCache(cacheKey, result);
+    
+    // ตั้ง cache headers
+    setResponseHeaders(event, {
+      'Cache-Control': 'public, max-age=60', // 1 นาที
+      'X-Cache': 'MISS'
+    });
+    
     return result;
   }catch(e: any) {
     console.error('Database query error:', e);

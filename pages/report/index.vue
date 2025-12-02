@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <div class="py-8" v-if="pending"  ref="table">
+        <div class="py-8" v-if="!pending"  ref="table">
             <div class="mt-8 lg:mt-0 print:block lg:flex justify-between px-8 items-center">
                 <div class="ml-auto print:ml-0 print:hidden"></div>
                 <div >
@@ -273,7 +273,7 @@
             </div>
 
         </div>
-        <div v-else class="min-h-screen flex items-center justify-center">
+        <div v-if="pending" class="min-h-screen flex items-center justify-center">
             <h3 class="text-center font-bold text-[50px]">กำลังประมวลผล...</h3>
         </div>
         
@@ -322,20 +322,44 @@ const title = computed(() => titles.value.find(title => title.value == route.que
   }
 
   interface Sub {
-      sub_id: number;
-      subField: string;
-      anotherSubField: string;
+      sub_id?: number;
+      p_no: string;
+      p_name: string;
+      commit_no: string;
+      commit_date: string;
+      commit_id: string;
+      status_confirm: string;
+      person_qty: number;
+      failed_linkage: number;
+      send_bank: number;
+      latest_payment_date: string | null;
+      payment_sequence: number;
+      count_payment_date: number;
+      successful_payments: number;
+      unsuccessful_payments: number;
+      count_back_to_province: number;
+      send_from_province: number;
+      outstanding: number;
+      retreat: number;
   }
 
   interface Head {
-      p_no: number;
-      anotherField: string;
+      p_no: string;
+      p_name: string;
+      person_qty: number;
+      failed_linkage: number;
+      send_bank: number;
+      count_total_commit: number;
+      successful_payments: number;
+      count_payment_date: number;
+      unsuccessful_payments: number;
+      count_back_to_province: number;
+      retreat: number;
       sub: Sub[];
       showSub: boolean;
   }
 
   const dataHead = ref < Head[] > ([])
-  const pending = ref(false)
   const table = ref()
   const isMobile = ref(false)
   const mainTable = ref()
@@ -348,20 +372,61 @@ const title = computed(() => titles.value.find(title => title.value == route.que
     generatePDF(dataHead.value)
   };
 
+  // สร้าง computed สำหรับ API URL
+  const database = computed(() => route.query.title || 'DPM_HELP68')
+  const apiUrl = computed(() => {
+    const db = database.value
+    const params = [
+      `database=${db}`,
+      route.query.phase ? `phase=${route.query.phase}` : '',
+      !route.query.paymentDateStart && route.query.startDate ? `startDate=${route.query.startDate}` : '',
+      !route.query.paymentDateStart && route.query.endDate ? `endDate=${route.query.endDate}` : '',
+      route.query.pcode ? `pcode=${route.query.pcode}` : '',
+      route.query.paymentDateStart ? `paymentDateStart=${route.query.paymentDateStart}` : '',
+      route.query.paymentDateEnd ? `paymentDateEnd=${route.query.paymentDateEnd}` : ''
+    ].filter(Boolean).join('&')
+    
+    return `/api/?${params}`
+  })
+
+  // สร้าง cache key จาก query params
+  const cacheKey = computed(() => {
+    const db = database.value
+    const pcode = route.query.pcode || 'all'
+    const startDate = route.query.startDate || 'none'
+    const endDate = route.query.endDate || 'none'
+    const paymentDateStart = route.query.paymentDateStart || 'none'
+    const paymentDateEnd = route.query.paymentDateEnd || 'none'
+    const phase = route.query.phase || 'all'
+    
+    return `report:${db}:${pcode}:${startDate}:${endDate}:${paymentDateStart}:${paymentDateEnd}:${phase}`
+  })
+
+  // ใช้ useFetch พร้อม cache
+  const { data: reportData, pending } = await useFetch(apiUrl, {
+    key: cacheKey.value,
+    getCachedData(key) {
+      const data = useNuxtApp().payload.data[key] || useNuxtApp().static.data[key]
+      // ถ้ามีข้อมูลใน cache ใช้เลย ไม่ต้อง fetch ใหม่
+      if (data) {
+        console.log('[Client Cache HIT]', key)
+        return data
+      }
+      console.log('[Client Cache MISS]', key)
+    }
+  })
+
+  // เมื่อได้ข้อมูลแล้วให้อัพเดท dataHead
+  watch(reportData, (newData) => {
+    if (newData && Array.isArray(newData)) {
+      dataHead.value = newData as Head[]
+    }
+  }, { immediate: true })
 
   onMounted(() => {
       checkMobile()
       window.addEventListener('resize', checkMobile);
-      query()
   })
-  
-  const query = async () => {
-      // Default to DPM_HELP68 if not specified
-      const database = route.query.title || 'DPM_HELP68';
-      const res = await $fetch(`/api/?database=${database}&phase=${route.query.phase}&${route.query.paymentDateStart ? '' : `startDate=${route.query?.startDate}&endDate=${route.query?.endDate}&`}${route.query.pcode ? `pcode=${route.query.pcode}`: ''}${route.query.paymentDateStart ? `&paymentDateStart=${route.query.paymentDateStart}`: ''}${route.query.paymentDateStart ? `&paymentDateEnd=${route.query.paymentDateEnd}`: ''}`)
-      dataHead.value = res ?? []
-      pending.value = true
-  }
 
   const toggleSub = (index: number) => {
       // เปลี่ยนสถานะการแสดงหรือซ่อนของ Sub

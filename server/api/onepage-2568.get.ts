@@ -1,16 +1,29 @@
 
 import { getDbConfig, createConnection, getPool } from '../config/database';
+import { getCache, setCache } from '../utils/cache';
+
+// Cache TTL: 1 นาที (dashboard data - อัพเดทบ่อยพอสมควร)
+const ONEPAGE_CACHE_TTL = 1 * 60 * 1000;
 
 export default defineEventHandler(async (event) => {
-  // Set cache headers to prevent caching
-  setResponseHeaders(event, {
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
-  });
-
-  const { database } = getQuery(event);
+  const { database, phase } = getQuery(event);
   const config = getDbConfig(database as string || 'DPM_HELP68'); // Default to DPM_HELP68
+  
+  // สร้าง cache key
+  const cacheKey = `onepage-2568:${config.database}:${phase || 'all'}`;
+  
+  // ตรวจสอบ cache ก่อน
+  const cachedData = getCache(cacheKey, ONEPAGE_CACHE_TTL);
+  if (cachedData) {
+    console.log(`[Cache HIT] Onepage-2568 data for ${config.database}`);
+    setResponseHeaders(event, {
+      'Cache-Control': 'public, max-age=60', // 1 นาที
+      'X-Cache': 'HIT'
+    });
+    return cachedData;
+  }
+  
+  console.log(`[Cache MISS] Fetching onepage-2568 data from database: ${config.database}`);
   console.log('=== onepage-2568 API Debug ===');
   console.log('Using database config:', config.database);
   
@@ -24,8 +37,6 @@ export default defineEventHandler(async (event) => {
       statusMessage: `Database connection failed: ${error?.message || 'Unknown error'}`
     });
   }
-
-  const {phase} = getQuery(event);
 
   let where = ``;
   if(phase == '1') {
@@ -107,6 +118,15 @@ export default defineEventHandler(async (event) => {
     console.log('All transfer:', result.allTransfer);
     console.log('Top province:', result.topRequest?.p_name);
     console.log('=== End Debug ===');
+    
+    // บันทึกลง cache
+    setCache(cacheKey, result);
+    
+    // ตั้ง cache headers
+    setResponseHeaders(event, {
+      'Cache-Control': 'public, max-age=60', // 1 นาที
+      'X-Cache': 'MISS'
+    });
   
     return result;
   }catch(e: any) {
