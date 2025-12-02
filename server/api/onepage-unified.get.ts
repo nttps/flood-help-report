@@ -1,18 +1,30 @@
 import { getDbConfig, createConnection, getPool } from '../config/database';
+import { getCache, setCache } from '../utils/cache';
+
+// Cache TTL: 2 นาที (ข้อมูล dashboard อัพเดทบ่อย แต่ไม่ต้อง real-time ทุกวินาที)
+const DASHBOARD_CACHE_TTL = 2 * 60 * 1000;
 
 export default defineEventHandler(async (event) => {
-  // Set cache headers to prevent caching
-  setResponseHeaders(event, {
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
-  });
-
   const { phase, database } = getQuery(event);
-  
   
   // Determine which database to use based on database parameter
   const config = getDbConfig(database as string);
+  
+  // สร้าง cache key จาก database และ phase
+  const cacheKey = `dashboard:onepage-unified:${config.database}:${phase || 'all'}`;
+  
+  // ตรวจสอบ cache ก่อน
+  const cachedData = getCache(cacheKey, DASHBOARD_CACHE_TTL);
+  if (cachedData) {
+    console.log(`[Cache HIT] Dashboard data for ${config.database}`);
+    setResponseHeaders(event, {
+      'Cache-Control': 'public, max-age=120', // 2 นาที
+      'X-Cache': 'HIT'
+    });
+    return cachedData;
+  }
+  
+  console.log(`[Cache MISS] Fetching dashboard data from database: ${config.database}`);
   console.log('Selected database config:', config.database);
   
   try {
@@ -102,6 +114,15 @@ export default defineEventHandler(async (event) => {
     console.log('All transfer:', result.allTransfer);
     console.log('Top province:', result.topRequest?.p_name);
     console.log('=== End Debug ===');
+    
+    // บันทึกลง cache
+    setCache(cacheKey, result);
+    
+    // ตั้ง cache headers
+    setResponseHeaders(event, {
+      'Cache-Control': 'public, max-age=120', // 2 นาที
+      'X-Cache': 'MISS'
+    });
   
     return result;
   }catch(e: any) {

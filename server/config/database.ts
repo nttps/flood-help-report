@@ -12,15 +12,15 @@ const getBaseConfig = (databaseName: string) => ({
     trustServerCertificate: true,
   },
   connectionTimeout: 30000,  // 30 seconds to establish connection
-  requestTimeout: 30000,     // 30 seconds for query execution (ลดจาก 60s)
+  requestTimeout: 45000,     // 45 seconds for query execution (เพิ่มจาก 30s สำหรับ complex queries)
   pool: {
-    max: 100,                     // Increased from 50 to handle high concurrency
-    min: 5,                       // Keep 5 connections ready
-    idleTimeoutMillis: 30000,     // 30 seconds (ลดจาก 60s) - คืน connections เร็วขึ้น
-    acquireTimeoutMillis: 15000,  // 15 seconds (ลดจาก 20s) - fail faster
-    createTimeoutMillis: 10000,   // 10 seconds timeout for creating new connection
+    max: 150,                     // เพิ่มจาก 100 → 150 เพื่อรองรับ high load
+    min: 10,                      // เพิ่มจาก 5 → 10 connections พร้อมใช้ตลอด
+    idleTimeoutMillis: 60000,     // เพิ่มกลับเป็น 60s - ให้ connections อยู่นานขึ้น
+    acquireTimeoutMillis: 25000,  // เพิ่มจาก 15s → 25s - ให้เวลารอ connection มากขึ้น
+    createTimeoutMillis: 15000,   // เพิ่มจาก 10s → 15s
     destroyTimeoutMillis: 5000,   // 5 seconds timeout for destroying connection
-    reapIntervalMillis: 5000,     // Check every 5 seconds (เร็วขึ้นจาก 10s)
+    reapIntervalMillis: 10000,    // Check every 10 seconds
     createRetryIntervalMillis: 200, // Retry interval for connection creation
     propagateCreateError: true    // Propagate connection creation errors
   }

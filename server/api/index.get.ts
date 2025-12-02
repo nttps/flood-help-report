@@ -1,4 +1,8 @@
 import { createConnection, getDbConfig, getPool } from '../config/database';
+import { getCache, setCache } from '../utils/cache';
+
+// Cache TTL: 3 นาที (report data ไม่ต้อง real-time มาก)
+const REPORT_CACHE_TTL = 3 * 60 * 1000;
 
 const getHeader = async (databaseName: string, startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
   const config = getDbConfig(databaseName);
@@ -192,6 +196,22 @@ export default defineEventHandler(async (event) => {
 
     // Default to DPM_HELP68 if database not specified
     const dbName = (database as string) || 'DPM_HELP68';
+    
+    // สร้าง cache key จาก parameters ทั้งหมด
+    const cacheKey = `report:index:${dbName}:${pcode}:${startDate || 'none'}:${endDate || 'none'}:${paymentDateStart || 'none'}:${paymentDateEnd || 'none'}:${phase || 'all'}`;
+    
+    // ตรวจสอบ cache
+    const cachedData = getCache(cacheKey, REPORT_CACHE_TTL);
+    if (cachedData) {
+      console.log(`[Cache HIT] Report data for ${dbName}`);
+      setResponseHeaders(event, {
+        'Cache-Control': 'public, max-age=180', // 3 นาที
+        'X-Cache': 'HIT'
+      });
+      return cachedData;
+    }
+    
+    console.log(`[Cache MISS] Fetching report data from database: ${dbName}`);
 
     let phaseHead = ''
     let phaseSub = ''
@@ -231,5 +251,15 @@ export default defineEventHandler(async (event) => {
         sub: groupedChildren[parent.p_no] || [] // Attach children or an empty array
       };
     });
+    
+    // บันทึกลง cache
+    setCache(cacheKey, result);
+    
+    // ตั้ง cache headers
+    setResponseHeaders(event, {
+      'Cache-Control': 'public, max-age=180', // 3 นาที
+      'X-Cache': 'MISS'
+    });
+    
     return result;
 })
