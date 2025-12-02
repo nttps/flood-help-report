@@ -11,12 +11,19 @@ const getBaseConfig = (databaseName: string) => ({
     encrypt: false,
     trustServerCertificate: true,
   },
-  connectionTimeout: 300000,
-  requestTimeout: 300000,
+  connectionTimeout: 30000,  // 30 seconds to establish connection
+  requestTimeout: 60000,     // 60 seconds for query execution
   pool: {
-    max: 100,
-    min: 0,
-    idleTimeoutMillis: 30000
+    max: 50,                      // Reduce max connections
+    min: 2,                       // Keep minimum 2 connections alive
+    idleTimeoutMillis: 60000,     // 60 seconds before closing idle connection
+    acquireTimeoutMillis: 20000,  // 20 seconds timeout waiting for connection from pool
+    evictionRunIntervalMillis: 10000, // Check for idle connections every 10 seconds
+    softIdleTimeoutMillis: 30000, // Soft timeout for idle connections
+    createTimeoutMillis: 10000,   // 10 seconds timeout for creating new connection
+    destroyTimeoutMillis: 5000,   // 5 seconds timeout for destroying connection
+    createRetryIntervalMillis: 200, // Retry interval for connection creation
+    propagateCreateError: true    // Propagate connection creation errors
   }
 });
 
@@ -60,23 +67,44 @@ export const createConnection = async (config: any) => {
     // Validate database name
     validateDatabaseName(dbName);
     
-    // Check if pool already exists
-    if (!pools.has(dbName)) {
-      console.log(`Creating new connection pool for ${dbName}`);
-      const newPool = await new sql.ConnectionPool(config).connect();
-      pools.set(dbName, newPool);
+    // Check if pool already exists and is connected
+    const existingPool = pools.get(dbName);
+    if (existingPool) {
+      // Check if pool is still connected
+      if (existingPool.connected) {
+        console.log(`[Pool] Reusing existing pool for ${dbName}`);
+        return existingPool;
+      } else {
+        // Pool exists but not connected, remove it
+        console.log(`[Pool] Removing disconnected pool for ${dbName}`);
+        pools.delete(dbName);
+      }
     }
     
-    const pool = pools.get(dbName);
-    if (!pool) {
-      throw new Error(`Failed to get pool for database: ${dbName}`);
+    // Create new pool
+    console.log(`[Pool] Creating new connection pool for ${dbName}`);
+    const newPool = new sql.ConnectionPool(config);
+    
+    // Add error handler before connecting
+    newPool.on('error', (err) => {
+      console.error(`[Pool Error] ${dbName}:`, err.message);
+    });
+    
+    // Connect with timeout handling
+    await newPool.connect();
+    pools.set(dbName, newPool);
+    
+    console.log(`[Pool] Successfully created pool for ${dbName}`);
+    return newPool;
+  } catch (error: any) {
+    console.error(`[Pool Error] Failed to create connection for ${config.database}:`, error.message);
+    
+    // Remove failed pool from map
+    if (pools.has(config.database)) {
+      pools.delete(config.database);
     }
     
-    console.log(`Using connection pool for database: ${dbName}`);
-    return pool;
-  } catch (error) {
-    console.error('Database connection error:', error);
-    throw error;
+    throw new Error(`Database connection failed for ${config.database}: ${error.message}`);
   }
 };
 
@@ -93,7 +121,27 @@ export const getPool = (databaseName?: string) => {
     throw new Error(`Pool for ${dbName} not initialized. Please call createConnection first.`);
   }
   
+  // Log pool state for debugging
+  logPoolState(dbName, pool);
+  
   return pool;
+};
+
+// Helper function to log pool state
+const logPoolState = (dbName: string, pool: sql.ConnectionPool) => {
+  try {
+    const poolInfo = {
+      database: dbName,
+      size: pool.size,
+      available: pool.available,
+      pending: pool.pending,
+      borrowed: pool.borrowed,
+      connected: pool.connected
+    };
+    console.log(`[Pool State] ${dbName}:`, JSON.stringify(poolInfo));
+  } catch (error) {
+    // Ignore logging errors
+  }
 };
 
 // Helper function to close all pools (for cleanup)
