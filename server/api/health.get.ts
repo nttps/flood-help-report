@@ -20,8 +20,54 @@ export default defineEventHandler(async (event) => {
       pendingRequests: Object.values(poolStates).reduce((sum: number, p: any) => sum + (p.pending || 0), 0)
     };
     
+    // Check for pool health issues
+    const warnings: string[] = [];
+    const criticalIssues: string[] = [];
+    
+    for (const [dbName, state] of Object.entries(poolStates) as [string, any][]) {
+      // Critical: Pool exhaustion with many pending requests
+      if (state.available === 0 && state.pending > 10) {
+        criticalIssues.push(
+          `${dbName}: Pool exhausted! ${state.pending} requests waiting, 0 connections available`
+        );
+      }
+      // Warning: High utilization
+      else if (state.available <= 2 && state.pending > 0) {
+        warnings.push(
+          `${dbName}: High pool utilization - ${state.available} available, ${state.pending} pending`
+        );
+      }
+      // Warning: High pending count
+      else if (state.pending > 50) {
+        warnings.push(
+          `${dbName}: High pending requests - ${state.pending} requests waiting`
+        );
+      }
+      // Warning: All connections borrowed
+      else if (state.available === 0 && state.borrowed === state.size) {
+        warnings.push(
+          `${dbName}: All connections in use - ${state.borrowed}/${state.size}`
+        );
+      }
+    }
+    
+    // Determine overall health status
+    let healthStatus = 'healthy';
+    let statusCode = 200;
+    
+    if (criticalIssues.length > 0) {
+      healthStatus = 'critical';
+      statusCode = 503; // Service Unavailable
+    } else if (warnings.length > 0) {
+      healthStatus = 'degraded';
+    }
+    
+    // Set appropriate status code
+    setResponseStatus(event, statusCode);
+    
     return {
-      success: true,
+      success: healthStatus !== 'critical',
+      status: healthStatus,
       timestamp: new Date().toISOString(),
       uptime: Math.floor(process.uptime()),
       memory: {
@@ -36,7 +82,24 @@ export default defineEventHandler(async (event) => {
       },
       pools: poolStates,
       poolStats: poolStats,
-      message: 'Service is healthy'
+      warnings: warnings.length > 0 ? warnings : undefined,
+      criticalIssues: criticalIssues.length > 0 ? criticalIssues : undefined,
+      message: healthStatus === 'healthy' 
+        ? 'Service is healthy' 
+        : healthStatus === 'degraded'
+        ? 'Service is operational but experiencing high load'
+        : 'Service is experiencing critical issues',
+      recommendations: criticalIssues.length > 0 ? [
+        'Increase pool size if database server can handle more connections',
+        'Optimize slow queries to release connections faster',
+        'Implement request queuing or rate limiting',
+        'Check for connection leaks in application code',
+        'Consider scaling horizontally with load balancing'
+      ] : warnings.length > 0 ? [
+        'Monitor pool utilization closely',
+        'Consider increasing pool size',
+        'Review and optimize database queries'
+      ] : undefined
     };
   } catch (error: any) {
     console.error('Health check error:', error);
