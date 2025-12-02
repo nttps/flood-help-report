@@ -2,7 +2,7 @@ import { createConnection, getDbConfig, getPool } from '../config/database';
 import { getCache, setCache } from '../utils/cache';
 
 // Cache TTL: 2 นาที (report data ไม่ต้อง real-time มาก)
-const REPORT_CACHE_TTL = 2 * 60 * 1000;
+const REPORT_CACHE_TTL = 0 * 60 * 1000;
 
 const getHeader = async (pool: any, startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
   // รับ pool มาจาก parameter แทนการ createConnection ซ้ำ
@@ -201,7 +201,7 @@ export default defineEventHandler(async (event) => {
     if (cachedData) {
       console.log(`[Cache HIT] Report data for ${dbName}`);
       setResponseHeaders(event, {
-        'Cache-Control': 'public, max-age=120', // 2 นาที
+        'Cache-Control': 'public, max-age=0', // 2 นาที
         'X-Cache': 'HIT'
       });
       return cachedData;
