@@ -1,9 +1,11 @@
 import { createConnection, getDbConfig, getPool } from '../config/database';
+import { getCache, setCache } from '../utils/cache';
 
-const getSub = async (databaseName: string, p_no: any, startDate: any, endDate: any) => {
-  const config = getDbConfig(databaseName);
-  await createConnection(config);
-  const pool = getPool(databaseName);
+// Cache TTL: 5 นาที (detail data ค่อนข้างคงที่)
+const DETAIL_CACHE_TTL = 5 * 60 * 1000;
+
+const getSub = async (pool: any, p_no: any, startDate: any, endDate: any) => {
+  // รับ pool มาจาก parameter แทนการ createConnection ซ้ำ
 
   
   let where = '';
@@ -67,12 +69,50 @@ const getSub = async (databaseName: string, p_no: any, startDate: any, endDate: 
 
 
 export default defineEventHandler(async (event) => {
-
     const {startDate, endDate, pcode, database} = getQuery(event)
     const dbName = (database as string) || 'DPM_HELP67'; // Default to DPM_HELP67
-
-    const childData = await getSub(dbName, pcode, startDate, endDate);
-
-    return childData;
-
+    
+    // สร้าง cache key
+    const cacheKey = `detail:${dbName}:${pcode}:${startDate || 'none'}:${endDate || 'none'}`;
+    
+    // ตรวจสอบ cache ก่อน
+    const cachedData = getCache(cacheKey, DETAIL_CACHE_TTL);
+    if (cachedData) {
+      console.log(`[Cache HIT] Detail data for ${dbName}, pcode: ${pcode}`);
+      setResponseHeaders(event, {
+        'Cache-Control': 'public, max-age=300', // 5 นาที
+        'X-Cache': 'HIT'
+      });
+      return cachedData;
+    }
+    
+    console.log(`[Cache MISS] Fetching detail data from database: ${dbName}`);
+    
+    // สร้าง connection และ get pool ครั้งเดียว
+    try {
+      const config = getDbConfig(dbName);
+      await createConnection(config);
+      const pool = getPool(dbName);
+      
+      // ส่ง pool แทน databaseName
+      const childData = await getSub(pool, pcode, startDate, endDate);
+      
+      // บันทึกลง cache
+      setCache(cacheKey, childData);
+      
+      // ตั้ง cache headers
+      setResponseHeaders(event, {
+        'Cache-Control': 'public, max-age=300', // 5 นาที
+        'X-Cache': 'MISS'
+      });
+      
+      return childData;
+      
+    } catch (error: any) {
+      console.error('Failed to fetch detail data:', error);
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Database query failed: ${error?.message || 'Unknown error'}`
+      });
+    }
 })

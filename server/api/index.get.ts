@@ -1,13 +1,11 @@
 import { createConnection, getDbConfig, getPool } from '../config/database';
 import { getCache, setCache } from '../utils/cache';
 
-// Cache TTL: 3 นาที (report data ไม่ต้อง real-time มาก)
-const REPORT_CACHE_TTL = 3 * 60 * 1000;
+// Cache TTL: 2 นาที (report data ไม่ต้อง real-time มาก)
+const REPORT_CACHE_TTL = 2 * 60 * 1000;
 
-const getHeader = async (databaseName: string, startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
-  const config = getDbConfig(databaseName);
-  await createConnection(config);
-  const pool = getPool(databaseName);
+const getHeader = async (pool: any, startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
+  // รับ pool มาจาก parameter แทนการ createConnection ซ้ำ
 
   let where = '';
   if(startDate && !paymentDateStart) {
@@ -61,10 +59,8 @@ const getHeader = async (databaseName: string, startDate: any, endDate: any, pco
 }
 
 
-const getSub = async (databaseName: string, p_no: any[], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any) => {
-  const config = getDbConfig(databaseName);
-  await createConnection(config);
-  const pool = getPool(databaseName);
+const getSub = async (pool: any, p_no: any[], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any) => {
+  // รับ pool มาจาก parameter แทนการ createConnection ซ้ำ
 
   let where = '';
 
@@ -205,61 +201,77 @@ export default defineEventHandler(async (event) => {
     if (cachedData) {
       console.log(`[Cache HIT] Report data for ${dbName}`);
       setResponseHeaders(event, {
-        'Cache-Control': 'public, max-age=180', // 3 นาที
+        'Cache-Control': 'public, max-age=120', // 2 นาที
         'X-Cache': 'HIT'
       });
       return cachedData;
     }
     
     console.log(`[Cache MISS] Fetching report data from database: ${dbName}`);
+    
+    // สร้าง connection และ get pool ครั้งเดียว
+    try {
+      const config = getDbConfig(dbName);
+      await createConnection(config);
+      const pool = getPool(dbName);
+      console.log('Successfully connected to database:', dbName);
+      
+      let phaseHead = ''
+      let phaseSub = ''
+      if(phase == '1') {
+        phaseHead = ` and cl.ph in ('1.0')`
+        phaseSub = ` and cl.ph in ('1.0')`
+      }else {
+        phaseHead = ` and cl.ph in ('2.0')`
+        phaseSub = ` and cl.ph in ('2.0')`
+      }
 
-    let phaseHead = ''
-    let phaseSub = ''
-    if(phase == '1') {
-      phaseHead = ` and cl.ph in ('1.0')`
-      phaseSub = ` and cl.ph in ('1.0')`
-    }else {
-      phaseHead = ` and cl.ph in ('2.0')`
-      phaseSub = ` and cl.ph in ('2.0')`
+      const results = []
+      // ส่ง pool แทน databaseName
+      const resultHead = await getHeader(pool, startDate, endDate, pcode, paymentDateStart, paymentDateEnd);
+
+      const pNoArray = resultHead.map(item => item.p_no);
+      
+      if (pNoArray.length === 0) {
+        return resultHead;
+      }
+
+      // ส่ง pool แทน databaseName
+      const childData = await getSub(pool, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd);
+
+      // Group child data by p_no
+      const groupedChildren = childData.reduce((acc, child) => {
+        const { p_no } = child;
+        if (!acc[p_no]) acc[p_no] = [];
+        acc[p_no].push(child);
+        return acc;
+      }, {});
+
+      // Map parent data and attach children
+      const result = resultHead.map((parent: any) => {
+        return {
+          ...parent,
+          showSub: true,
+          sub: groupedChildren[parent.p_no] || [] // Attach children or an empty array
+        };
+      });
+      
+      // บันทึกลง cache
+      setCache(cacheKey, result);
+      
+      // ตั้ง cache headers
+      setResponseHeaders(event, {
+        'Cache-Control': 'public, max-age=120', // 2 นาที
+        'X-Cache': 'MISS'
+      });
+      
+      return result;
+      
+    } catch (error: any) {
+      console.error('Failed to fetch report data:', error);
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Database query failed: ${error?.message || 'Unknown error'}`
+      });
     }
-
-    
-    const results = []
-  const resultHead = await getHeader(dbName, startDate, endDate, pcode, paymentDateStart, paymentDateEnd);
-
-  const pNoArray = resultHead.map(item => item.p_no);
-  
-  if (pNoArray.length === 0) {
-    return resultHead;
-  }
-
-    const childData = await getSub(dbName, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd);
-
-    // Group child data by p_no
-    const groupedChildren = childData.reduce((acc, child) => {
-      const { p_no } = child;
-      if (!acc[p_no]) acc[p_no] = [];
-      acc[p_no].push(child);
-      return acc;
-    }, {});
-
-    // Map parent data and attach children
-    const result = resultHead.map((parent: any) => {
-      return {
-        ...parent,
-        showSub: true,
-        sub: groupedChildren[parent.p_no] || [] // Attach children or an empty array
-      };
-    });
-    
-    // บันทึกลง cache
-    setCache(cacheKey, result);
-    
-    // ตั้ง cache headers
-    setResponseHeaders(event, {
-      'Cache-Control': 'public, max-age=180', // 3 นาที
-      'X-Cache': 'MISS'
-    });
-    
-    return result;
 })
