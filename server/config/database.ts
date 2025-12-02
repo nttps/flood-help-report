@@ -14,7 +14,7 @@ const getBaseConfig = (databaseName: string) => ({
   connectionTimeout: 25000,  // 25 seconds (ลดลง)
   requestTimeout: 35000,     // 35 seconds (ลดจาก 45s) - force queries to complete faster
   pool: {
-    max: 250,                     // EMERGENCY: เพิ่มเป็น 250 (จาก 150)
+    max: 400,                     // EMERGENCY: เพิ่มเป็น 400 (จาก 150)
     min: 15,                      // เพิ่มเป็น 15 warm connections
     idleTimeoutMillis: 45000,     // ลดเป็น 45s - คืน connections เร็วขึ้น
     acquireTimeoutMillis: 20000,  // ลดเป็น 20s - fail faster
