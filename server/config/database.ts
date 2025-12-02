@@ -14,7 +14,7 @@ const getBaseConfig = (databaseName: string) => ({
   connectionTimeout: 300000,
   requestTimeout: 300000,
   pool: {
-    max: 10,
+    max: 100,
     min: 0,
     idleTimeoutMillis: 30000
   }
