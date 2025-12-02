@@ -14,14 +14,13 @@ const getBaseConfig = (databaseName: string) => ({
   connectionTimeout: 30000,  // 30 seconds to establish connection
   requestTimeout: 60000,     // 60 seconds for query execution
   pool: {
-    max: 50,                      // Reduce max connections
-    min: 2,                       // Keep minimum 2 connections alive
+    max: 50,                      // Maximum number of connections
+    min: 2,                       // Minimum number of connections to keep alive
     idleTimeoutMillis: 60000,     // 60 seconds before closing idle connection
     acquireTimeoutMillis: 20000,  // 20 seconds timeout waiting for connection from pool
-    evictionRunIntervalMillis: 10000, // Check for idle connections every 10 seconds
-    softIdleTimeoutMillis: 30000, // Soft timeout for idle connections
     createTimeoutMillis: 10000,   // 10 seconds timeout for creating new connection
     destroyTimeoutMillis: 5000,   // 5 seconds timeout for destroying connection
+    reapIntervalMillis: 10000,    // Check for idle connections every 10 seconds (Tarn supported)
     createRetryIntervalMillis: 200, // Retry interval for connection creation
     propagateCreateError: true    // Propagate connection creation errors
   }
