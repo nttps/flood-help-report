@@ -23,9 +23,7 @@ const getBaseConfig = (databaseName: string) => ({
     reapIntervalMillis: 5000,     // 5s - cleanup บ่อยขึ้นเพื่อคืน connections เร็ว
     createRetryIntervalMillis: 100, // 100ms retry
     propagateCreateError: true,
-    // Connection validation - ช่วยให้ connections ที่เสียถูกทำลายและสร้างใหม่
-    evictionRunIntervalMillis: 10000, // 10s - ตรวจสอบ connections ที่ควรถูกทำลาย
-    softIdleTimeoutMillis: 15000      // 15s - connections ที่ idle เกิน 15s จะถูก evict ก่อน
+    // Connection validation - ช่วยให้ connections ที่เสียถูกทำลายและสร้างใหม่=
   }
 });
 
