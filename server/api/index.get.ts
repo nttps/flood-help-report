@@ -139,10 +139,11 @@ payment_counts AS (
 linkage_failed AS (
     SELECT 
         commit_id,
+        origin_pcode,
         SUM(CASE WHEN linkgate_status != 'ปกติ' THEN 1 ELSE 0 END) AS failed_linkage
     FROM sf_commit_line
     WHERE is_active = 1
-    GROUP BY commit_id
+    GROUP BY commit_id, origin_pcode
 ),
 send_from_province_counts AS (
     SELECT 
@@ -171,7 +172,7 @@ sub_counts AS (
     FROM pre_filtered_head ch
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id AND cl.is_active = 1
     LEFT JOIN payment_counts pc ON ch.commit_id = pc.commit_id
-    LEFT JOIN linkage_failed lf ON ch.commit_id = lf.commit_id
+    LEFT JOIN linkage_failed lf ON ch.commit_id = lf.commit_id AND cl.origin_pcode = lf.origin_pcode
     LEFT JOIN send_from_province_counts sp ON cl.origin_pcode = sp.p_no AND sp.commit_no = CONCAT('99', ch.commit_no)
     GROUP BY 
         cl.origin_pcode, 
@@ -191,7 +192,6 @@ RankedSequence AS (
         (person_qty - failed_linkage - successful_payments) AS unsuccessful_payments,
         (failed_linkage + (person_qty - failed_linkage - successful_payments)) AS count_back_to_province,
         COALESCE(rd.payment_sequence, 0) AS payment_sequence
-        
     FROM sub_counts sc
     LEFT JOIN ranked_dates rd ON sc.latest_payment_date = rd.export_bank_trn_date
 )
