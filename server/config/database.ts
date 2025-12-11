@@ -11,8 +11,8 @@ const getBaseConfig = (databaseName: string) => ({
     encrypt: false,
     trustServerCertificate: true,
   },
-  connectionTimeout: 25000,  // 25 seconds (ลดลง)
-  requestTimeout: 35000,     // 35 seconds (ลดจาก 45s) - force queries to complete faster
+  connectionTimeout: 30000,  // 30 seconds
+  requestTimeout: 60000,     // 60 seconds (เพิ่มจาก 35s) - allow complex queries for multiple provinces
   pool: {
     max: 1000,                    // 1000 connections max (OK กับ RAM 128GB!)
     min: 20,                      // 20 warm connections (ลดลงเพราะมี cache แล้ว)
@@ -24,8 +24,7 @@ const getBaseConfig = (databaseName: string) => ({
     createRetryIntervalMillis: 100, // 100ms retry
     propagateCreateError: true,
     // Connection validation - ช่วยให้ connections ที่เสียถูกทำลายและสร้างใหม่
-    evictionRunIntervalMillis: 10000, // 10s - ตรวจสอบ connections ที่ควรถูกทำลาย
-    softIdleTimeoutMillis: 15000      // 15s - connections ที่ idle เกิน 15s จะถูก evict ก่อน
+    
   }
 });
 

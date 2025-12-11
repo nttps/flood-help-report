@@ -11,7 +11,7 @@
                         <USelectMenu searchable v-model="form.pcode" placeholder="เลือกจังหวัด" value-attribute="pcode" option-attribute="pname" :options="provinces || []"/>
                     </UFormGroup>
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 items-center justify-center gap-4">
+                <div class="grid grid-cols-1 lg:grid-cols-3 items-start justify-center gap-4">
                     <UFormGroup label="ตั้งแต่วันที่" size="xl" name="startDate">
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton class="w-full" icon="i-heroicons-calendar-days-20-solid" :label="formatDateTH(form.startDate, 'd MMM yyy')" size="xl" />
@@ -39,8 +39,11 @@
                     </UFormGroup>
                     
                 </div>
+                <div class="mt-4">
+                    <UCheckbox v-model="form.onlyNoPaymentDate" label="แสดงเฉพาะรายการที่ยังไม่มีวันที่โอนเงิน" size="xl" />
+                </div>
               <div class="text-center self-end mt-8">
-                <UButton type="submit" label="ค้นหา" size="xl" />
+                <UButton type="submit" label="ค้นหา" size="xl" :loading="loading" />
               </div>
             </UForm>
         </UContainer>
@@ -92,7 +95,8 @@
       paymentDate: {
         start: null,
         end: null,
-      }
+      },
+      onlyNoPaymentDate: false
     })
 
     // Computed properties สำหรับช่วงวันที่ตาม database ที่เลือก
@@ -117,6 +121,7 @@
 
     const { data: provinces, status } = await useFetch(() => `/api/province?database=${form.database}`)
     const router = useRouter()
+    const loading = ref(false)
 
     // ฟังก์ชันสำหรับเมื่อเปลี่ยน database
     const onDatabaseChange = async (newDatabase: string) => {
@@ -131,6 +136,9 @@
         // Reset วันที่โอนเงิน
         form.paymentDate.start = null
         form.paymentDate.end = null
+        
+        // Reset checkbox
+        form.onlyNoPaymentDate = false
       }
       
       // Refresh provinces และ lastPaymentDate เมื่อเปลี่ยน database
@@ -139,14 +147,36 @@
 
     type Schema = z.infer<typeof schema>;
     const submit = (event: FormSubmitEvent<Schema>) => {
-
+      loading.value = true
       const formattedStartDate = format(form.startDate, 'yyyy-MM-dd')
       const formattedEndDate = format(form.endDate, 'yyyy-MM-dd')
       const formattedPaymentDateStart = form.paymentDate.start ? format(form.paymentDate.start, 'yyyy-MM-dd') : ''
       const formattedPaymentDateEnd = form.paymentDate.end ? format(form.paymentDate.end, 'yyyy-MM-dd') : ''
 
+      // สร้าง query params
+      const params = new URLSearchParams()
+      params.append('title', form.database)
+      
+      // ถ้าเลือกวันที่โอนเงิน ให้ใช้วันที่โอนเงิน
+      if (form.paymentDate.start && form.paymentDate.end) {
+        params.append('paymentDateStart', formattedPaymentDateStart)
+        params.append('paymentDateEnd', formattedPaymentDateEnd)
+      } else {
+        // ถ้าไม่เลือกวันที่โอนเงิน ให้ใช้วันที่ commit
+        params.append('startDate', formattedStartDate)
+        params.append('endDate', formattedEndDate)
+      }
+      
+      if (form.pcode) {
+        params.append('pcode', form.pcode)
+      }
+      
+      // เพิ่ม parameter สำหรับ checkbox
+      if (form.onlyNoPaymentDate) {
+        params.append('onlyNoPaymentDate', 'true')
+      }
 
-      router.push(`/report?title=${form.database}${form.paymentDate.start ? `` : `&startDate=${formattedStartDate}&endDate=${formattedEndDate}` }${form.pcode ? `&pcode=${form.pcode}`: ''}${form.paymentDate.start ? `&paymentDateStart=${formattedPaymentDateStart}`: ''}${form.paymentDate.end ? `&paymentDateEnd=${formattedPaymentDateEnd}`: ''}`)
+      router.push(`/report?${params.toString()}`)
     }
 </script>
 

@@ -4,24 +4,35 @@ import { getCache, setCache } from '../utils/cache';
 // Cache TTL: 2 นาที (report data ไม่ต้อง real-time มาก)
 const REPORT_CACHE_TTL = 0 * 60 * 1000;
 
-const getHeader = async (pool: any, startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any) => {
+const getHeader = async (pool: any, startDate: any, endDate: any, pcode: any, paymentDateStart: any, paymentDateEnd: any, onlyNoPaymentDate: any) => {
   // รับ pool มาจาก parameter แทนการ createConnection ซ้ำ
 
   let where = '';
-  if(startDate && !paymentDateStart) {
-    where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}' `
-  }
-
-  if(endDate  && !paymentDateEnd) {
-    where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}' `
-  }
-
+  
+  // กรณีเลือกวันที่โอนเงิน - กรองตามวันที่โอนเงิน
   if(paymentDateStart ) {
     where += ` AND CAST(ch.export_bank_trn_date AS DATE) >= '${paymentDateStart}' `
   }
 
   if(paymentDateEnd ) {
     where += ` AND CAST(ch.export_bank_trn_date AS DATE) <= '${paymentDateEnd}' `
+  }
+  
+  // กรณีไม่เลือกวันที่โอนเงิน
+  if(!paymentDateStart && !paymentDateEnd) {
+    // ถ้า checkbox ถูกเลือก - แสดงเฉพาะรายการที่ยังไม่มีวันที่โอนเงิน
+    if(onlyNoPaymentDate === 'true') {
+      where += ` AND ch.export_bank_trn_date IS NULL `
+    }
+    
+    // กรองตามช่วงวันที่ commit_date
+    if(startDate) {
+      where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}' `
+    }
+
+    if(endDate) {
+      where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}' `
+    }
   }
 
   if(pcode != 'all') {
@@ -59,25 +70,35 @@ const getHeader = async (pool: any, startDate: any, endDate: any, pcode: any, pa
 }
 
 
-const getSub = async (pool: any, p_no: any[], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any) => {
+const getSub = async (pool: any, p_no: any[], startDate: any, endDate: any, paymentDateStart: any, paymentDateEnd: any, onlyNoPaymentDate: any) => {
   // รับ pool มาจาก parameter แทนการ createConnection ซ้ำ
 
   let where = '';
 
-  if(startDate && !paymentDateStart) {
-    where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}'`
-  }
-
-  if(endDate && !paymentDateEnd) {
-    where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}'`
-  }
-
+  // กรณีเลือกวันที่โอนเงิน - กรองตามวันที่โอนเงิน
   if(paymentDateStart) {
     where += ` AND CAST(ch.export_bank_trn_date AS DATE) >= '${paymentDateStart}' `
   }
 
   if(paymentDateEnd) {
     where += ` AND CAST(ch.export_bank_trn_date AS DATE) <= '${paymentDateEnd}' `
+  }
+  
+  // กรณีไม่เลือกวันที่โอนเงิน
+  if(!paymentDateStart && !paymentDateEnd) {
+    // ถ้า checkbox ถูกเลือก - แสดงเฉพาะรายการที่ยังไม่มีวันที่โอนเงิน
+    if(onlyNoPaymentDate === 'true') {
+      where += ` AND ch.export_bank_trn_date IS NULL `
+    }
+    
+    // กรองตามช่วงวันที่ commit_date
+    if(startDate) {
+      where += ` AND CAST(ch.commit_date AS DATE) >= '${startDate}'`
+    }
+
+    if(endDate) {
+      where += ` AND CAST(ch.commit_date AS DATE) <= '${endDate}'`
+    }
   }
 
 
@@ -130,8 +151,7 @@ send_from_province_counts AS (
         ccl.commit_no
     FROM sf_commit_head ccl 
     LEFT JOIN sf_commit_line cco ON ccl.commit_id = cco.commit_id 
-    WHERE ccl.commit_no LIKE '99%' 
-    AND ccl.ph in ('1.0')
+    WHERE ccl.commit_no LIKE '99%'
     GROUP BY cco.origin_pcode, ccl.commit_no
 ),
 sub_counts AS (
@@ -188,13 +208,13 @@ ORDER BY commit_date,commit_no ASC;
 
 export default defineEventHandler(async (event) => {
    
-    const {startDate, endDate, pcode, paymentDateStart, paymentDateEnd, phase, database } = getQuery(event)
+    const {startDate, endDate, pcode, paymentDateStart, paymentDateEnd, phase, database, onlyNoPaymentDate } = getQuery(event)
 
     // Default to DPM_HELP68 if database not specified
     const dbName = (database as string) || 'DPM_HELP68';
     
     // สร้าง cache key จาก parameters ทั้งหมด
-    const cacheKey = `report:index:${dbName}:${pcode}:${startDate || 'none'}:${endDate || 'none'}:${paymentDateStart || 'none'}:${paymentDateEnd || 'none'}:${phase || 'all'}`;
+    const cacheKey = `report:index:${dbName}:${pcode}:${startDate || 'none'}:${endDate || 'none'}:${paymentDateStart || 'none'}:${paymentDateEnd || 'none'}:${phase || 'all'}:${onlyNoPaymentDate || 'false'}`;
     
     // ตรวจสอบ cache
     const cachedData = getCache(cacheKey, REPORT_CACHE_TTL);
@@ -216,19 +236,10 @@ export default defineEventHandler(async (event) => {
       const pool = getPool(dbName);
       console.log('Successfully connected to database:', dbName);
       
-      let phaseHead = ''
-      let phaseSub = ''
-      if(phase == '1') {
-        phaseHead = ` and cl.ph in ('1.0')`
-        phaseSub = ` and cl.ph in ('1.0')`
-      }else {
-        phaseHead = ` and cl.ph in ('2.0')`
-        phaseSub = ` and cl.ph in ('2.0')`
-      }
 
       const results = []
       // ส่ง pool แทน databaseName
-      const resultHead = await getHeader(pool, startDate, endDate, pcode, paymentDateStart, paymentDateEnd);
+      const resultHead = await getHeader(pool, startDate, endDate, pcode, paymentDateStart, paymentDateEnd, onlyNoPaymentDate);
 
       const pNoArray = resultHead.map(item => item.p_no);
       
@@ -237,7 +248,7 @@ export default defineEventHandler(async (event) => {
       }
 
       // ส่ง pool แทน databaseName
-      const childData = await getSub(pool, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd);
+      const childData = await getSub(pool, pNoArray, startDate, endDate, paymentDateStart, paymentDateEnd, onlyNoPaymentDate);
 
       // Group child data by p_no
       const groupedChildren = childData.reduce((acc, child) => {

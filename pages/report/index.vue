@@ -157,7 +157,12 @@
                                 </td>
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
                                     {{ dataHead.reduce((total, region) => {
-                                    const subTotal = region.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((subTotal, item) => subTotal + item.outstanding, 0);
+                                    const subTotal = region.sub.reduce((subTotal, item) => {
+                                        if (item.commit_no.toString().startsWith('88')) {
+                                            return subTotal + (-item.outstanding);
+                                        }
+                                        return item.status_confirm == 'ยืนยันแล้ว' ? subTotal + item.outstanding : subTotal;
+                                    }, 0);
                                     return total + subTotal;
                                     }, 0).toLocaleString() }}
                                 </td>
@@ -205,7 +210,12 @@
                                         {{ head.retreat.toLocaleString() }}
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
-                                        {{ head.sub.filter(i => i.status_confirm == 'ยืนยันแล้ว').reduce((total, current) => total + current.outstanding, 0).toLocaleString() }}
+                                        {{ head.sub.reduce((total, current) => {
+                                            if (current.commit_no.toString().startsWith('88')) {
+                                                return total + (-current.outstanding);
+                                            }
+                                            return current.status_confirm == 'ยืนยันแล้ว' ? total + current.outstanding : total;
+                                        }, 0).toLocaleString() }}
                                     </td>
                                 </tr>
 
@@ -256,7 +266,7 @@
                                                 {{ sub.retreat.toLocaleString() }}
                                             </td>
                                             <td class="border border-zinc-500 text-right" :class="{ 'bg-red-400': sub.status_confirm == 'ยืนยันแล้ว' && sub.outstanding > 0, 'bg-[#90db92]': sub.status_confirm == 'ยืนยันแล้ว' &&  sub.outstanding == 0}">
-                                                {{ sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : 0 }}
+                                                {{ sub.commit_no.toString().startsWith('88') ? (-sub.outstanding).toLocaleString() : (sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : 0) }}
                                             </td>
                                         </tr>
                                     </template>
@@ -273,8 +283,35 @@
             </div>
 
         </div>
-        <div v-if="pending" class="min-h-screen flex items-center justify-center">
-            <h3 class="text-center font-bold text-[50px]">กำลังประมวลผล...</h3>
+        
+        <!-- Loading Screen -->
+        <div v-if="pending" class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div class="text-center space-y-8">
+                <!-- Spinner Animation -->
+                <div class="relative">
+                    <div class="w-24 h-24 border-8 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-16 h-16 border-8 border-transparent border-b-indigo-400 rounded-full animate-spin" style="animation-direction: reverse; animation-duration: 1s;"></div>
+                    </div>
+                </div>
+                
+                <!-- Loading Text -->
+                <div class="space-y-3">
+                    <h3 class="text-3xl lg:text-4xl font-bold text-gray-800 animate-pulse">
+                        กำลังโหลดข้อมูล...
+                    </h3>
+                    <p class="text-base lg:text-lg text-gray-600">
+                        กรุณารอสักครู่ ระบบกำลังประมวลผลรายงาน
+                    </p>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="w-64 lg:w-80 mx-auto">
+                    <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full animate-progress"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <NuxtLoadingIndicator />
@@ -383,7 +420,8 @@ const title = computed(() => titles.value.find(title => title.value == route.que
       !route.query.paymentDateStart && route.query.endDate ? `endDate=${route.query.endDate}` : '',
       route.query.pcode ? `pcode=${route.query.pcode}` : '',
       route.query.paymentDateStart ? `paymentDateStart=${route.query.paymentDateStart}` : '',
-      route.query.paymentDateEnd ? `paymentDateEnd=${route.query.paymentDateEnd}` : ''
+      route.query.paymentDateEnd ? `paymentDateEnd=${route.query.paymentDateEnd}` : '',
+      route.query.onlyNoPaymentDate ? `onlyNoPaymentDate=${route.query.onlyNoPaymentDate}` : ''
     ].filter(Boolean).join('&')
     
     return `/api/?${params}`
@@ -398,13 +436,15 @@ const title = computed(() => titles.value.find(title => title.value == route.que
     const paymentDateStart = route.query.paymentDateStart || 'none'
     const paymentDateEnd = route.query.paymentDateEnd || 'none'
     const phase = route.query.phase || 'all'
+    const onlyNoPaymentDate = route.query.onlyNoPaymentDate || 'false'
     
-    return `report:${db}:${pcode}:${startDate}:${endDate}:${paymentDateStart}:${paymentDateEnd}:${phase}`
+    return `report:${db}:${pcode}:${startDate}:${endDate}:${paymentDateStart}:${paymentDateEnd}:${phase}:${onlyNoPaymentDate}`
   })
 
-  // ใช้ useFetch พร้อม cache
-  const { data: reportData, pending } = await useFetch(apiUrl, {
+  // ใช้ useFetch พร้อม cache และ watch URL changes
+  const { data: reportData, pending, refresh } = await useFetch(apiUrl, {
     key: cacheKey.value,
+    watch: [cacheKey], // Watch cacheKey เพื่อ auto-refresh เมื่อ query params เปลี่ยน
     getCachedData(key) {
       const data = useNuxtApp().payload.data[key] || useNuxtApp().static.data[key]
       // ถ้ามีข้อมูลใน cache ใช้เลย ไม่ต้อง fetch ใหม่
@@ -462,6 +502,22 @@ const title = computed(() => titles.value.find(title => title.value == route.que
         display: none; /* ซ่อนไว้เมื่อแสดงผลบนหน้าจอ */
     }
 
+    /* Loading Animation */
+    @keyframes progress {
+        0% {
+            width: 0%;
+        }
+        50% {
+            width: 70%;
+        }
+        100% {
+            width: 100%;
+        }
+    }
+
+    .animate-progress {
+        animation: progress 2s ease-in-out infinite;
+    }
 
     table {
         border-collapse: collapse;
