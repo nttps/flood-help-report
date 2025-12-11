@@ -159,7 +159,10 @@
                                     {{ dataHead.reduce((total, region) => {
                                     const subTotal = region.sub.reduce((subTotal, item) => {
                                         if (item.commit_no.toString().startsWith('88')) {
-                                            return subTotal + (-item.outstanding);
+                                            if (item.status_confirm == 'ยืนยันแล้ว') {
+                                                return subTotal + item.outstanding; // 88 + ยืนยันแล้ว = ปกติ
+                                            }
+                                            return subTotal + (-item.outstanding); // 88 + ไม่ยืนยัน = ติดลบ
                                         }
                                         return item.status_confirm == 'ยืนยันแล้ว' ? subTotal + item.outstanding : subTotal;
                                     }, 0);
@@ -212,7 +215,10 @@
                                     <td class="border border-t-0 border-zinc-500 text-right">
                                         {{ head.sub.reduce((total, current) => {
                                             if (current.commit_no.toString().startsWith('88')) {
-                                                return total + (-current.outstanding);
+                                                if (current.status_confirm == 'ยืนยันแล้ว') {
+                                                    return total + current.outstanding; // 88 + ยืนยันแล้ว = ปกติ
+                                                }
+                                                return total + (-current.outstanding); // 88 + ไม่ยืนยัน = ติดลบ
                                             }
                                             return current.status_confirm == 'ยืนยันแล้ว' ? total + current.outstanding : total;
                                         }, 0).toLocaleString() }}
@@ -266,7 +272,11 @@
                                                 {{ sub.retreat.toLocaleString() }}
                                             </td>
                                             <td class="border border-zinc-500 text-right" :class="{ 'bg-red-400': sub.status_confirm == 'ยืนยันแล้ว' && sub.outstanding > 0, 'bg-[#90db92]': sub.status_confirm == 'ยืนยันแล้ว' &&  sub.outstanding == 0}">
-                                                {{ sub.commit_no.toString().startsWith('88') ? (-sub.outstanding).toLocaleString() : (sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : 0) }}
+                                                {{ 
+                                                    sub.commit_no.toString().startsWith('88') 
+                                                        ? (sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : (-sub.outstanding).toLocaleString())
+                                                        : (sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : 0) 
+                                                }}
                                             </td>
                                         </tr>
                                     </template>
