@@ -158,6 +158,9 @@
                                 <td class="border-r border-b-2 border-zinc-500 text-right">
                                     {{ dataHead.reduce((total, region) => {
                                     const subTotal = region.sub.reduce((subTotal, item) => {
+                                        if (item.commit_no.toString().startsWith('55')) {
+                                            return subTotal + item.outstanding; // 55 นำหน้า = บวกเสมอ
+                                        }
                                         if (item.commit_no.toString().startsWith('88')) {
                                             if (item.status_confirm == 'ยืนยันแล้ว') {
                                                 return subTotal + item.outstanding; // 88 + ยืนยันแล้ว = ปกติ
@@ -214,6 +217,9 @@
                                     </td>
                                     <td class="border border-t-0 border-zinc-500 text-right">
                                         {{ head.sub.reduce((total, current) => {
+                                            if (current.commit_no.toString().startsWith('55')) {
+                                                return total + current.outstanding; // 55 นำหน้า = บวกเสมอ
+                                            }
                                             if (current.commit_no.toString().startsWith('88')) {
                                                 if (current.status_confirm == 'ยืนยันแล้ว') {
                                                     return total + current.outstanding; // 88 + ยืนยันแล้ว = ปกติ
@@ -273,9 +279,11 @@
                                             </td>
                                             <td class="border border-zinc-500 text-right" :class="{ 'bg-red-400': sub.status_confirm == 'ยืนยันแล้ว' && sub.outstanding > 0, 'bg-[#90db92]': sub.status_confirm == 'ยืนยันแล้ว' &&  sub.outstanding == 0}">
                                                 {{ 
-                                                    sub.commit_no.toString().startsWith('88') 
-                                                        ? (sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : (-sub.outstanding).toLocaleString())
-                                                        : (sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : 0) 
+                                                    sub.commit_no.toString().startsWith('55')
+                                                        ? sub.outstanding.toLocaleString() // 55 นำหน้า = บวกเสมอ
+                                                        : sub.commit_no.toString().startsWith('88') 
+                                                            ? (sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : (-sub.outstanding).toLocaleString())
+                                                            : (sub.status_confirm == 'ยืนยันแล้ว' ? sub.outstanding.toLocaleString() : 0) 
                                                 }}
                                             </td>
                                         </tr>
