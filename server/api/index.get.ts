@@ -130,11 +130,12 @@ pre_filtered_head AS (
 payment_counts AS (
     SELECT 
         commit_id,
+        origin_pcode,
         COUNT(DISTINCT payment_date) AS count_payment_date,
         SUM(CASE WHEN payment_status = 'สำเร็จ' THEN 1 ELSE 0 END) AS successful_payments
     FROM sf_commit_line
     WHERE is_active = 1
-    GROUP BY commit_id
+    GROUP BY commit_id, origin_pcode
 ),
 linkage_failed AS (
     SELECT 
@@ -171,7 +172,7 @@ sub_counts AS (
         COALESCE(sp.send_from_province, 0) AS send_from_province
     FROM pre_filtered_head ch
     LEFT JOIN sf_commit_line cl ON ch.commit_id = cl.commit_id AND cl.is_active = 1
-    LEFT JOIN payment_counts pc ON ch.commit_id = pc.commit_id
+    LEFT JOIN payment_counts pc ON ch.commit_id = pc.commit_id AND cl.origin_pcode = pc.origin_pcode
     LEFT JOIN linkage_failed lf ON ch.commit_id = lf.commit_id AND cl.origin_pcode = lf.origin_pcode
     LEFT JOIN send_from_province_counts sp ON cl.origin_pcode = sp.p_no AND sp.commit_no = CONCAT('99', ch.commit_no)
     GROUP BY 
